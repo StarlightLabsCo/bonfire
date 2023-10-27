@@ -1,0 +1,25 @@
+{
+  "name": "ws_server",
+  "type": "module",
+  "module": "./src/index.ts",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "bun --hot run ./src/index.ts",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "latest",
+    "ioredis": "^5.3.2",
+    "openai": "^4.10.0",
+    "replicate": "^0.18.1",
+    "database": "workspace:*"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "bun-types": "latest",
+    "prisma": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
