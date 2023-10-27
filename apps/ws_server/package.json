@@ -16,7 +16,8 @@
   },
   "devDependencies": {
     "bun-types": "latest",
-    "prisma": "latest"
+    "prisma": "latest",
+    "tsconfig": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
