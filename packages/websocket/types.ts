@@ -1,7 +1,25 @@
 import { Message } from '../database';
 
-// ** --------------------------------- Request Types --------------------------------- **
+// ** --------------------------------- Websocket Request Types --------------------------------- **
 // ** Request **
+export type StarlightWebSocketRequest =
+  | AuthRequest
+  | CreateAdventureSuggestionsRequest
+  | CreateWelcomeSoundbiteRequest
+  | CreateInstanceRequest
+  | AddPlayerMessageRequest
+  | UndoMessageRequest
+  | StopAudioRequest
+  | ProcessVoiceTranscriptionRequest;
+
+export type GenericStarlightWebSocketRequest<
+  T extends StarlightWebSocketRequestType,
+  D,
+> = {
+  type: T;
+  data: D;
+};
+
 export enum StarlightWebSocketRequestType {
   auth,
   createAdventureSuggestions,
@@ -13,67 +31,103 @@ export enum StarlightWebSocketRequestType {
   processVoiceTranscription,
 }
 
-export type StarlightWebSocketRequest =
-  | { type: StarlightWebSocketRequestType.auth; data: AuthData }
-  | {
-      type: StarlightWebSocketRequestType.createAdventureSuggestions;
-      data: CreateAdventureSuggestionsData;
-    }
-  | {
-      type: StarlightWebSocketRequestType.createWelcomeSoundbite;
-      data: CreateWelcomeSoundbiteData;
-    }
-  | {
-      type: StarlightWebSocketRequestType.createInstance;
-      data: CreateInstanceData;
-    }
-  | {
-      type: StarlightWebSocketRequestType.addPlayerMessage;
-      data: AddPlayerMessageData;
-    }
-  | {
-      type: StarlightWebSocketRequestType.undoMessage;
-      data: UndoMessageData;
-    }
-  | {
-      type: StarlightWebSocketRequestType.stopAudio;
-      data: StopAudioData;
-    }
-  | {
-      type: StarlightWebSocketRequestType.processVoiceTranscription;
-      data: ProcessVoiceTranscriptionData;
-    };
+// Auth
+export type AuthRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.auth,
+  AuthData
+>;
 
-// ** Data **
 export type AuthData = {
   token: string;
+  connectionId: string;
 };
 
+// Create Adventure Suggestions
+export type CreateAdventureSuggestionsRequest =
+  GenericStarlightWebSocketRequest<
+    StarlightWebSocketRequestType.createAdventureSuggestions,
+    CreateAdventureSuggestionsData
+  >;
+
 export type CreateAdventureSuggestionsData = {};
+
+// Create Instance
+export type CreateInstanceRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.createInstance,
+  CreateInstanceData
+>;
 
 export type CreateInstanceData = {
   description: string;
 };
 
+// Create Welcome Soundbite
+export type CreateWelcomeSoundbiteRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.createWelcomeSoundbite,
+  CreateWelcomeSoundbiteData
+>;
+
 export type CreateWelcomeSoundbiteData = {};
+
+// Add Player Message
+export type AddPlayerMessageRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.addPlayerMessage,
+  AddPlayerMessageData
+>;
 
 export type AddPlayerMessageData = {
   instanceId: string;
   message: string;
 };
 
+// Undo Message
+export type UndoMessageRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.undoMessage,
+  UndoMessageData
+>;
+
 export type UndoMessageData = {
   instanceId: string;
 };
 
+// Stop Audio
+export type StopAudioRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.stopAudio,
+  StopAudioData
+>;
+
 export type StopAudioData = {};
+
+// Process Voice Transcription
+export type ProcessVoiceTranscriptionRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.processVoiceTranscription,
+  ProcessVoiceTranscriptionData
+>;
 
 export type ProcessVoiceTranscriptionData = {
   audio: string; // base64 encoded audio
 };
+// ** --------------------------------- Websocket Response Types --------------------------------- **
+export type StarlightWebSocketResponse =
+  | AuthSuccessResponse
+  | AdventureSuggestionsCreatedResponse
+  | InstanceCreatedResponse
+  | MessageAddedResponse
+  | MessageUpdatedResponse
+  | MessageDeletedResponse
+  | AudioCreatedResponse
+  | VoiceTranscriptionProcessedResponse
+  | OutOfCreditsResponse
+  | ErrorResponse;
 
-// ** --------------------------------- Response Types --------------------------------- **
-// ** Response **
+export type GenericStarlightWebSocketResponse<
+  T extends StarlightWebSocketResponseType,
+  D,
+> = {
+  type: T;
+  data: D;
+};
+
 export enum StarlightWebSocketResponseType {
   authSuccess,
   adventureSuggestionsCreated,
@@ -87,77 +141,102 @@ export enum StarlightWebSocketResponseType {
   error,
 }
 
-export type StarlightWebSocketResponse =
-  | { type: StarlightWebSocketResponseType.authSuccess; data: AuthSuccessData }
-  | {
-      type: StarlightWebSocketResponseType.adventureSuggestionsCreated;
-      data: AdventureSuggestionsCreatedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.instanceCreated;
-      data: InstanceCreatedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.messageAdded;
-      data: MessageAddedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.messageUpdated;
-      data: MessageUpdatedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.messageDeleted;
-      data: MessageDeletedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.audioCreated;
-      data: AudioCreatedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.voiceTranscriptionProcessed;
-      data: VoiceTranscriptionProcessedData;
-    }
-  | {
-      type: StarlightWebSocketResponseType.outOfCredits;
-      data: OutOfCreditsData;
-    }
-  | { type: StarlightWebSocketResponseType.error; data: ErrorData };
+// Auth Success
+export type AuthSuccessResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.authSuccess,
+  AuthSuccessData
+>;
 
-// ** Data **
 export type AuthSuccessData = {};
+
+// Adventure Suggestions Created
+export type AdventureSuggestionsCreatedResponse =
+  GenericStarlightWebSocketResponse<
+    StarlightWebSocketResponseType.adventureSuggestionsCreated,
+    AdventureSuggestionsCreatedData
+  >;
 
 export type AdventureSuggestionsCreatedData = {
   suggestions: string[];
 };
 
+// Instance Created
+export type InstanceCreatedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.instanceCreated,
+  InstanceCreatedData
+>;
+
 export type InstanceCreatedData = {
   instanceId: string;
 };
+
+// Message Added
+export type MessageAddedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.messageAdded,
+  MessageAddedData
+>;
 
 export type MessageAddedData = {
   instanceId: string;
   message: Message;
 };
 
+// Message Updated
+export type MessageUpdatedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.messageUpdated,
+  MessageUpdatedData
+>;
+
 export type MessageUpdatedData = {
   instanceId: string;
   message: Message;
 };
+
+// Message Deleted
+export type MessageDeletedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.messageDeleted,
+  MessageDeletedData
+>;
 
 export type MessageDeletedData = {
   instanceId: string;
   messageId: string;
 };
 
+// Audio Created
+export type AudioCreatedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.audioCreated,
+  AudioCreatedData
+>;
+
 export type AudioCreatedData = {
   audio: string; // base64 encoded audio
 };
+
+// Voice Transcription Processed
+export type VoiceTranscriptionProcessedResponse =
+  GenericStarlightWebSocketResponse<
+    StarlightWebSocketResponseType.voiceTranscriptionProcessed,
+    VoiceTranscriptionProcessedData
+  >;
 
 export type VoiceTranscriptionProcessedData = {
   transcription: string;
 };
 
+// Out Of Credits
+export type OutOfCreditsResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.outOfCredits,
+  OutOfCreditsData
+>;
+
 export type OutOfCreditsData = {};
+
+// Error
+export type ErrorResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.error,
+  ErrorData
+>;
 
 export type ErrorData = {
   message: string;

@@ -140,8 +140,8 @@ enum MessageRole {
 model OpenAIRequestLog {
   id String @id @default(cuid())
 
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   tag   String?
   model String
@@ -175,8 +175,8 @@ model OpenAIRequestLog {
 model ReplicateRequestLog {
   id String @id @default(cuid())
 
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   prompt         String @db.Text
   negativePrompt String @db.Text
@@ -196,8 +196,8 @@ model ReplicateRequestLog {
 model ElevenLabsRequestLog {
   id String @id @default(cuid())
 
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   requestedCharacters String
   numCharacters       Int
