@@ -2,8 +2,6 @@
 
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  baseURL: 'https://openai_proxy.harrishr.workers.dev',
-});
+const openai = new OpenAI();
 
 export { openai };

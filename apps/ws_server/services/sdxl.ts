@@ -1,6 +1,6 @@
 // Documentation: https://replicate.com/stability-ai/sdxl/api
 import Replicate from 'replicate';
-import { db } from './prisma';
+import { db } from './db';
 
 if (!process.env.REPLICATE_API_TOKEN) {
   throw new Error('REPLICATE_API_TOKEN is not defined');
@@ -10,11 +10,7 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-async function generateImage(
-  requestingUserId: string,
-  prompt: string,
-  negative_prompt: string,
-) {
+async function generateImage(userId: string, prompt: string, negative_prompt: string) {
   const width = 1344;
   const height = 768;
   const scheduler = 'KarrasDPM';
@@ -24,7 +20,7 @@ async function generateImage(
     data: {
       user: {
         connect: {
-          id: requestingUserId,
+          id: userId,
         },
       },
       prompt,
@@ -56,6 +52,8 @@ async function generateImage(
   const finishDate = new Date();
 
   const imageURL = (output as string[])[0];
+
+  // TODO: Handle errors if imageURL is undefined
 
   await db.replicateRequestLog.update({
     where: {

@@ -9,7 +9,8 @@
   "devDependencies": {
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
-    "turbo": "latest"
+    "turbo": "latest",
+    "tsconfig": "workspace:*"
   },
   "name": "bonfire",
   "packageManager": "bun@1.0.7",

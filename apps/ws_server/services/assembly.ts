@@ -1,7 +1,10 @@
 // Documentation: https://www.assemblyai.com/docs/guides/real-time-streaming-transcription
 
+import { StarlightWebSocketResponseType, VoiceTranscriptionProcessedResponse } from 'websocket/types';
+import { sendToUser } from '../src/connection';
+
 const SAMPLE_RATE = 44100;
-const userIdToAssemblyWebsockets: { [key: string]: WebSocket } = {};
+const connectionIdToAssemblyWebsockets: { [key: string]: WebSocket } = {};
 
 // ** --------------------------------- Types --------------------------------- **
 // ** Request **
@@ -16,11 +19,7 @@ type TerminateSession = {
 };
 
 // ** Response **
-type AssemblyAIWebsocketResponse =
-  | SessionBegins
-  | PartialTranscript
-  | FinalTranscript
-  | SessionTerminated;
+type AssemblyAIWebsocketResponse = SessionBegins | PartialTranscript | FinalTranscript | SessionTerminated;
 
 type SessionBegins = {
   message_type: 'SessionBegins';
@@ -62,7 +61,7 @@ type SessionTerminated = {
 };
 
 // ** Error Codes **
-const errorMessages: { [key: number]: string } = {
+const assemblyErrors: { [key: number]: string } = {
   4000: 'Sample rate must be a positive integer',
   4001: 'Not Authorized',
   4002: 'Insufficient Funds or This feature is paid-only and requires you to add a credit card. Please visit https://app.assemblyai.com/ to add a credit card to your account',
@@ -82,93 +81,86 @@ const errorMessages: { [key: number]: string } = {
 };
 
 // ** --------------------------------- Code --------------------------------- **
-async function initAssemblyWs(userId: string) {
-  if (!process.env.ASSEMBLYAI_API_KEY) {
-    throw new Error('ASSEMBLYAI_API_KEY is not defined');
-  }
+async function initAssemblyWs(connectionId: string) {
+  return await new Promise<WebSocket>((resolve) => {
+    if (!process.env.ASSEMBLYAI_API_KEY) {
+      throw new Error('ASSEMBLYAI_API_KEY is not defined');
+    }
 
-  // TODO: idea add word boost for suggestions?
-  const assemblyWs = new WebSocket(
-    `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=${SAMPLE_RATE}`,
-    {
+    const ws = new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=${SAMPLE_RATE}`, {
       headers: {
         authorization: process.env.ASSEMBLYAI_API_KEY,
       },
-    },
-  );
+    });
 
-  assemblyWs.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data as string);
+    ws.addEventListener('open', () => {
+      connectionIdToAssemblyWebsockets[connectionId] = ws;
+      resolve(ws);
+    });
 
-    if (data.text) {
-      // TODO: make a generic send function that is typed and also fetches the most latest websocket for the user rather than having to pass it in.
-      // send(ws, {
-      //   type: WebSocketResponseType.transcription,
-      //   payload: {
-      //     id: '',
-      //     content: data.text,
-      //   },
-      // });
-    }
+    ws.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data as string);
 
-    // TODO: I think the terminate session here might be what's causing bad experience when you stop talking for a while.
-    if (data.message_type === 'FinalMessage') {
-      assemblyWs.send(JSON.stringify({ terminate_session: true }));
-    } else if (data.message_type === 'SessionTerminated') {
-      assemblyWs.close();
-      delete userIdToAssemblyWebsockets[userId];
-    }
-  });
+      // TODO: validate message
 
-  assemblyWs.addEventListener('error', (err) => {
-    console.error(`[${userId}] Error from AssemblyAI.`, err);
-    assemblyWs.close();
-    delete userIdToAssemblyWebsockets[userId];
-  });
+      if (data.text) {
+        sendToUser(connectionId, {
+          type: StarlightWebSocketResponseType.voiceTranscriptionProcessed,
+          data: {
+            transcription: data.text,
+          },
+        } as VoiceTranscriptionProcessedResponse);
+      }
 
-  assemblyWs.addEventListener('close', (event) => {
-    console.log(`[${userId}] Disconnected from AssemblyAI.`);
-    delete userIdToAssemblyWebsockets[userId];
+      // TODO: I think the terminate session here might be what's causing bad experience when you stop talking for a while.
+      if (data.message_type === 'FinalMessage') {
+        ws.send(JSON.stringify({ terminate_session: true } as TerminateSession));
+      } else if (data.message_type === 'SessionTerminated') {
+        ws.close();
+        delete connectionIdToAssemblyWebsockets[connectionId];
+      }
+    });
 
-    if (event.code in errorMessages) {
-      console.error(
-        `[${userId}] Error from AssemblyAI: ${errorMessages[event.code]}`,
-      );
-    }
-  });
+    ws.addEventListener('error', (err) => {
+      delete connectionIdToAssemblyWebsockets[connectionId];
+      console.error(`Error from AssemblyAI.`, err);
+    });
 
-  return await new Promise<WebSocket>((resolve) => {
-    assemblyWs.addEventListener('open', () => {
-      userIdToAssemblyWebsockets[userId] = assemblyWs;
-      resolve(assemblyWs);
+    ws.addEventListener('close', (event) => {
+      console.log(`Disconnected from AssemblyAI.`);
+      delete connectionIdToAssemblyWebsockets[connectionId];
+
+      if (event.code in assemblyErrors) {
+        console.error(`Error from AssemblyAI: ${assemblyErrors[event.code]}`);
+      }
     });
   });
 }
 
-async function transcribeAudio(userId: string, base64Audio: string) {
-  let assemblyWs = userIdToAssemblyWebsockets[userId];
-  if (!assemblyWs) {
-    console.log(`[${userId}] Initializing AssemblyAI websocket.`);
-    assemblyWs = await initAssemblyWs(userId);
+async function transcribeAudio(connectionId: string, base64Audio: string) {
+  let ws = connectionIdToAssemblyWebsockets[connectionId];
+  if (!ws) {
+    console.log(`Initializing AssemblyAI websocket.`);
+    ws = await initAssemblyWs(connectionId);
   }
 
   try {
-    console.log(`[${userId}] Sending data to AssemblyAI.`);
-    assemblyWs.send(JSON.stringify({ audio_data: base64Audio }));
+    console.log(`Sending data to AssemblyAI.`);
+    ws.send(JSON.stringify({ audio_data: base64Audio } as AudioData));
   } catch (e) {
-    console.error(`[${userId}] Error sending data to AssemblyAI.`, e);
+    console.error(`Error sending data to AssemblyAI.`, e);
   }
 }
 
-async function finishTranscription(userId: string) {
-  const assemblyWs = userIdToAssemblyWebsockets[userId];
+async function finishTranscription(connectionId: string) {
+  const assemblyWs = connectionIdToAssemblyWebsockets[connectionId];
 
   if (assemblyWs) {
     const base64Buffer = Buffer.alloc(44100 * 2).toString('base64');
-    assemblyWs.send(JSON.stringify({ audio_data: base64Buffer }));
-    assemblyWs.send(JSON.stringify({ terminate_session: true }));
+    assemblyWs.send(JSON.stringify({ audio_data: base64Buffer } as AudioData));
+    assemblyWs.send(JSON.stringify({ terminate_session: true } as TerminateSession));
   } else {
-    console.log(`[${userId}] No AssemblyAI websocket found to terminate.`);
+    console.log(`No AssemblyAI websocket found to terminate.`);
   }
 }
 
