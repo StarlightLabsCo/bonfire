@@ -64,9 +64,7 @@ export function UndoButton() {
   }
 
   function removeMessages(messagesToRemove: MessageLike[]) {
-    setMessages((messages) =>
-      messages.filter((message) => !messagesToRemove.includes(message)),
-    );
+    setMessages((messages) => messages.filter((message) => !messagesToRemove.includes(message)));
   }
 
   function undo() {

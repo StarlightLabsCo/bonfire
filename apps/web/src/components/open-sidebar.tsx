@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { useSidebar } from './contexts/sidebar-context';
 import { Icons } from './icons';
+import { useSidebarStore } from '@/stores/sidebar-store';
 
 export function OpenSidebar() {
-  const { showSidebarOpen, openSidebar, closeSidebar } = useSidebar();
+  const { showSidebarOpen, openSidebar, closeSidebar } = useSidebarStore();
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {

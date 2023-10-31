@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Suggestions } from './suggestions';
 import { useWebSocket } from '../contexts/ws-context';
 import { useMessages } from '../contexts/messages-context';
-import { useAudioProcessor } from '../contexts/audio-context';
+import { StarlightWebSocketRequestType } from 'websocket';
+import { usePlayback } from '../contexts/audio/playback-context';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 
 interface ActionSuggestionsProps {
   suggestions: string[];
@@ -12,14 +14,11 @@ interface ActionSuggestionsProps {
   className?: string;
 }
 
-export function ActionSuggestions({
-  suggestions,
-  setSuggestions,
-  className,
-}: ActionSuggestionsProps) {
-  const { sendJSON, instanceId } = useWebSocket();
-  const { clearAudio } = useAudioProcessor();
+export function ActionSuggestions({ suggestions, setSuggestions, className }: ActionSuggestionsProps) {
+  const { sendToServer } = useWebSocket();
+  const { clearAudio } = usePlayback();
   const { messages, setMessages } = useMessages();
+  const { instanceId } = useCurrentInstanceStore();
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -31,16 +30,9 @@ export function ActionSuggestions({
           payload: any;
         } = lastMessage.content && JSON.parse(lastMessage.content);
 
-        if (
-          lastMessageContent &&
-          lastMessageContent.type === 'generate_suggestions'
-        ) {
+        if (lastMessageContent && lastMessageContent.type === 'generate_suggestions') {
           let suggestions: string[] = lastMessageContent.payload.map(
-            (suggestion: {
-              action: string;
-              modifier: number;
-              reason: string;
-            }) => suggestion.action,
+            (suggestion: { action: string; modifier: number; reason: string }) => suggestion.action,
           );
           setSuggestions(suggestions);
         }
@@ -51,13 +43,15 @@ export function ActionSuggestions({
   }, [messages]);
 
   const submitAction = (suggestion: string) => {
+    if (!instanceId) return;
+
     clearAudio();
 
-    sendJSON({
-      type: 'addPlayerMessage',
-      payload: {
+    sendToServer({
+      type: StarlightWebSocketRequestType.addPlayerMessage,
+      data: {
         instanceId,
-        content: suggestion,
+        message: suggestion,
       },
     });
 

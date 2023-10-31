@@ -4,6 +4,7 @@ const { withSentryConfig } = require('@sentry/nextjs');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  transpilePackages: ['websocket'],
 };
 
 module.exports = withSentryConfig(

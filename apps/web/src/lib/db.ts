@@ -10,8 +10,8 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClientSingleton | undefined;
 };
 
-const db = globalForPrisma.prisma ?? prismaClientSingleton();
+const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
-export default db;
+export default prisma;
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

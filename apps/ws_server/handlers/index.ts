@@ -5,6 +5,8 @@ import { hasTokensMiddleware } from './hasTokensMiddleware';
 
 import { stopAudioHandler } from './audio/stopAudio';
 import { processVoiceTranscriptionHandler } from './audio/processVoiceTranscription';
+import { finishVoiceTranscriptionHandler } from './audio/finishVoiceTranscription';
+
 import { createAdventureSuggestionsHandler } from './story/createAdventureSuggestions';
 import { createWelcomeSoundbiteHandler } from './story/createWelcomeSoundbite';
 import { createInstanceHandler } from './story/createInstance';
@@ -26,4 +28,5 @@ export const handlers: {
   [StarlightWebSocketRequestType.addPlayerMessage]: hasTokensMiddleware(addPlayerMessageHandler),
   [StarlightWebSocketRequestType.undoMessage]: hasTokensMiddleware(undoMessageHandler),
   [StarlightWebSocketRequestType.processVoiceTranscription]: hasTokensMiddleware(processVoiceTranscriptionHandler),
+  [StarlightWebSocketRequestType.finishVoiceTranscription]: hasTokensMiddleware(finishVoiceTranscriptionHandler),
 };

@@ -1,29 +1,17 @@
 'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { useWebSocket } from '../contexts/ws-context';
 import { useToast } from '../ui/use-toast';
-import { useShareDialog } from '../contexts/share-dialog-context';
-
-type ShareLinkDialogProps = {
-  isDialogOpen: boolean;
-  setIsDialogOpen: (isOpen: boolean) => void;
-};
+import { useShareDialogStore } from '@/stores/share-dialog-store';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 
 export function ShareLinkDialog() {
-  const { instanceId } = useWebSocket();
   const { toast } = useToast();
-
-  const { isDialogOpen, setIsDialogOpen } = useShareDialog();
+  const { isDialogOpen, setIsDialogOpen } = useShareDialogStore();
+  const { instanceId } = useCurrentInstanceStore();
 
   const [checked, setChecked] = useState(false);
 
@@ -108,26 +96,19 @@ export function ShareLinkDialog() {
         <DialogHeader>
           <DialogTitle>Spread the tales of your journey</DialogTitle>
           <DialogDescription>
-            <div className="mb-5">
-              Share this link with your friends to let them view your story.
-            </div>
+            <div className="mb-5">Share this link with your friends to let them view your story.</div>
             <div className="flex flex-col w-28 gap-y-4">
               <div className="flex items-center gap-x-2 text-white">
                 <Switch checked={checked} onCheckedChange={setInstancePublic} />
                 {checked ? 'Public' : 'Private'}
               </div>
-              <Button
-                variant={'outline'}
-                disabled={!checked}
-                onClick={copyLink}
-              >
+              <Button variant={'outline'} disabled={!checked} onClick={copyLink}>
                 Copy Link
               </Button>
             </div>
           </DialogDescription>
           <DialogDescription className="text-xs pt-5 text-gray-600">
-            ( Heads up! Anyone with this link can view past and future messages.
-            )
+            ( Heads up! Anyone with this link can view past and future messages. )
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

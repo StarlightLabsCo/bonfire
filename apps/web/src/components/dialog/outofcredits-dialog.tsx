@@ -1,14 +1,8 @@
 'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useOutOfCreditsDialog } from '../contexts/credits-dialog-context';
+import { useOutOfCreditsDialog } from '../contexts/dialog/credits-dialog-context';
 
 export function OutOfCreditsDialog() {
   const { isDialogOpen, setIsDialogOpen } = useOutOfCreditsDialog();
@@ -19,9 +13,7 @@ export function OutOfCreditsDialog() {
         <DialogHeader>
           <DialogTitle>Want to continue the adventure?</DialogTitle>
           <DialogDescription>
-            <div className="mb-5">
-              Join our Discord community, and reach out!
-            </div>
+            <div className="mb-5">Join our Discord community, and reach out!</div>
             <a href="https://discord.gg/pnQkCHaz4M">
               <Button>Join</Button>
             </a>

@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { User } from 'next-auth';
 import { useMessages } from '../contexts/messages-context';
-import { useAudioProcessor } from '../contexts/audio-context';
 import { OpenSidebar } from '../open-sidebar';
 import { LobbyInput } from '../input/lobby-input';
 import { cn } from '@/lib/utils';
-import { useWebSocket } from '../contexts/ws-context';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
+import { usePlayback } from '../contexts/audio/playback-context';
+import { useTranscription } from '../contexts/audio/transcription-context';
 
 const loadingMessages = [
   'Preparing for adventure',
@@ -43,16 +44,15 @@ export function Lobby({
   } & User;
   imageUrls: string[];
 }) {
-  const [imageIndex, setImageIndex] = useState(
-    Math.floor(Math.random() * imageUrls.length),
-  );
+  const [imageIndex, setImageIndex] = useState(Math.floor(Math.random() * imageUrls.length));
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [imageURL, setImageURL] = useState(imageUrls[imageIndex]);
   const [animated, setAnimated] = useState(false);
 
   const { setMessages } = useMessages();
-  const { setTranscription, clearAudio } = useAudioProcessor();
-  const { setInstanceId, sendJSON } = useWebSocket();
+  const { clearAudio } = usePlayback();
+  const { setTranscription } = useTranscription();
+  const { setInstanceId } = useCurrentInstanceStore();
 
   const [submitted, setSubmitted] = useState(false);
   const [loadingMessageVisible, setLoadingMessageVisible] = useState(false);
@@ -76,9 +76,7 @@ export function Lobby({
           const newIndex = (oldIndex + 1) % imageUrls.length;
           setImageURL(imageUrls[newIndex]);
 
-          setCurrentMessageIndex(
-            (prevIndex) => (prevIndex + 1) % loadingMessages.length,
-          );
+          setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
 
           return newIndex;
         });
@@ -124,11 +122,7 @@ export function Lobby({
           />
         </div>
       </div>
-      <LobbyInput
-        userId={user.id}
-        submitted={submitted}
-        setSubmitted={setSubmitted}
-      />
+      <LobbyInput userId={user.id} submitted={submitted} setSubmitted={setSubmitted} />
       <span key={currentMessageIndex} className={cn('h-10')}>
         {loadingMessageVisible && loadingMessages[currentMessageIndex]}
       </span>

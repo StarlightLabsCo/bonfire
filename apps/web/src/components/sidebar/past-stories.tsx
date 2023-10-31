@@ -2,17 +2,11 @@ import { Instance } from '@prisma/client';
 import { Icons } from '../icons';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useSidebar } from '../contexts/sidebar-context';
+import { useSidebarStore } from '@/stores/sidebar-store';
 
-export function PastStories({
-  instances,
-  className,
-}: {
-  instances: Instance[];
-  className?: string;
-}) {
+export function PastStories({ instances, className }: { instances: Instance[]; className?: string }) {
   const router = useRouter();
-  const { closeSidebar } = useSidebar();
+  const { closeSidebar } = useSidebarStore();
 
   const handleClick = (path: string) => {
     if (window.innerWidth < 768) {
@@ -22,12 +16,7 @@ export function PastStories({
   };
 
   return (
-    <div
-      className={cn(
-        'w-full grow px-2 flex flex-col overflow-y-scroll',
-        className,
-      )}
-    >
+    <div className={cn('w-full grow px-2 flex flex-col overflow-y-scroll', className)}>
       <div className="text-xs p-2">Past Stories</div>
       <div className="flex flex-col gap-y-2">
         {instances.map((instance, index) => (

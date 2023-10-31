@@ -15,15 +15,10 @@ export default async function Instance({ params }: { params: { id: string } }) {
   }
 
   const user = await getCurrentUser();
-  if (!instance.public) {
-    if (!user) {
-      redirect('/');
-    } else if (instance.userId !== user.id) {
-      redirect('/');
-    }
+  if (!instance.public && (!user || user.id !== instance.userId)) {
+    redirect('/');
   }
 
-  // Fetch any from db if this is hard refresh
   const messages = await db.message.findMany({
     where: {
       instanceId: params.id,

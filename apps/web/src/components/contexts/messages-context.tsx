@@ -17,100 +17,40 @@ export const MessagesContext = createContext<MessagesContextValue>({
 });
 
 export function MessagesProvider({ children }: { children: React.ReactNode }) {
-  const { socket } = useWebSocket();
+  const { addMessageHandler, removeMessageHandler } = useWebSocket();
   const [messages, setMessages] = useState<MessageLike[]>([]);
 
+  function addMessage(message: MessageLike) {
+    setMessages((messages) => [...messages, message]);
+  }
+
+  function updateMessage(message: MessageLike) {
+    setMessages((messages) => {
+      const messageExists = messages.some((existingMessage) => existingMessage.id === message.id);
+
+      if (messageExists) {
+        return messages.map((existingMessage) => (existingMessage.id === message.id ? message : existingMessage));
+      } else {
+        return [...messages, message];
+      }
+    });
+  }
+
+  function removeMessage(messageId: string) {
+    setMessages((messages) => messages.filter((message) => message.id !== messageId));
+  }
+
   useEffect(() => {
-    if (socket) {
-      socket.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
-
-        console.log('data', data);
-
-        if (data.type === WebSocketResponseType.message) {
-          setMessages((messages) => {
-            const messageExists = messages.some((message) => message.id === data.payload.id);
-
-            if (messageExists) {
-              return messages.map((message) =>
-                message.id === data.payload.id
-                  ? {
-                      id: data.payload.id,
-                      role: 'assistant',
-                      content: data.payload.content,
-                    }
-                  : message,
-              );
-            } else {
-              return [
-                ...messages,
-                {
-                  id: data.payload.id,
-                  role: 'assistant',
-                  content: data.payload.content,
-                },
-              ];
-            }
-          });
-        } else if (data.type === WebSocketResponseType['message-append']) {
-          setMessages((messages) => {
-            const messageExists = messages.some((message) => message.id === data.payload.id);
-
-            if (messageExists) {
-              return messages.map((message) =>
-                message.id === data.payload.id
-                  ? {
-                      id: data.payload.id,
-                      role: 'assistant',
-                      content: message.content + data.payload.content,
-                    }
-                  : message,
-              );
-            } else {
-              console.error(`Message ${data.payload.id} does not exist.`);
-              return messages;
-            }
-          });
-        } else if (data.type === WebSocketResponseType.image) {
-          setMessages((messages) => {
-            const messageExists = messages.some((message) => message.id === data.payload.id);
-
-            if (messageExists) {
-              return messages.map((message) =>
-                message.id === data.payload.id
-                  ? {
-                      id: data.payload.id,
-                      role: 'function',
-                      content: data.payload.content,
-                    }
-                  : message,
-              );
-            } else {
-              return [
-                ...messages,
-                {
-                  id: data.payload.id,
-                  role: 'function',
-                  content: data.payload.content,
-                },
-              ];
-            }
-          });
-        } else if (data.type === WebSocketResponseType.suggestions) {
-          setMessages((messages) => {
-            return [
-              ...messages,
-              {
-                id: data.payload.id,
-                role: 'function',
-                content: data.payload.content,
-              },
-            ];
-          });
-        }
-      });
-    }
-  }, [socket]);
+    // TODO: add something like this
+    // addMessageHandler(addMessage);
+    // addMessageHandler(updateMessage);
+    // addMessageHandler(removeMessage);
+    // return () => {
+    //   removeMessageHandler(addMessage);
+    //   removeMessageHandler(updateMessage);
+    //   removeMessageHandler(removeMessage);
+    // };
+  }, []);
 
   return <MessagesContext.Provider value={{ messages, setMessages }}>{children}</MessagesContext.Provider>;
 }

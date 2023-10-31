@@ -3,15 +3,16 @@
 import { cn } from '@/lib/utils';
 import { Instance } from '@prisma/client';
 import { usePathname } from 'next/navigation';
-import { useSidebar } from '../contexts/sidebar-context';
 import { TopActions } from './top-actions';
 import { PastStories } from './past-stories';
 import { UserInfo } from './user-info';
 import { AudioSidebar } from './audio-sidebar';
 import { useEffect, useState } from 'react';
 import { Icons } from '../icons';
-import { useShareDialog } from '../contexts/share-dialog-context';
-import { useWebSocket } from '../contexts/ws-context';
+
+import { useSidebarStore } from '@/stores/sidebar-store';
+import { useShareDialogStore } from '@/stores/share-dialog-store';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 
 export function Sidebar({
   user,
@@ -26,12 +27,11 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
 
-  const { isSidebarOpen, setShowSidebarOpen, openSidebar } = useSidebar();
-  const { setIsDialogOpen } = useShareDialog();
-  const { instanceId } = useWebSocket();
+  const { isSidebarOpen, setShowSidebarOpen, openSidebar } = useSidebarStore();
+  const { setIsDialogOpen } = useShareDialogStore();
+  const { instanceId } = useCurrentInstanceStore();
 
-  const [displayedInstances, setDisplayedInstances] =
-    useState<Instance[]>(instances);
+  const [displayedInstances, setDisplayedInstances] = useState<Instance[]>(instances);
 
   const handleTransitionEnd = () => {
     if (!isSidebarOpen) {
@@ -54,9 +54,7 @@ export function Sidebar({
       <div
         className={cn(
           'absolute z-20 w-full max-w-xs h-screen max-h-screen bg-black border-r border-white/10 overflow-auto md:hidden flex flex-col transition-transform duration-200 ease-in-out',
-          isSidebarOpen
-            ? 'transform translate-x-0'
-            : 'transform -translate-x-full',
+          isSidebarOpen ? 'transform translate-x-0' : 'transform -translate-x-full',
         )}
         onTransitionEnd={handleTransitionEnd}
       >
@@ -76,10 +74,7 @@ export function Sidebar({
           'sticky top-0 z-1 flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200  md:hidden',
         )}
       >
-        <button
-          className="h-10 w-10 flex-shrink-0 flex items-center justify-center"
-          onClick={() => openSidebar()}
-        >
+        <button className="h-10 w-10 flex-shrink-0 flex items-center justify-center" onClick={() => openSidebar()}>
           <Icons.hamburger />
         </button>
         <div className="h-10 grow flex items-center justify-center font-sans">

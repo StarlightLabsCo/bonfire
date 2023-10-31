@@ -1,9 +1,9 @@
 import { useRouter } from 'next/navigation';
 import { Icons } from '../icons';
-import { useSidebar } from '../contexts/sidebar-context';
+import { useSidebarStore } from '@/stores/sidebar-store';
 
 export function TopActions() {
-  const { closeSidebar } = useSidebar();
+  const { closeSidebar } = useSidebarStore();
   const router = useRouter();
 
   const handleClick = (path: string) => {

@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { Icons } from '../icons';
 import { FC, InputHTMLAttributes, useEffect, useState } from 'react';
-import { useAudioProcessor } from '../contexts/audio-context';
 import { useWebSocket } from '../contexts/ws-context';
+import { useTranscription } from '../contexts/audio/transcription-context';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   value: string;
@@ -14,18 +14,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   disabled?: boolean;
 }
 
-const Input: FC<InputProps> = ({
-  value,
-  setValue,
-  submit,
-  placeholder,
-  className,
-  ...props
-}) => {
+const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className, ...props }) => {
   const { socketState } = useWebSocket();
 
-  const { audioRecorder, transcription, setTranscription } =
-    useAudioProcessor();
+  const { audioRecorder, transcription, setTranscription } = useTranscription();
 
   const [recording, setRecording] = useState<boolean>(false);
 
@@ -41,11 +33,7 @@ const Input: FC<InputProps> = ({
   }
 
   if (socketState !== 'open') {
-    return (
-      <div className="w-full flex items-center justify-center">
-        Connecting...
-      </div>
-    );
+    return <div className="w-full flex items-center justify-center">Connecting...</div>;
   }
 
   return (
@@ -68,10 +56,7 @@ const Input: FC<InputProps> = ({
         {...props}
       />
       <Icons.microphone
-        className={cn(
-          'w-4 h-4 cursor-pointer text-neutral-500 mr-2',
-          recording && 'animate-pulse text-red-500',
-        )}
+        className={cn('w-4 h-4 cursor-pointer text-neutral-500 mr-2', recording && 'animate-pulse text-red-500')}
         onClick={() => {
           if (!audioRecorder) {
             console.error('Audio recorder not initialized');

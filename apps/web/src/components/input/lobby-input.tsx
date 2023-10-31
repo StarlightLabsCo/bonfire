@@ -3,6 +3,8 @@ import { Input } from './input';
 import { useWebSocket } from '../contexts/ws-context';
 import { cn } from '@/lib/utils';
 import { Suggestions } from './suggestions';
+import { useAdventureSuggestionsStore } from '@/stores/adventure-suggestions-store';
+import { StarlightWebSocketRequestType } from 'websocket';
 
 interface LobbyInputProps {
   userId: string;
@@ -11,29 +13,24 @@ interface LobbyInputProps {
   className?: string;
 }
 
-export function LobbyInput({
-  userId,
-  submitted,
-  setSubmitted,
-  className,
-}: LobbyInputProps) {
+export function LobbyInput({ userId, submitted, setSubmitted, className }: LobbyInputProps) {
   const [description, setDescription] = useState('');
 
-  const { sendJSON, adventureSuggestions, socketState } = useWebSocket();
+  const { sendToServer, socketState } = useWebSocket();
+  const { adventureSuggestions } = useAdventureSuggestionsStore();
 
   const createWelcome = (description: string) => {
-    sendJSON({
-      type: 'welcome',
-      payload: {},
+    sendToServer({
+      type: StarlightWebSocketRequestType.createWelcomeSoundbite,
+      data: {},
     });
   };
 
   const createInstance = (description: string) => {
-    sendJSON({
-      type: 'createInstance',
-      payload: {
-        userId: userId,
-        description: description,
+    sendToServer({
+      type: StarlightWebSocketRequestType.createInstance,
+      data: {
+        description,
       },
     });
   };
@@ -45,23 +42,19 @@ export function LobbyInput({
   };
 
   useEffect(() => {
+    // TODO: add a flag for authentication
     if (socketState == 'open' && adventureSuggestions == null) {
       setTimeout(() => {
-        sendJSON({
-          type: 'generateAdventureSuggestions',
-          payload: {},
+        sendToServer({
+          type: StarlightWebSocketRequestType.createAdventureSuggestions,
+          data: {},
         });
       }, 1000);
     }
-  }, [adventureSuggestions, sendJSON, socketState]);
+  }, [adventureSuggestions, sendToServer, socketState]);
 
   return (
-    <div
-      className={cn(
-        `flex flex-col items-center gap-y-2 w-full mt-10`,
-        className,
-      )}
-    >
+    <div className={cn(`flex flex-col items-center gap-y-2 w-full mt-10`, className)}>
       <Input
         value={description}
         setValue={setDescription}
@@ -75,10 +68,7 @@ export function LobbyInput({
         onSelect={(suggestion) => {
           submit(suggestion);
         }}
-        className={cn(
-          'items-center justify-center w-full h-10',
-          submitted && 'cursor-not-allowed fade-out-2s ',
-        )}
+        className={cn('items-center justify-center w-full h-10', submitted && 'cursor-not-allowed fade-out-2s ')}
       />
     </div>
   );

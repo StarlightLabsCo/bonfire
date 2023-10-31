@@ -3,15 +3,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
@@ -71,10 +65,7 @@ export function UserInfo({
       >
         <div className="flex items-center gap-x-2">
           <Avatar className="h-8 w-8 rounded-md">
-            <AvatarImage
-              src={user.image ? user.image : undefined}
-              alt={user.name ? user.name : undefined}
-            />
+            <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div className="text-xs font-bold">{user.name}</div>

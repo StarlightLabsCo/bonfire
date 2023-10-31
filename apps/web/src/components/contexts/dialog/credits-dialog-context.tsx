@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useState, useContext, useEffect } from 'react';
-import { useWebSocket } from './ws-context';
+import { useWebSocket } from '../ws-context';
+import { StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket';
 
 interface OutOfCreditsDialogContextProps {
   isDialogOpen: boolean;
@@ -19,26 +20,22 @@ export const OutOfCreditsDialogProvider: React.FC<OutOfCreditsDialogProviderProp
 }: {
   children: React.ReactNode;
 }) => {
-  const { socket } = useWebSocket();
+  const { addMessageHandler, removeMessageHandler } = useWebSocket();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  function handleMessage(event: MessageEvent) {
-    const data = JSON.parse(event.data);
-
-    if (data.type === WebSocketResponseType.outOfCredits) {
+  function openDialog(response: StarlightWebSocketResponse) {
+    if (response.type === StarlightWebSocketResponseType.outOfCredits) {
       setIsDialogOpen(true);
     }
   }
 
   useEffect(() => {
-    if (socket) {
-      socket.addEventListener('message', handleMessage);
-    }
+    addMessageHandler(openDialog);
 
     return () => {
-      socket?.removeEventListener('message', handleMessage);
+      removeMessageHandler(openDialog);
     };
-  }, [socket]);
+  }, []);
 
   return (
     <OutOfCreditsDialogContext.Provider

@@ -27,4 +27,10 @@ export const authOptions = {
       return session;
     },
   },
+  events: {
+    createUser: async ({ user }: { user: User }) => {
+      // TODO: create stripe customer id & update user via prisma
+      // TODO: use loops api to add user to mailing list
+    },
+  },
 };

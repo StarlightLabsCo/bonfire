@@ -1,3 +1,3 @@
 {
-  "extends": "custom/next"
+  "extends": "next/core-web-vitals" // custom/next is vercel's engineering style guide
 }

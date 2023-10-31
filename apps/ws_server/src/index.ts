@@ -1,11 +1,11 @@
 import { WebSocketAuthenticationToken } from 'database';
+import { db } from '../services/db';
 
-import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
+import { StarlightWebSocketRequestType } from 'websocket/types';
 import { validateRequest } from 'websocket/utils';
 
 import { clearWebsocketFromConnection } from './connection';
 import { handlers } from '../handlers';
-import { authHandler, clearAuthTimeout, setupAuthTimeout } from './auth';
 import {
   clearHeartbeat,
   heartbeatClientRequestHandler,
@@ -14,9 +14,6 @@ import {
 } from './heartbeat';
 
 export type WebSocketData = {
-  // Authentication timeout
-  timeout: NodeJS.Timeout | null;
-
   // Heartbeat
   isAlive: boolean;
   heartbeatInterval: NodeJS.Timeout | null;
@@ -29,13 +26,38 @@ export type WebSocketData = {
 const server = Bun.serve<WebSocketData>({
   port: process.env.PORT ? parseInt(process.env.PORT) : 80,
   async fetch(req, server) {
+    // Auth via query param
+    const url = new URL(req.url);
+    const token = url.searchParams.get('token');
+
+    if (!token) {
+      return new Response('Missing authentication token.', { status: 400 });
+    }
+
+    const webSocketToken = await db.webSocketAuthenticationToken.findUnique({
+      where: {
+        token,
+      },
+    });
+
+    if (!webSocketToken || webSocketToken.expires < new Date()) {
+      return new Response('Invalid authentication token.', { status: 400 });
+    }
+
+    // Get connectionId from query param
+    const connectionId = url.searchParams.get('connectionId');
+
+    if (!connectionId) {
+      return new Response('Missing connectionId.', { status: 400 });
+    }
+
+    // Success - Upgrade to websocket
     const success = server.upgrade(req, {
       data: {
-        timeout: null,
         heartbeatInterval: null,
         isAlive: true,
-        webSocketToken: null,
-        connectionId: null,
+        webSocketToken: webSocketToken,
+        connectionId: `${webSocketToken.userId}-${connectionId}`,
       },
     });
 
@@ -47,24 +69,12 @@ const server = Bun.serve<WebSocketData>({
   },
   websocket: {
     async open(ws) {
-      setupAuthTimeout(ws);
       setupHeartbeat(ws);
     },
 
     async message(ws, message) {
       const request = validateRequest(message);
       if (!request) return;
-
-      // Auth
-      if (!ws.data.webSocketToken) {
-        if (request.type === StarlightWebSocketRequestType.auth) {
-          authHandler(ws, request);
-          return;
-        } else {
-          console.error(`[${ws.remoteAddress}] Unauthorized websocket message.`);
-          return;
-        }
-      }
 
       // Heartbeat
       if (request.type === StarlightWebSocketRequestType.heartbeatClientRequest) {
@@ -86,7 +96,6 @@ const server = Bun.serve<WebSocketData>({
     async close(ws) {
       console.log('Websocket closed. ' + ws.remoteAddress + ' ' + ws.data.webSocketToken);
 
-      clearAuthTimeout(ws);
       clearHeartbeat(ws);
 
       if (!ws.data.connectionId) return;

@@ -14,8 +14,7 @@ export function validateRequest(message: string | Buffer) {
     return;
   }
 
-  const schema =
-    requestTypeToSchema[rawRequest.type as keyof typeof requestTypeToSchema];
+  const schema = requestTypeToSchema[rawRequest.type as keyof typeof requestTypeToSchema];
 
   if (!schema) {
     console.error('No schema found for ' + rawRequest.type);
@@ -23,6 +22,8 @@ export function validateRequest(message: string | Buffer) {
   }
 
   const result = schema.safeParse(rawRequest);
+
+  console.log('result', result);
 
   if (!result.success) {
     console.error('Invalid request data:', result.error);
@@ -40,8 +41,7 @@ export function validateResponse(message: string | Buffer) {
     return;
   }
 
-  const schema =
-    responseTypeToSchema[rawResponse.type as keyof typeof responseTypeToSchema];
+  const schema = responseTypeToSchema[rawResponse.type as keyof typeof responseTypeToSchema];
 
   if (!schema) {
     console.error('No schema found for ' + rawResponse.type);
@@ -49,6 +49,8 @@ export function validateResponse(message: string | Buffer) {
   }
 
   const result = schema.safeParse(rawResponse);
+
+  console.log('result', result);
 
   if (!result.success) {
     console.error('Invalid response data:', result.error);

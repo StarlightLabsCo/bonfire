@@ -17,21 +17,16 @@ export default async function Home() {
     },
     where: {
       role: 'function',
+      name: 'generate_image',
     },
     take: 30,
   });
 
   // only give images that are generate_image
-  const images = messages
-    .filter((message) => {
-      if (!message.content) return false;
-      const content = JSON.parse(message.content);
-      return content.type === 'generate_image';
-    })
-    .map((message) => {
-      const content = JSON.parse(message.content);
-      return content.payload['imageURL'];
-    });
+  const images = messages.map((message) => {
+    const content = JSON.parse(message.content);
+    return content['imageURL'];
+  });
 
   // shuffle images
   for (let i = images.length - 1; i > 0; i--) {

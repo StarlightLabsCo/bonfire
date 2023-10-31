@@ -3,7 +3,6 @@ import { Message } from '../database';
 // ** --------------------------------- Websocket Request Types --------------------------------- **
 // ** Request **
 export type StarlightWebSocketRequest =
-  | AuthRequest
   | CreateAdventureSuggestionsRequest
   | CreateWelcomeSoundbiteRequest
   | CreateInstanceRequest
@@ -11,6 +10,7 @@ export type StarlightWebSocketRequest =
   | UndoMessageRequest
   | StopAudioRequest
   | ProcessVoiceTranscriptionRequest
+  | FinishVoiceTranscriptionRequest
   | HeartbeatClientRequest
   | HeartbeatClientResponse;
 
@@ -20,7 +20,6 @@ export type GenericStarlightWebSocketRequest<T extends StarlightWebSocketRequest
 };
 
 export enum StarlightWebSocketRequestType {
-  auth,
   createAdventureSuggestions,
   createWelcomeSoundbite,
   createInstance,
@@ -28,17 +27,10 @@ export enum StarlightWebSocketRequestType {
   undoMessage,
   stopAudio,
   processVoiceTranscription,
+  finishVoiceTranscription,
   heartbeatClientRequest,
   heartbeatClientResponse,
 }
-
-// Auth
-export type AuthRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.auth, AuthData>;
-
-export type AuthData = {
-  token: string;
-  connectionId: string;
-};
 
 // Create Adventure Suggestions
 export type CreateAdventureSuggestionsRequest = GenericStarlightWebSocketRequest<
@@ -101,6 +93,13 @@ export type ProcessVoiceTranscriptionRequest = GenericStarlightWebSocketRequest<
 export type ProcessVoiceTranscriptionData = {
   audio: string; // base64 encoded audio
 };
+
+export type FinishVoiceTranscriptionRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.finishVoiceTranscription,
+  FinishVoiceTranscriptionData
+>;
+
+export type FinishVoiceTranscriptionData = {};
 
 // Heartbeat Client Request
 export type HeartbeatClientRequest = GenericStarlightWebSocketRequest<
