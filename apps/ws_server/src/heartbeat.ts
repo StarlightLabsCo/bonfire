@@ -19,8 +19,6 @@ export function setupHeartbeat(ws: ServerWebSocket<WebSocketData>) {
 
     ws.data.isAlive = false;
 
-    console.log('Sending heartbeat');
-
     ws.send(
       JSON.stringify({
         type: StarlightWebSocketResponseType.heartbeatServerRequest,
@@ -36,7 +34,6 @@ export function setupHeartbeat(ws: ServerWebSocket<WebSocketData>) {
 
 // Client requested heartbeat, send response
 export function heartbeatClientRequestHandler(ws: ServerWebSocket<WebSocketData>, request: HeartbeatClientRequest) {
-  console.log('Received heartbeat request');
   ws.send(
     JSON.stringify({
       type: StarlightWebSocketResponseType.heartbeatServerResponse,
@@ -50,7 +47,6 @@ export function heartbeatClientRequestHandler(ws: ServerWebSocket<WebSocketData>
 
 // Client responded to heartbeat, update isAlive
 export function heartbeatClientResponseHandler(ws: ServerWebSocket<WebSocketData>, request: HeartbeatClientResponse) {
-  console.log('Received heartbeat response');
   ws.data.isAlive = true;
 }
 

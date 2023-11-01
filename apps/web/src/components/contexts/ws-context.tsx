@@ -14,7 +14,6 @@ import {
 
 // ** ------------- WebSocketContext ------------- **
 interface WebSocketContextType {
-  socket: WebSocket | null;
   socketState: string | null;
   sendToServer: (data: StarlightWebSocketRequest) => void;
   addMessageHandler: (handler: (response: StarlightWebSocketResponse) => void) => void;
@@ -22,7 +21,6 @@ interface WebSocketContextType {
 }
 
 export const WebSocketContext = createContext<WebSocketContextType>({
-  socket: null,
   socketState: null,
   sendToServer: () => {},
   addMessageHandler: () => {},
@@ -35,15 +33,18 @@ let exponentialBackoff = 1000;
 type MessageHandler = (response: StarlightWebSocketResponse) => void;
 
 export function WebSocketProvider({ children }: { children: React.ReactNode }) {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
   const [socketState, setSocketState] = useState<string | null>(null);
 
   const [heartbeat, setHeartbeat] = useState<NodeJS.Timeout | null>(null);
-  const [isAlive, setIsAlive] = useState<boolean>(false);
+  const isAliveRef = useRef<boolean>(false);
 
   const connectionIdRef = useRef<string | null>(null);
 
-  const [messageHandlers, setMessageHandlers] = useState<MessageHandler[]>([handleHeartbeatRequest]);
+  const [messageHandlers, setMessageHandlers] = useState<MessageHandler[]>([
+    handleHeartbeatRequest,
+    handleHeartbeatResponse,
+  ]);
 
   function addMessageHandler(handler: MessageHandler) {
     setMessageHandlers((prevHandlers) => [...prevHandlers, handler]);
@@ -59,8 +60,8 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     const validated = validateRequest(data);
     if (!validated) return;
 
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(data);
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(data);
     } else {
       console.error('WebSocket is not in valid state. Unable to send data.');
     }
@@ -68,7 +69,6 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
 
   function handleHeartbeatRequest(response: StarlightWebSocketResponse) {
     if (response.type === StarlightWebSocketResponseType.heartbeatServerRequest) {
-      console.log('Received heartbeat request from server. Sending response.');
       sendToServer({
         type: StarlightWebSocketRequestType.heartbeatClientResponse,
         data: {
@@ -76,6 +76,12 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
           receivedTimestamp: Date.now(),
         },
       });
+    }
+  }
+
+  function handleHeartbeatResponse(response: StarlightWebSocketResponse) {
+    if (response.type === StarlightWebSocketResponseType.heartbeatServerResponse) {
+      isAliveRef.current = true;
     }
   }
 
@@ -106,24 +112,24 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       `${process.env.NEXT_PUBLIC_BACKEND_URL}?token=${response.token}&connectionId=${connectionIdRef.current}`,
     );
 
-    setSocket(ws);
+    socketRef.current = ws;
     setSocketState('connecting');
 
     ws.addEventListener('open', () => {
       setSocketState('open');
       exponentialBackoff = 1000;
 
+      isAliveRef.current = true;
+
       // Send heartbeat every 30 seconds
       const heartbeat = setInterval(() => {
-        if (!isAlive) {
-          console.error('WebSocket connection is dead. Closing.');
+        if (!isAliveRef.current) {
+          console.error('Client heartbeat request failed to recieve response. Closing connection.');
           ws.close();
           return;
         }
 
-        setIsAlive(false);
-
-        console.log(`Sending heartbeat request to server.`);
+        isAliveRef.current = false;
 
         sendToServer({
           type: StarlightWebSocketRequestType.heartbeatClientRequest,
@@ -134,19 +140,11 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       }, 30000);
 
       setHeartbeat(heartbeat);
-
-      addMessageHandler((response) => {
-        if (response.type === StarlightWebSocketResponseType.heartbeatServerResponse) {
-          console.log('Received heartbeat response from server.');
-          setIsAlive(true);
-        }
-      });
     });
 
     ws.addEventListener('message', (event) => {
       try {
-        const data = JSON.parse(event.data);
-        const response = validateResponse(data);
+        const response = validateResponse(event.data);
         if (!response) return;
 
         messageHandlers.forEach((handler) => handler(response));
@@ -170,7 +168,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     });
 
     ws.addEventListener('close', (event) => {
-      setSocket(null);
+      socketRef.current = null;
       setSocketState('closed');
 
       if (!event.wasClean) {
@@ -204,14 +202,13 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       if (heartbeat) clearInterval(heartbeat);
       setHeartbeat(null);
 
-      socket?.close();
+      socketRef.current?.close();
     };
   }, []);
 
   return (
     <WebSocketContext.Provider
       value={{
-        socket,
         socketState,
         sendToServer,
         addMessageHandler,

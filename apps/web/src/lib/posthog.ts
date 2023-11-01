@@ -11,5 +11,7 @@ export default function PostHogClient() {
     flushInterval: 0,
   });
 
+  posthogClient.debug(false);
+
   return posthogClient;
 }

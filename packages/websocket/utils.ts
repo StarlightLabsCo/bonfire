@@ -23,8 +23,6 @@ export function validateRequest(message: string | Buffer) {
 
   const result = schema.safeParse(rawRequest);
 
-  console.log('result', result);
-
   if (!result.success) {
     console.error('Invalid request data:', result.error);
     return;
@@ -49,8 +47,6 @@ export function validateResponse(message: string | Buffer) {
   }
 
   const result = schema.safeParse(rawResponse);
-
-  console.log('result', result);
 
   if (!result.success) {
     console.error('Invalid response data:', result.error);

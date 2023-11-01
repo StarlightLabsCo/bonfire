@@ -94,7 +94,7 @@ const server = Bun.serve<WebSocketData>({
     },
 
     async close(ws) {
-      console.log('Websocket closed. ' + ws.remoteAddress + ' ' + ws.data.webSocketToken);
+      console.log('Websocket closed. ', ws.data.connectionId);
 
       clearHeartbeat(ws);
 
