@@ -26,7 +26,7 @@ export const PlaybackContext = createContext<PlaybackContextType>({
 });
 
 export function PlaybackContextProvider({ children }: { children: React.ReactNode }) {
-  const { socket, sendToServer, addMessageHandler, removeMessageHandler } = useWebSocket();
+  const { socketState, sendToServer, addMessageHandler, removeMessageHandler } = useWebSocket();
 
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [bufferedPlayerNode, setBufferedPlayerNode] = useState<AudioWorkletNode | null>(null);
@@ -71,14 +71,14 @@ export function PlaybackContextProvider({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    if (!bufferedPlayerNode || !socket) return;
+    if (!bufferedPlayerNode || socketState != 'open') return;
 
     addMessageHandler(bufferAudio);
 
     return () => {
       removeMessageHandler(bufferAudio);
     };
-  }, [audioContext, bufferedPlayerNode, socket]);
+  }, [audioContext, bufferedPlayerNode, socketState]);
 
   return (
     <PlaybackContext.Provider

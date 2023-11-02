@@ -7,7 +7,6 @@ import {
   StarlightWebSocketRequest,
   StarlightWebSocketRequestType,
   StarlightWebSocketResponse,
-  StarlightWebSocketResponseType,
   validateRequest,
   validateResponse,
 } from 'websocket';
@@ -41,18 +40,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
 
   const connectionIdRef = useRef<string | null>(null);
 
-  const [messageHandlers, setMessageHandlers] = useState<MessageHandler[]>([
-    handleHeartbeatRequest,
-    handleHeartbeatResponse,
-  ]);
-
-  function addMessageHandler(handler: MessageHandler) {
-    setMessageHandlers((prevHandlers) => [...prevHandlers, handler]);
-  }
-
-  function removeMessageHandler(handler: MessageHandler) {
-    setMessageHandlers((prevHandlers) => prevHandlers.filter((h) => h !== handler));
-  }
+  const messageHandlersRef = useRef<MessageHandler[]>([]);
 
   function sendToServer(request: StarlightWebSocketRequest) {
     const data = JSON.stringify(request);
@@ -64,24 +52,6 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       socketRef.current.send(data);
     } else {
       console.error('WebSocket is not in valid state. Unable to send data.');
-    }
-  }
-
-  function handleHeartbeatRequest(response: StarlightWebSocketResponse) {
-    if (response.type === StarlightWebSocketResponseType.heartbeatServerRequest) {
-      sendToServer({
-        type: StarlightWebSocketRequestType.heartbeatClientResponse,
-        data: {
-          timestamp: response.data.timestamp,
-          receivedTimestamp: Date.now(),
-        },
-      });
-    }
-  }
-
-  function handleHeartbeatResponse(response: StarlightWebSocketResponse) {
-    if (response.type === StarlightWebSocketResponseType.heartbeatServerResponse) {
-      isAliveRef.current = true;
     }
   }
 
@@ -147,7 +117,9 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
         const response = validateResponse(event.data);
         if (!response) return;
 
-        messageHandlers.forEach((handler) => handler(response));
+        messageHandlersRef.current.forEach((handler) => {
+          handler(response);
+        });
       } catch (error) {
         console.error('Error in handling WebSocket message:', error);
         Sentry.captureException(error);

@@ -11,4 +11,5 @@ export async function createWelcomeSoundbiteHandler(
   }
 
   // Add your code here to handle the createWelcomeSoundbite request
+  console.log('createWelcomeSoundbite', request);
 }

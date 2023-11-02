@@ -8,8 +8,8 @@ import { UndoButton } from './undo-button';
 import { useWebSocket } from '../contexts/ws-context';
 import { useMessages } from '../contexts/messages-context';
 import { ShareButton } from './share-button';
-import { ShareLinkDialog } from '../dialog/sharelink-dialog';
-import { useShareDialog } from '../contexts/dialog/share-dialog-context';
+import { StarlightWebSocketRequestType } from 'websocket';
+import { useShareDialogStore } from '@/stores/share-dialog-store';
 
 interface StoryInputProps {
   instanceId: string;
@@ -18,18 +18,18 @@ interface StoryInputProps {
 
 export function StoryInput({ instanceId, className }: StoryInputProps) {
   const [input, setInput] = useState('');
-  const { sendJSON } = useWebSocket();
+  const { sendToServer } = useWebSocket();
   const { messages, setMessages } = useMessages();
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  const { setIsDialogOpen } = useShareDialog();
+  const { setIsDialogOpen } = useShareDialogStore();
 
   const submit = () => {
-    sendJSON({
-      type: 'addPlayerMessage',
-      payload: {
+    sendToServer({
+      type: StarlightWebSocketRequestType.addPlayerMessage,
+      data: {
         instanceId,
-        content: input,
+        message: input,
       },
     });
 

@@ -1,10 +1,10 @@
 import { WebSocketAuthenticationToken } from 'database';
 import { db } from '../services/db';
 
-import { StarlightWebSocketRequestType } from 'websocket/types';
+import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateRequest } from 'websocket/utils';
 
-import { clearWebsocketFromConnection } from './connection';
+import { clearWebsocketFromConnection, handleWebsocketConnected } from './connection';
 import { handlers } from '../handlers';
 import {
   clearHeartbeat,
@@ -34,6 +34,7 @@ const server = Bun.serve<WebSocketData>({
       return new Response('Missing authentication token.', { status: 400 });
     }
 
+    // TODO: figure out a way to have websocket auth tokens already in memory - remote db call makes things slow
     const webSocketToken = await db.webSocketAuthenticationToken.findUnique({
       where: {
         token,
@@ -69,12 +70,15 @@ const server = Bun.serve<WebSocketData>({
   },
   websocket: {
     async open(ws) {
+      handleWebsocketConnected(ws);
       setupHeartbeat(ws);
     },
 
     async message(ws, message) {
       const request = validateRequest(message);
       if (!request) return;
+
+      console.log('Received request: ', StarlightWebSocketRequestType[request.type]);
 
       // Heartbeat
       if (request.type === StarlightWebSocketRequestType.heartbeatClientRequest) {
@@ -95,6 +99,12 @@ const server = Bun.serve<WebSocketData>({
 
     async close(ws) {
       console.log('Websocket closed. ', ws.data.connectionId);
+
+      await db.webSocketAuthenticationToken.delete({
+        where: {
+          id: ws.data.webSocketToken!.id,
+        },
+      });
 
       clearHeartbeat(ws);
 

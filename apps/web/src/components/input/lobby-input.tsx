@@ -4,7 +4,7 @@ import { useWebSocket } from '../contexts/ws-context';
 import { cn } from '@/lib/utils';
 import { Suggestions } from './suggestions';
 import { useAdventureSuggestionsStore } from '@/stores/adventure-suggestions-store';
-import { StarlightWebSocketRequestType } from 'websocket';
+import { StarlightWebSocketRequestType, StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket';
 
 interface LobbyInputProps {
   userId: string;
@@ -16,8 +16,8 @@ interface LobbyInputProps {
 export function LobbyInput({ userId, submitted, setSubmitted, className }: LobbyInputProps) {
   const [description, setDescription] = useState('');
 
-  const { sendToServer, socketState } = useWebSocket();
-  const { adventureSuggestions } = useAdventureSuggestionsStore();
+  const { sendToServer, socketState, addMessageHandler, removeMessageHandler } = useWebSocket();
+  const { adventureSuggestions, setAdventureSuggestions } = useAdventureSuggestionsStore();
 
   const createWelcome = (description: string) => {
     sendToServer({
@@ -41,9 +41,23 @@ export function LobbyInput({ userId, submitted, setSubmitted, className }: Lobby
     createInstance(description);
   };
 
+  const adventureSuggestionsCreated = (response: StarlightWebSocketResponse) => {
+    if (response.type === StarlightWebSocketResponseType.adventureSuggestionsCreated) {
+      const { suggestions } = response.data;
+      setAdventureSuggestions(suggestions);
+    }
+  };
+
   useEffect(() => {
-    // TODO: add a flag for authentication
-    if (socketState == 'open' && adventureSuggestions == null) {
+    addMessageHandler(adventureSuggestionsCreated);
+
+    return () => {
+      removeMessageHandler(adventureSuggestionsCreated);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socketState == 'open' && adventureSuggestions.length == 0) {
       setTimeout(() => {
         sendToServer({
           type: StarlightWebSocketRequestType.createAdventureSuggestions,

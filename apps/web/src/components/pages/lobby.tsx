@@ -9,6 +9,8 @@ import { cn } from '@/lib/utils';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { usePlayback } from '../contexts/audio/playback-context';
 import { useTranscription } from '../contexts/audio/transcription-context';
+import { useWebSocket } from '../contexts/ws-context';
+import { StarlightWebSocketRequestType } from 'websocket';
 
 const loadingMessages = [
   'Preparing for adventure',
@@ -49,6 +51,7 @@ export function Lobby({
   const [imageURL, setImageURL] = useState(imageUrls[imageIndex]);
   const [animated, setAnimated] = useState(false);
 
+  const { socketState, sendToServer } = useWebSocket();
   const { setMessages } = useMessages();
   const { clearAudio } = usePlayback();
   const { setTranscription } = useTranscription();
@@ -57,7 +60,7 @@ export function Lobby({
   const [submitted, setSubmitted] = useState(false);
   const [loadingMessageVisible, setLoadingMessageVisible] = useState(false);
 
-  // clear messages and transcription
+  // clear messages and transcription on each lobby load
   useEffect(() => {
     setMessages([]);
     setTranscription('');
@@ -128,4 +131,7 @@ export function Lobby({
       </span>
     </div>
   );
+}
+function sendToServer(arg0: { type: any; data: { userId: string } }) {
+  throw new Error('Function not implemented.');
 }

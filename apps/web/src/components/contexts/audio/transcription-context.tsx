@@ -24,7 +24,7 @@ export const TranscriptionContext = createContext<TranscriptionContextType>({
 });
 
 export function TranscriptionContextProvider({ children }: { children: React.ReactNode }) {
-  const { socket, sendToServer, addMessageHandler, removeMessageHandler } = useWebSocket();
+  const { socketState, sendToServer, addMessageHandler, removeMessageHandler } = useWebSocket();
   const { audioContext } = usePlayback();
 
   const [audioRecorder, setAudioRecorder] = useState<AudioRecorder | null>(null);
@@ -48,7 +48,7 @@ export function TranscriptionContextProvider({ children }: { children: React.Rea
   }, [audioContext]);
 
   useEffect(() => {
-    if (!socket || !audioRecorder) return;
+    if (socketState != 'open' || !audioRecorder) return;
 
     audioRecorder.onmessage = (event) => {
       if (event.data) {
@@ -68,17 +68,17 @@ export function TranscriptionContextProvider({ children }: { children: React.Rea
         });
       }
     };
-  }, [socket, audioRecorder]);
+  }, [socketState, audioRecorder]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (socketState != 'open') return;
 
     addMessageHandler(updateTranscription);
 
     return () => {
       removeMessageHandler(updateTranscription);
     };
-  }, [socket]);
+  }, [socketState]);
 
   return (
     <TranscriptionContext.Provider

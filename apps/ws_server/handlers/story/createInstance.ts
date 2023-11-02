@@ -8,4 +8,5 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
   }
 
   // Add your code here to handle the createInstance request
+  console.log('createInstanceHandler', request);
 }

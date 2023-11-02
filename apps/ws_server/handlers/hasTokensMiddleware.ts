@@ -7,6 +7,7 @@ export function hasTokensMiddleware(
 ) {
   return async (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => {
     // TODO: Add your code here to check if the user has enough tokens to perform the action
+    console.log('hasTokensMiddleware', request);
 
     await handler(ws, request);
   };

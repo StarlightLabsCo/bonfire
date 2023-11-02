@@ -1,6 +1,11 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
-import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
+import {
+  StarlightWebSocketRequest,
+  StarlightWebSocketRequestType,
+  StarlightWebSocketResponseType,
+} from 'websocket/types';
+import { sendToUser } from '../../src/connection';
 
 export async function createAdventureSuggestionsHandler(
   ws: ServerWebSocket<WebSocketData>,
@@ -10,5 +15,13 @@ export async function createAdventureSuggestionsHandler(
     throw new Error('Invalid request type for createAdventureSuggestionsHandler');
   }
 
-  // generateAdventureSuggestions(ws, ws.data.webSocketToken!.userId);
+  // TODO: fetch prior instances from the db and generate new suggestions
+  console.log('Creating adventure suggestions...');
+
+  sendToUser(ws.data.connectionId!, {
+    type: StarlightWebSocketResponseType.adventureSuggestionsCreated,
+    data: {
+      suggestions: ["Steal the Spectral Serpent's Eye", 'Travel to Neo Toyko', 'The Last of Us'],
+    },
+  });
 }
