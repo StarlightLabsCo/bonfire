@@ -24,8 +24,7 @@ export default async function Home() {
 
   // only give images that are generate_image
   const images = messages.map((message) => {
-    const content = JSON.parse(message.content);
-    return content['imageURL'];
+    return message.content;
   });
 
   // shuffle images

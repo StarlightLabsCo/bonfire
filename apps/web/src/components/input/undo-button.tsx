@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
-import { MessageLike, useMessages } from '../contexts/messages-context';
-import { useWebSocket } from '../contexts/ws-context';
 import { MessageRole } from '@prisma/client';
 import { Icons } from '../icons';
+import { useWebsocketStore } from '@/stores/websocket-store';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
+import { useMessagesStore } from '@/stores/messages-store';
+import { StarlightWebSocketRequestType } from 'websocket';
 
 export function UndoButton() {
-  const { sendJSON, instanceId } = useWebSocket();
-  const { messages, setMessages } = useMessages();
+  const sendToServer = useWebsocketStore((state) => state.sendToServer);
+  const instanceId = useCurrentInstanceStore((state) => state.instanceId);
+  const messages = useMessagesStore((state) => state.messages);
+  const setMessages = useMessagesStore((state) => state.setMessages);
 
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -63,17 +67,19 @@ export function UndoButton() {
     return [];
   }
 
-  function removeMessages(messagesToRemove: MessageLike[]) {
-    setMessages((messages) => messages.filter((message) => !messagesToRemove.includes(message)));
-  }
+  // function removeMessages(messagesToRemove: MessageLike[]) {
+  //   setMessages((messages: MessageLike) => messages.filter((message) => !messagesToRemove.includes(message)));
+  // }
 
   function undo() {
-    const messagesToUndo = getMessagesToUndo();
-    removeMessages(messagesToUndo);
+    if (!instanceId) return;
 
-    sendJSON({
-      type: 'undo',
-      payload: {
+    const messagesToUndo = getMessagesToUndo();
+    // removeMessages(messagesToUndo);
+
+    sendToServer({
+      type: StarlightWebSocketRequestType.undoMessage,
+      data: {
         instanceId,
       },
     });

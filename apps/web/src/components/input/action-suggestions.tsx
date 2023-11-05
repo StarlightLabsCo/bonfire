@@ -1,46 +1,30 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Suggestions } from './suggestions';
-import { useWebSocket } from '../contexts/ws-context';
-import { useMessages } from '../contexts/messages-context';
 import { StarlightWebSocketRequestType } from 'websocket';
-import { usePlayback } from '../contexts/audio/playback-context';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
+import { useWebsocketStore } from '@/stores/websocket-store';
+import { usePlaybackStore } from '@/stores/audio/playback-store';
+import { useMessagesStore } from '@/stores/messages-store';
+import { cn } from '@/lib/utils';
+import { MessageRole } from 'database';
 
 interface ActionSuggestionsProps {
-  suggestions: string[];
-  setSuggestions: React.Dispatch<React.SetStateAction<string[]>>;
   className?: string;
 }
 
-export function ActionSuggestions({ suggestions, setSuggestions, className }: ActionSuggestionsProps) {
-  const { sendToServer } = useWebSocket();
-  const { clearAudio } = usePlayback();
-  const { messages, setMessages } = useMessages();
-  const { instanceId } = useCurrentInstanceStore();
+type Suggestion = {
+  action: string;
+  modifier_reason: string;
+  modifier: number;
+};
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-
-      if (lastMessage.role === 'function') {
-        const lastMessageContent: {
-          type: string;
-          payload: any;
-        } = lastMessage.content && JSON.parse(lastMessage.content);
-
-        if (lastMessageContent && lastMessageContent.type === 'generate_suggestions') {
-          let suggestions: string[] = lastMessageContent.payload.map(
-            (suggestion: { action: string; modifier: number; reason: string }) => suggestion.action,
-          );
-          setSuggestions(suggestions);
-        }
-      }
-    } else {
-      setSuggestions([]);
-    }
-  }, [messages]);
+export function ActionSuggestions({ className }: ActionSuggestionsProps) {
+  const sendToServer = useWebsocketStore((state) => state.sendToServer);
+  const clearAudio = usePlaybackStore((state) => state.clearAudio);
+  const messages = useMessagesStore((state) => state.messages);
+  const submittedMessage = useMessagesStore((state) => state.submittedMessage);
+  const setSubmittedMessage = useMessagesStore((state) => state.setSubmittedMessage);
+  const instanceId = useCurrentInstanceStore((state) => state.instanceId);
 
   const submitAction = (suggestion: string) => {
     if (!instanceId) return;
@@ -55,23 +39,24 @@ export function ActionSuggestions({ suggestions, setSuggestions, className }: Ac
       },
     });
 
-    setMessages([
-      ...messages,
-      {
-        id: Date.now().toString(),
-        role: 'user',
-        content: suggestion,
-      },
-    ]);
-
-    setSuggestions([]);
+    setSubmittedMessage(suggestion);
   };
 
   return (
-    <Suggestions
-      suggestions={suggestions}
-      onSelect={(suggestion: string) => submitAction(suggestion)}
-      className={className}
-    />
+    <div className={cn('flex flex-row flex-wrap gap-x-2 gap-y-2', className)}>
+      {submittedMessage == null &&
+        messages.length > 0 &&
+        messages[messages.length - 1].role == MessageRole.function &&
+        messages[messages.length - 1].name == 'action_suggestions' &&
+        JSON.parse(messages[messages.length - 1].content).map((suggestion: Suggestion, index: number) => (
+          <button
+            key={index}
+            className="px-3 py-1 border rounded-full border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500 fade-in-2s"
+            onClick={() => submitAction(suggestion.action)}
+          >
+            <span className="text-xs md:text-sm font-light">{suggestion.action}</span>
+          </button>
+        ))}
+    </div>
   );
 }

@@ -5,13 +5,14 @@ import { Switch } from '@/components/ui/switch';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
-import { useShareDialogStore } from '@/stores/share-dialog-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
+import { useDialogStore } from '@/stores/dialog-store';
 
 export function ShareLinkDialog() {
   const { toast } = useToast();
-  const { isDialogOpen, setIsDialogOpen } = useShareDialogStore();
-  const { instanceId } = useCurrentInstanceStore();
+  const isShareDialogOpen = useDialogStore((state) => state.isShareDialogOpen);
+  const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
+  const instanceId = useCurrentInstanceStore((state) => state.instanceId);
 
   const [checked, setChecked] = useState(false);
 
@@ -91,7 +92,7 @@ export function ShareLinkDialog() {
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
       <DialogContent className="bg-black">
         <DialogHeader>
           <DialogTitle>Spread the tales of your journey</DialogTitle>

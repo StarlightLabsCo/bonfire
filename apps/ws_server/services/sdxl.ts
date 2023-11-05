@@ -16,21 +16,21 @@ async function generateImage(userId: string, prompt: string, negative_prompt: st
   const scheduler = 'KarrasDPM';
   const refine = 'expert_ensemble_refiner';
 
-  const replicateRequestLog = await db.replicateRequestLog.create({
-    data: {
-      user: {
-        connect: {
-          id: userId,
-        },
-      },
-      prompt,
-      negativePrompt: negative_prompt,
-      width,
-      height,
-      scheduler,
-      refine,
-    },
-  });
+  // const replicateRequestLog = await db.replicateRequestLog.create({
+  //   data: {
+  //     user: {
+  //       connect: {
+  //         id: userId,
+  //       },
+  //     },
+  //     prompt,
+  //     negativePrompt: negative_prompt,
+  //     width,
+  //     height,
+  //     scheduler,
+  //     refine,
+  //   },
+  // });
 
   const date = new Date();
 
@@ -55,15 +55,15 @@ async function generateImage(userId: string, prompt: string, negative_prompt: st
 
   // TODO: Handle errors if imageURL is undefined
 
-  await db.replicateRequestLog.update({
-    where: {
-      id: replicateRequestLog.id,
-    },
-    data: {
-      imageURL,
-      time: finishDate.getTime() - date.getTime(),
-    },
-  });
+  // await db.replicateRequestLog.update({
+  //   where: {
+  //     id: replicateRequestLog.id,
+  //   },
+  //   data: {
+  //     imageURL,
+  //     time: finishDate.getTime() - date.getTime(),
+  //   },
+  // });
 
   return imageURL;
 }

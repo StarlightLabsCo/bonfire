@@ -11,8 +11,8 @@ import { useEffect, useState } from 'react';
 import { Icons } from '../icons';
 
 import { useSidebarStore } from '@/stores/sidebar-store';
-import { useShareDialogStore } from '@/stores/share-dialog-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
+import { useDialogStore } from '@/stores/dialog-store';
 
 export function Sidebar({
   user,
@@ -27,9 +27,13 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
 
-  const { isSidebarOpen, setShowSidebarOpen, openSidebar } = useSidebarStore();
-  const { setIsDialogOpen } = useShareDialogStore();
-  const { instanceId } = useCurrentInstanceStore();
+  const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
+  const setShowSidebarOpen = useSidebarStore((state) => state.setShowSidebarOpen);
+  const openSidebar = useSidebarStore((state) => state.openSidebar);
+
+  const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
+
+  const instanceId = useCurrentInstanceStore((state) => state.instanceId);
 
   const [displayedInstances, setDisplayedInstances] = useState<Instance[]>(instances);
 
@@ -83,7 +87,7 @@ export function Sidebar({
         {instanceId && (
           <button
             className="h-10 flex-shrink-0  w-10 flex items-center justify-center"
-            onClick={() => setIsDialogOpen(true)}
+            onClick={() => setIsShareDialogOpen(true)}
           >
             <Icons.share />
           </button>

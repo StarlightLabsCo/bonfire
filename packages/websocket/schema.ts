@@ -9,16 +9,17 @@ export const MessageZodSchema: z.ZodType<Message> = z
   .object({
     id: z.string(),
     instanceId: z.string(),
-    embedding: z.union([z.array(z.number()), z.null()]),
-    importance: z.union([z.number(), z.null()]),
-    accessedAt: z.union([z.date(), z.null()]),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+
+    importance: z.number().nullable(),
+    accessedAt: z.coerce.date().nullable(),
+
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 
     role: MessageRoleZodSchema,
     content: z.string(),
-    name: z.union([z.string(), z.null()]),
-    functionCall: z.union([z.string(), z.null()]),
+    name: z.string().nullable(),
+    functionCall: z.string().nullable(),
   })
   .strict();
 
@@ -120,13 +121,6 @@ export const HeartbeatClientResponseZodSchema: z.ZodType<Types.HeartbeatClientRe
   .strict();
 
 // ** --------------------------------- Websocket Response Zod Schemas --------------------------------- **
-export const AuthSuccessResponseZodSchema: z.ZodType<Types.AuthSuccessResponse> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketResponseType.authSuccess),
-    data: z.object({}).strict(),
-  })
-  .strict();
-
 export const AdventureSuggestionsCreatedResponseZodSchema: z.ZodType<Types.AdventureSuggestionsCreatedResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.adventureSuggestionsCreated),
@@ -161,13 +155,27 @@ export const MessageAddedResponseZodSchema: z.ZodType<Types.MessageAddedResponse
   })
   .strict();
 
-export const MessageUpdatedResponseZodSchema: z.ZodType<Types.MessageUpdatedResponse> = z
+export const MessageAppendResponseZodSchema: z.ZodType<Types.MessageAppendResponse> = z
   .object({
-    type: z.literal(Types.StarlightWebSocketResponseType.messageUpdated),
+    type: z.literal(Types.StarlightWebSocketResponseType.messageAppend),
     data: z
       .object({
         instanceId: z.string(),
-        message: MessageZodSchema,
+        messageId: z.string(),
+        delta: z.string(),
+      })
+      .strict(),
+  })
+  .strict();
+
+export const MessageReplaceResponseZodSchema: z.ZodType<Types.MessageReplaceResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.messageReplace),
+    data: z
+      .object({
+        instanceId: z.string(),
+        messageId: z.string(),
+        content: z.string(),
       })
       .strict(),
   })
@@ -267,11 +275,11 @@ export const requestTypeToSchema: {
 export const responseTypeToSchema: {
   [key in Types.StarlightWebSocketResponseType]: z.ZodSchema<Types.GenericStarlightWebSocketResponse<key, any>>;
 } = {
-  [Types.StarlightWebSocketResponseType.authSuccess]: AuthSuccessResponseZodSchema,
   [Types.StarlightWebSocketResponseType.adventureSuggestionsCreated]: AdventureSuggestionsCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceCreated]: InstanceCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageAdded]: MessageAddedResponseZodSchema,
-  [Types.StarlightWebSocketResponseType.messageUpdated]: MessageUpdatedResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.messageAppend]: MessageAppendResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.messageReplace]: MessageReplaceResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageDeleted]: MessageDeletedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.audioCreated]: AudioCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed]: VoiceTranscriptionProcessedResponseZodSchema,

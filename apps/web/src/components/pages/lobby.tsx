@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { User } from 'next-auth';
-import { useMessages } from '../contexts/messages-context';
 import { OpenSidebar } from '../open-sidebar';
 import { LobbyInput } from '../input/lobby-input';
 import { cn } from '@/lib/utils';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
-import { usePlayback } from '../contexts/audio/playback-context';
-import { useTranscription } from '../contexts/audio/transcription-context';
-import { useWebSocket } from '../contexts/ws-context';
 import { StarlightWebSocketRequestType } from 'websocket';
+import { useWebsocketStore } from '@/stores/websocket-store';
+import { useMessagesStore } from '@/stores/messages-store';
+import { usePlaybackStore } from '@/stores/audio/playback-store';
+import { useTranscriptionStore } from '@/stores/audio/transcription-store';
 
 const loadingMessages = [
   'Preparing for adventure',
@@ -51,11 +51,11 @@ export function Lobby({
   const [imageURL, setImageURL] = useState(imageUrls[imageIndex]);
   const [animated, setAnimated] = useState(false);
 
-  const { socketState, sendToServer } = useWebSocket();
-  const { setMessages } = useMessages();
-  const { clearAudio } = usePlayback();
-  const { setTranscription } = useTranscription();
-  const { setInstanceId } = useCurrentInstanceStore();
+  const socketState = useWebsocketStore((state) => state.socketState);
+  const setMessages = useMessagesStore((state) => state.setMessages);
+  const clearAudio = usePlaybackStore((state) => state.clearAudio);
+  const setTranscription = useTranscriptionStore((state) => state.setTranscription);
+  const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
 
   const [submitted, setSubmitted] = useState(false);
   const [loadingMessageVisible, setLoadingMessageVisible] = useState(false);
@@ -64,7 +64,7 @@ export function Lobby({
   useEffect(() => {
     setMessages([]);
     setTranscription('');
-    clearAudio();
+    if (socketState == 'open') clearAudio();
     if (setInstanceId) setInstanceId(null);
   }, []);
 
@@ -131,7 +131,4 @@ export function Lobby({
       </span>
     </div>
   );
-}
-function sendToServer(arg0: { type: any; data: { userId: string } }) {
-  throw new Error('Function not implemented.');
 }

@@ -5,7 +5,9 @@ import { Icons } from './icons';
 import { useSidebarStore } from '@/stores/sidebar-store';
 
 export function OpenSidebar() {
-  const { showSidebarOpen, openSidebar, closeSidebar } = useSidebarStore();
+  const showSidebarOpen = useSidebarStore((state) => state.showSidebarOpen);
+  const openSidebar = useSidebarStore((state) => state.openSidebar);
+  const closeSidebar = useSidebarStore((state) => state.closeSidebar);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {

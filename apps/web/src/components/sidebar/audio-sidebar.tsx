@@ -2,10 +2,10 @@
 
 import { Slider } from '@/components/ui/slider';
 import { Icons } from '../icons';
-import { usePlayback } from '../contexts/audio/playback-context';
+import { usePlaybackStore } from '@/stores/audio/playback-store';
 
 export function AudioSidebar() {
-  const { setVolume } = usePlayback();
+  const setVolume = usePlaybackStore((state) => state.setVolume);
 
   const onVolumeChange = (value: number[]) => {
     setVolume(value[0] / 100);

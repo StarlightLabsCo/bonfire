@@ -124,11 +124,11 @@ export type HeartbeatClientResponseData = {
 
 // ** --------------------------------- Websocket Response Types --------------------------------- **
 export type StarlightWebSocketResponse =
-  | AuthSuccessResponse
   | AdventureSuggestionsCreatedResponse
   | InstanceCreatedResponse
   | MessageAddedResponse
-  | MessageUpdatedResponse
+  | MessageAppendResponse
+  | MessageReplaceResponse
   | MessageDeletedResponse
   | AudioCreatedResponse
   | VoiceTranscriptionProcessedResponse
@@ -143,11 +143,11 @@ export type GenericStarlightWebSocketResponse<T extends StarlightWebSocketRespon
 };
 
 export enum StarlightWebSocketResponseType {
-  authSuccess,
   adventureSuggestionsCreated,
   instanceCreated,
   messageAdded,
-  messageUpdated,
+  messageAppend,
+  messageReplace,
   messageDeleted,
   audioCreated,
   voiceTranscriptionProcessed,
@@ -156,14 +156,6 @@ export enum StarlightWebSocketResponseType {
   heartbeatServerRequest,
   heartbeatServerResponse,
 }
-
-// Auth Success
-export type AuthSuccessResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.authSuccess,
-  AuthSuccessData
->;
-
-export type AuthSuccessData = {};
 
 // Adventure Suggestions Created
 export type AdventureSuggestionsCreatedResponse = GenericStarlightWebSocketResponse<
@@ -197,14 +189,27 @@ export type MessageAddedData = {
 };
 
 // Message Updated
-export type MessageUpdatedResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.messageUpdated,
-  MessageUpdatedData
+export type MessageAppendResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.messageAppend,
+  MessageAppendData
 >;
 
-export type MessageUpdatedData = {
+export type MessageAppendData = {
   instanceId: string;
-  message: Message;
+  messageId: string;
+  delta: string;
+};
+
+// Message Replace
+export type MessageReplaceResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.messageReplace,
+  MessageReplaceData
+>;
+
+export type MessageReplaceData = {
+  instanceId: string;
+  messageId: string;
+  content: string;
 };
 
 // Message Deleted

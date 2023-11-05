@@ -1,8 +1,9 @@
 'use client';
 import posthog from 'posthog-js';
-import { PostHogProvider } from 'posthog-js/react';
+import { usePostHog, PostHogProvider } from 'posthog-js/react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
   throw new Error('NEXT_PUBLIC_POSTHOG_KEY is not defined');
@@ -39,4 +40,21 @@ export function PostHogPageview(): JSX.Element {
 
 export function PHProvider({ children }: { children: React.ReactNode }) {
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
+}
+
+export function PosthogIdentify() {
+  const posthog = usePostHog();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (!session) return;
+    if (session.user && posthog) {
+      posthog.identify(session.user.id, {
+        email: session.user.email,
+        name: session.user.name,
+      });
+    }
+  }, [session, posthog]);
+
+  return null;
 }

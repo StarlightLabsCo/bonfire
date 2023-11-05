@@ -37,12 +37,10 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 }
 
 export function sendToUser(connectionId: string, data: StarlightWebSocketResponse) {
-  console.log('Sending to user: ', connectionId, data);
   const websocket = connectionIdToWebSocket[connectionId];
 
   if (!websocket || websocket.readyState !== 1) {
     redis.rpush(connectionId, JSON.stringify(data));
-    console.log('Queued message for user: ', connectionId, data);
     return;
   }
 

@@ -3,7 +3,7 @@ import { Icons } from '../icons';
 import { useSidebarStore } from '@/stores/sidebar-store';
 
 export function TopActions() {
-  const { closeSidebar } = useSidebarStore();
+  const closeSidebar = useSidebarStore((state) => state.closeSidebar);
   const router = useRouter();
 
   const handleClick = (path: string) => {

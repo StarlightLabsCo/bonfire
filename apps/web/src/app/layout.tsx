@@ -1,8 +1,8 @@
 import './globals.css';
 import { Suspense } from 'react';
 import { Inter } from 'next/font/google';
-import { PHProvider, PostHogPageview } from '@/components/analytics/posthog-provider';
-import { PosthogIdentify } from '@/components/analytics/posthog-identify';
+import { PHProvider, PostHogPageview } from '@/components/analytics/posthog';
+import { PosthogIdentify } from '@/components/analytics/posthog';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Analytics } from '@vercel/analytics/react';
 

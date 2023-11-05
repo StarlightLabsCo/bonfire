@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { Icons } from '../icons';
 import { FC, InputHTMLAttributes, useEffect, useState } from 'react';
-import { useWebSocket } from '../contexts/ws-context';
-import { useTranscription } from '../contexts/audio/transcription-context';
+import { useWebsocketStore } from '@/stores/websocket-store';
+import { useTranscriptionStore } from '@/stores/audio/transcription-store';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   value: string;
@@ -15,9 +15,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className, ...props }) => {
-  const { socketState } = useWebSocket();
+  const socketState = useWebsocketStore((state) => state.socketState);
 
-  const { audioRecorder, transcription, setTranscription } = useTranscription();
+  const audioRecorder = useTranscriptionStore((state) => state.audioRecorder);
+  const transcription = useTranscriptionStore((state) => state.transcription);
+  const setTranscription = useTranscriptionStore((state) => state.setTranscription);
 
   const [recording, setRecording] = useState<boolean>(false);
 

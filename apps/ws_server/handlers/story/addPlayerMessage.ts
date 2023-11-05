@@ -1,7 +1,12 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
-import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
+import {
+  StarlightWebSocketRequest,
+  StarlightWebSocketRequestType,
+  StarlightWebSocketResponseType,
+} from 'websocket/types';
 import { db } from '../../services/db';
+import { sendToUser } from '../../src/connection';
 
 export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.addPlayerMessage) {
@@ -15,6 +20,9 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     where: {
       id: instanceId,
       userId: ws.data.webSocketToken!.userId,
+    },
+    include: {
+      messages: true,
     },
   });
 
@@ -33,6 +41,26 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
       accessedAt: new Date(),
     },
   });
+
+  sendToUser(ws.data.connectionId!, {
+    type: StarlightWebSocketResponseType.messageAdded,
+    data: {
+      instanceId,
+      message: addedMessage,
+    },
+  });
+
+  let messages = [...instance.messages, addedMessage];
+
+  // TODO: dice roll - with modifiers
+  // TODO: narrator internal monologue - reaction
+  // TODO: narrator internal monologue - planning
+  // TODO: narration - next story beat
+
+  // TODO: THIS is where i need to do context window stuff
+
+  // TODO: generate image
+  // TODO: action suggestions
 
   // Queue up - importance & embedding - these aren't needed immedately because this message will be in the context
   // TODO: Add to queue

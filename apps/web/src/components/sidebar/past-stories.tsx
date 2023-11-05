@@ -6,7 +6,7 @@ import { useSidebarStore } from '@/stores/sidebar-store';
 
 export function PastStories({ instances, className }: { instances: Instance[]; className?: string }) {
   const router = useRouter();
-  const { closeSidebar } = useSidebarStore();
+  const closeSidebar = useSidebarStore((state) => state.closeSidebar);
 
   const handleClick = (path: string) => {
     if (window.innerWidth < 768) {
