@@ -7,6 +7,12 @@ import {
 } from 'websocket/types';
 import { db } from '../../services/db';
 import { sendToUser } from '../../src/connection';
+import { rollDice } from '../../core/dice/roll';
+import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
+import { narratorReaction } from '../../core/narrator/reaction';
+import { continueStory } from '../../core/narrator/continue';
+import { createImage } from '../../core/images';
+import { generateActionSuggestions } from '../../core/suggestions/actions';
 
 export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.addPlayerMessage) {
@@ -22,7 +28,14 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
       userId: ws.data.webSocketToken!.userId,
     },
     include: {
-      messages: true,
+      messages: {
+        select: {
+          role: true,
+          content: true,
+          name: true,
+          functionCall: true,
+        },
+      },
     },
   });
 
@@ -50,21 +63,16 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     },
   });
 
-  let messages = [...instance.messages, addedMessage];
-
-  // TODO: dice roll - with modifiers
-  // TODO: narrator internal monologue - reaction
-  // TODO: narrator internal monologue - planning
-  // TODO: narration - next story beat
+  let messages = [...instance.messages, { role: 'user', content: message }] as ChatCompletionMessageParam[];
 
   // TODO: THIS is where i need to do context window stuff
+  messages = await rollDice(instance.id, messages);
+  messages = await narratorReaction(instance.id, messages);
+  messages = await continueStory(ws.data.connectionId!, instance.id, messages);
 
-  // TODO: generate image
-  // TODO: action suggestions
+  messages = await createImage(ws.data.connectionId!, instance.id, messages);
+  messages = await generateActionSuggestions(ws.data.connectionId!, instance.id, messages);
 
   // Queue up - importance & embedding - these aren't needed immedately because this message will be in the context
   // TODO: Add to queue
-
-  // Trigger next step in the story
-  // TODO: trigger story step
 }

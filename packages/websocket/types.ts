@@ -188,6 +188,12 @@ export type MessageAddedData = {
   message: Message;
 };
 
+export type ActionSuggestion = {
+  action: string;
+  modifier_reason: string;
+  modifier: number;
+};
+
 // Message Updated
 export type MessageAppendResponse = GenericStarlightWebSocketResponse<
   StarlightWebSocketResponseType.messageAppend,

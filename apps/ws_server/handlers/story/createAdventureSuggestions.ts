@@ -16,8 +16,6 @@ export async function createAdventureSuggestionsHandler(
   }
 
   // TODO: fetch prior instances from the db and generate new suggestions
-  console.log('Creating adventure suggestions...');
-
   sendToUser(ws.data.connectionId!, {
     type: StarlightWebSocketResponseType.adventureSuggestionsCreated,
     data: {

@@ -21,7 +21,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.5",
     "@sentry/cli": "^2.21.2",
-    "@sentry/nextjs": "^7.74.1",
+    "@sentry/nextjs": "7.74.1",
     "@vercel/analytics": "^1.1.0",
     "database": "workspace:*",
     "eslint-config-custom": "workspace:*",
