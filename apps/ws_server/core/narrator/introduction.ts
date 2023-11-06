@@ -5,6 +5,7 @@ import { MessageRole } from 'database';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { sendToUser } from '../../src/connection';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
+import { embedMessage } from '../context/embedding';
 
 export async function introduceStory(connectionId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   const message = await db.message.create({
@@ -125,6 +126,8 @@ export async function introduceStory(connectionId: string, instanceId: string, m
       content: buffer,
     },
   });
+
+  embedMessage(updatedMessage.id, buffer);
 
   return [
     ...messages,

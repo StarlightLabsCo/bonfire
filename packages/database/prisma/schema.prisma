@@ -127,7 +127,7 @@ model Message {
   role         MessageRole
   content      String
   name         String?
-  functionCall String?
+  function_call String? // this one is specifically this case because openai api uses snake_case and we can just use prisma select
 }
 
 enum MessageRole {
@@ -154,7 +154,7 @@ model OpenAIRequestLog {
   role         MessageRole?
   content      String?      @db.Text
   name         String?
-  functionCall String?
+  function_call String?
 
   // ---- Streamed ---
   response String? @db.Text // SSE stream

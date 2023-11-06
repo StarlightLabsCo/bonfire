@@ -1,7 +1,7 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '.';
 import { redis } from '../services/redis';
-import { StarlightWebSocketResponse } from 'websocket/types';
+import { StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateResponse } from 'websocket/utils';
 
 // This map maintains the most updated websocket for each user. Stored as a map of userId-connectionId to websocket
@@ -37,15 +37,18 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 }
 
 export function sendToUser(connectionId: string, data: StarlightWebSocketResponse) {
+  console.log('Sending to user', connectionId, StarlightWebSocketResponseType[data.type]);
   const websocket = connectionIdToWebSocket[connectionId];
 
   if (!websocket || websocket.readyState !== 1) {
+    console.log('Websocket not found or not open, queueing message');
     redis.rpush(connectionId, JSON.stringify(data));
     return;
   }
 
   const status = websocket.send(JSON.stringify(data));
   if (status === 0) {
+    console.log('Message failed to send, queueing message');
     redis.rpush(connectionId, JSON.stringify(data));
   }
 }

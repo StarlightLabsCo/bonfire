@@ -23,7 +23,9 @@ export async function rollDice(instanceId: string, messages: ChatCompletionMessa
 
   // if no modifier, generate one
   if (!modifier) {
-    modifier = await generateModifier(instanceId, messages); // TODO: generate the reason here too
+    const result = await generateModifier(instanceId, messages);
+    modifier = result.modifier;
+    reason = result.reason;
   }
 
   // Roll

@@ -19,7 +19,7 @@ export const MessageZodSchema: z.ZodType<Message> = z
     role: MessageRoleZodSchema,
     content: z.string(),
     name: z.string().nullable(),
-    functionCall: z.string().nullable(),
+    function_call: z.string().nullable(),
   })
   .strict();
 

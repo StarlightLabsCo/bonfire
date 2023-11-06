@@ -12,7 +12,7 @@ export async function generateActionSuggestions(
 ) {
   const response = await openai.chat.completions.create({
     messages: messages,
-    model: 'gpt-4-32k',
+    model: 'gpt-4',
     functions: [
       {
         name: 'generate_action_suggestions',
@@ -57,8 +57,6 @@ export async function generateActionSuggestions(
   if (!args) {
     throw new Error('No arguments found in response');
   }
-
-  // Filter out any invalid characters
 
   const argsJSON = JSON.parse(args);
 

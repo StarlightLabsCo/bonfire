@@ -33,7 +33,7 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
           role: true,
           content: true,
           name: true,
-          functionCall: true,
+          function_call: true,
         },
       },
     },
@@ -65,14 +65,15 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
 
   let messages = [...instance.messages, { role: 'user', content: message }] as ChatCompletionMessageParam[];
 
+  // filter out any null-valued keys
+  messages = messages.map((message) => {
+    return Object.fromEntries(Object.entries(message).filter(([_, v]) => v != null));
+  }) as ChatCompletionMessageParam[];
+
   // TODO: THIS is where i need to do context window stuff
   messages = await rollDice(instance.id, messages);
   messages = await narratorReaction(instance.id, messages);
   messages = await continueStory(ws.data.connectionId!, instance.id, messages);
-
   messages = await createImage(ws.data.connectionId!, instance.id, messages);
   messages = await generateActionSuggestions(ws.data.connectionId!, instance.id, messages);
-
-  // Queue up - importance & embedding - these aren't needed immedately because this message will be in the context
-  // TODO: Add to queue
 }

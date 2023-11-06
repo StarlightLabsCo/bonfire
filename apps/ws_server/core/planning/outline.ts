@@ -2,6 +2,7 @@ import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { db } from '../../services/db';
 import { openai } from '../../services/openai';
 import { MessageRole } from 'database';
+import { embedMessage } from '../context/embedding';
 
 export async function createOutline(instanceId: string, messages: ChatCompletionMessageParam[]) {
   const response = await openai.chat.completions.create({
@@ -34,7 +35,7 @@ export async function createOutline(instanceId: string, messages: ChatCompletion
 
   const args = JSON.parse(response.choices[0].message.function_call.arguments.replace('\\n', ''));
 
-  await db.message.create({
+  const message = await db.message.create({
     data: {
       instance: {
         connect: {
@@ -46,6 +47,8 @@ export async function createOutline(instanceId: string, messages: ChatCompletion
       name: 'story_outline',
     },
   });
+
+  embedMessage(message.id, args.plan);
 
   return [
     ...messages,

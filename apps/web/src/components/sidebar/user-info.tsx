@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -36,21 +37,18 @@ export function UserInfo({
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {/* <DropdownMenuGroup>
-            <DropdownMenuItem>
+          <DropdownMenuGroup>
+            {/* <DropdownMenuItem>
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Billing
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            </DropdownMenuItem> */}
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            {/* <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuGroup>
-          <DropdownMenuSeparator /> */}
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>
             Log out
             {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
