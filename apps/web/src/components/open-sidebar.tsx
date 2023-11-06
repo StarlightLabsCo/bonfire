@@ -5,7 +5,7 @@ import { Icons } from './icons';
 import { useSidebarStore } from '@/stores/sidebar-store';
 
 export function OpenSidebar() {
-  const showSidebarOpen = useSidebarStore((state) => state.showSidebarOpen);
+  const showSidebarOpen = useSidebarStore((state) => state.showSidebarOpenButton);
   const openSidebar = useSidebarStore((state) => state.openSidebar);
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
 

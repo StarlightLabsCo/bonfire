@@ -125,7 +125,7 @@ export function Lobby({
           />
         </div>
       </div>
-      <LobbyInput userId={user.id} submitted={submitted} setSubmitted={setSubmitted} />
+      <LobbyInput submitted={submitted} setSubmitted={setSubmitted} />
       <span key={currentMessageIndex} className={cn('h-10')}>
         {loadingMessageVisible && loadingMessages[currentMessageIndex]}
       </span>

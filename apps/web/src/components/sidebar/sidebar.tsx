@@ -9,6 +9,8 @@ import { UserInfo } from './user-info';
 import { AudioSidebar } from './audio-sidebar';
 import { useEffect, useState } from 'react';
 import { Icons } from '../icons';
+import { useSpring } from '@react-spring/web';
+import { useDrag } from '@use-gesture/react';
 
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
@@ -28,8 +30,9 @@ export function Sidebar({
   const pathname = usePathname();
 
   const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
-  const setShowSidebarOpen = useSidebarStore((state) => state.setShowSidebarOpen);
+  const setShowSidebarOpen = useSidebarStore((state) => state.setShowSidebarOpenButton);
   const openSidebar = useSidebarStore((state) => state.openSidebar);
+  const closeSidebar = useSidebarStore((state) => state.closeSidebar);
 
   const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
 
@@ -42,6 +45,23 @@ export function Sidebar({
       setShowSidebarOpen(true);
     }
   };
+
+  const [{ x }, set] = useSpring(() => ({ x: 0 }));
+
+  const bind = useDrag(
+    ({ down, movement: [mx], cancel }) => {
+      // This checks if you're dragging to the left and the sidebar is open
+      if (!down && isSidebarOpen && mx < 0) {
+        const width = window.innerWidth * 0.3;
+        const shouldClose = -mx > width;
+
+        if (shouldClose) {
+          closeSidebar();
+        }
+      }
+    },
+    { preventScroll: true },
+  );
 
   useEffect(() => {
     async function updateDisplayedInstances() {
@@ -69,6 +89,7 @@ export function Sidebar({
       </div>
 
       <div
+        {...bind()}
         className={`h-screen w-screen z-10 bg-black/80 fixed top-0 left-0 md:hidden  ${
           isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
         }`}

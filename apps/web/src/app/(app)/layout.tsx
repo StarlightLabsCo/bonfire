@@ -24,7 +24,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="h-screen bg-neutral-950 flex flex-col md:flex-row">
+    <div className="h-full-dvh bg-neutral-950 flex flex-col md:flex-row">
       {user && <Sidebar user={user} instances={instances} />}
       <div className="flex flex-col w-full h-[calc(100%-2.5rem)] max-w-5xl mx-auto">
         <div className="h-full">{children}</div>

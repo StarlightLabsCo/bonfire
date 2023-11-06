@@ -2,16 +2,16 @@ import { create } from 'zustand';
 
 type SidebarStore = {
   isSidebarOpen: boolean;
-  showSidebarOpen: boolean;
+  showSidebarOpenButton: boolean;
   openSidebar: () => void;
   closeSidebar: () => void;
-  setShowSidebarOpen: (value: boolean) => void;
+  setShowSidebarOpenButton: (value: boolean) => void;
 };
 
 export const useSidebarStore = create<SidebarStore>((set) => ({
   isSidebarOpen: false,
-  showSidebarOpen: true,
-  openSidebar: () => set((state) => ({ ...state, isSidebarOpen: true, showSidebarOpen: false })),
+  showSidebarOpenButton: true,
+  openSidebar: () => set((state) => ({ ...state, isSidebarOpen: true, showSidebarOpenButton: false })),
   closeSidebar: () => set((state) => ({ ...state, isSidebarOpen: false })),
-  setShowSidebarOpen: (value: boolean) => set((state) => ({ ...state, showSidebarOpen: value })),
+  setShowSidebarOpenButton: (value: boolean) => set((state) => ({ ...state, showSidebarOpenButton: value })),
 }));
