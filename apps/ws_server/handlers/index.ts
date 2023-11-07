@@ -8,7 +8,6 @@ import { processVoiceTranscriptionHandler } from './audio/processVoiceTranscript
 import { finishVoiceTranscriptionHandler } from './audio/finishVoiceTranscription';
 
 import { createAdventureSuggestionsHandler } from './story/createAdventureSuggestions';
-import { createWelcomeSoundbiteHandler } from './story/createWelcomeSoundbite';
 import { createInstanceHandler } from './story/createInstance';
 import { addPlayerMessageHandler } from './story/addPlayerMessage';
 import { undoMessageHandler } from './story/undoMessage';
@@ -23,7 +22,6 @@ export const handlers: {
 
   // Paid requests
   [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokensMiddleware(createAdventureSuggestionsHandler),
-  [StarlightWebSocketRequestType.createWelcomeSoundbite]: hasTokensMiddleware(createWelcomeSoundbiteHandler),
   [StarlightWebSocketRequestType.createInstance]: hasTokensMiddleware(createInstanceHandler),
   [StarlightWebSocketRequestType.addPlayerMessage]: hasTokensMiddleware(addPlayerMessageHandler),
   [StarlightWebSocketRequestType.undoMessage]: hasTokensMiddleware(undoMessageHandler),

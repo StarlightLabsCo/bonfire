@@ -1,11 +1,8 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
-import {
-  StarlightWebSocketRequest,
-  StarlightWebSocketRequestType,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
-import { sendToUser } from '../../src/connection';
+import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
+import { db } from '../../services/db';
+import { generateAdventureSuggestions } from '../../core/suggestions/adventures';
 
 export async function createAdventureSuggestionsHandler(
   ws: ServerWebSocket<WebSocketData>,
@@ -15,11 +12,14 @@ export async function createAdventureSuggestionsHandler(
     throw new Error('Invalid request type for createAdventureSuggestionsHandler');
   }
 
-  // TODO: fetch prior instances from the db and generate new suggestions
-  sendToUser(ws.data.connectionId!, {
-    type: StarlightWebSocketResponseType.adventureSuggestionsCreated,
-    data: {
-      suggestions: ["Steal the Spectral Serpent's Eye", 'Travel to Neo Toyko', 'The Last of Us'],
+  const instances = await db.instance.findMany({
+    where: {
+      userId: ws.data.webSocketToken!.userId,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
   });
+
+  await generateAdventureSuggestions(ws.data.connectionId!, instances);
 }

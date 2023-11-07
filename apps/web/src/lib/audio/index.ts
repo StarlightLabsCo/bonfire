@@ -1,10 +1,6 @@
 import { setupBufferedPlayerProcessor } from './playback';
 
 export async function setupAudio() {
-  if (!window.AudioContext) {
-    throw new Error('AudioContext is not on the window object');
-  }
-
   const audioContext = new AudioContext({
     sampleRate: 44100,
     latencyHint: 'interactive',

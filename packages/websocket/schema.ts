@@ -42,13 +42,6 @@ export const CreateInstanceRequestZodSchema: z.ZodType<Types.CreateInstanceReque
   })
   .strict();
 
-export const CreateWelcomeSoundbiteRequestZodSchema: z.ZodType<Types.CreateWelcomeSoundbiteRequest> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketRequestType.createWelcomeSoundbite),
-    data: z.object({}).strict(),
-  })
-  .strict();
-
 export const AddPlayerMessageRequestZodSchema: z.ZodType<Types.AddPlayerMessageRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.addPlayerMessage),
@@ -262,7 +255,6 @@ export const requestTypeToSchema: {
 } = {
   [Types.StarlightWebSocketRequestType.createAdventureSuggestions]: CreateAdventureSuggestionsRequestZodSchema,
   [Types.StarlightWebSocketRequestType.createInstance]: CreateInstanceRequestZodSchema,
-  [Types.StarlightWebSocketRequestType.createWelcomeSoundbite]: CreateWelcomeSoundbiteRequestZodSchema,
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.stopAudio]: StopAudioRequestZodSchema,

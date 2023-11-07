@@ -4,7 +4,6 @@ import { Message } from '../database';
 // ** Request **
 export type StarlightWebSocketRequest =
   | CreateAdventureSuggestionsRequest
-  | CreateWelcomeSoundbiteRequest
   | CreateInstanceRequest
   | AddPlayerMessageRequest
   | UndoMessageRequest
@@ -21,7 +20,6 @@ export type GenericStarlightWebSocketRequest<T extends StarlightWebSocketRequest
 
 export enum StarlightWebSocketRequestType {
   createAdventureSuggestions,
-  createWelcomeSoundbite,
   createInstance,
   addPlayerMessage,
   undoMessage,
@@ -49,14 +47,6 @@ export type CreateInstanceRequest = GenericStarlightWebSocketRequest<
 export type CreateInstanceData = {
   description: string;
 };
-
-// Create Welcome Soundbite
-export type CreateWelcomeSoundbiteRequest = GenericStarlightWebSocketRequest<
-  StarlightWebSocketRequestType.createWelcomeSoundbite,
-  CreateWelcomeSoundbiteData
->;
-
-export type CreateWelcomeSoundbiteData = {};
 
 // Add Player Message
 export type AddPlayerMessageRequest = GenericStarlightWebSocketRequest<

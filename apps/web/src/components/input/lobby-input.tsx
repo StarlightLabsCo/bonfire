@@ -19,13 +19,6 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
 
   const adventureSuggestions = useAdventureSuggestionsStore((state) => state.adventureSuggestions);
 
-  const createWelcome = (description: string) => {
-    sendToServer({
-      type: StarlightWebSocketRequestType.createWelcomeSoundbite,
-      data: {},
-    });
-  };
-
   const createInstance = (description: string) => {
     sendToServer({
       type: StarlightWebSocketRequestType.createInstance,
@@ -37,7 +30,6 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
 
   const submit = (description: string) => {
     setSubmitted(true);
-    createWelcome(description);
     createInstance(description);
   };
 
@@ -62,7 +54,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
         disabled={submitted}
         className={cn(submitted && 'cursor-not-allowed fade-out-2s')}
       />
-      <div className={cn('flex flex-row flex-wrap gap-x-2 gap-y-2', className)}>
+      <div className={cn('flex flex-row flex-wrap gap-x-2 gap-y-2', className, submitted && 'fade-out-2s')}>
         {adventureSuggestions &&
           adventureSuggestions.map((suggestion, index) => (
             <button
