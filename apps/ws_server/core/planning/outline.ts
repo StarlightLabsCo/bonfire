@@ -7,7 +7,7 @@ import { embedMessage } from '../context/embedding';
 export async function createOutline(instanceId: string, messages: ChatCompletionMessageParam[]) {
   const response = await openai.chat.completions.create({
     messages: messages,
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     functions: [
       {
         name: 'plan_story',

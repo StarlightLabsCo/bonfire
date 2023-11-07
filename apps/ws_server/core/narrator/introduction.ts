@@ -33,7 +33,7 @@ export async function introduceStory(connectionId: string, instanceId: string, m
 
   const response = await openai.chat.completions.create({
     messages: messages,
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     stream: true,
     functions: [
       {

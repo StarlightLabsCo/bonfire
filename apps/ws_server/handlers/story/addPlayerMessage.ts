@@ -70,7 +70,6 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     return Object.fromEntries(Object.entries(message).filter(([_, v]) => v != null));
   }) as ChatCompletionMessageParam[];
 
-  // TODO: THIS is where i need to do context window stuff
   messages = await rollDice(instance.id, messages);
   messages = await narratorReaction(instance.id, messages);
   messages = await continueStory(ws.data.connectionId!, instance.id, messages);

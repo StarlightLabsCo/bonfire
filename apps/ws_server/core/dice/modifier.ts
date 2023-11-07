@@ -4,7 +4,7 @@ import { openai } from '../../services/openai';
 export async function generateModifier(instanceId: string, messages: ChatCompletionMessageParam[]) {
   const response = await openai.chat.completions.create({
     messages: messages,
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     functions: [
       {
         name: 'generate_action_dice_modifier',

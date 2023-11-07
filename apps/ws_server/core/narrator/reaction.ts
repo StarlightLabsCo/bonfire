@@ -11,7 +11,7 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
       ...messages,
       { content: '[Narrator Inner Monologue] As the narrator, I feel ', role: MessageRole.assistant },
     ],
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     functions: [
       {
         name: 'generate_narrator_internal_monologue_reaction',
@@ -67,7 +67,7 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
         role: MessageRole.assistant,
       },
     ],
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     functions: [
       {
         name: 'generate_narrator_internal_monologue_plan',

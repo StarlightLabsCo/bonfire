@@ -41,7 +41,7 @@ export async function createImage(connectionId: string, instanceId: string, mess
       },
       messages[messages.length - 1],
     ],
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     functions: [
       {
         name: 'generate_image',
