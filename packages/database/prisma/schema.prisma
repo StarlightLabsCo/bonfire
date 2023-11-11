@@ -70,7 +70,7 @@ model User {
   webSocketAuthenticationToken WebSocketAuthenticationToken[]
 
   // Payment / Monetization
-  stripeCustomerId String?
+  stripeCustomerId String? @unique
   plan             UserPlan @default(FREE)
 
   stripeSubscriptionId     String?

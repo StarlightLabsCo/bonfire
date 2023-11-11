@@ -7,31 +7,38 @@ import { Navigator } from '@/components/navigator';
 import db from '@/lib/db';
 import { Instance } from '@prisma/client';
 import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
+import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
+import { User } from 'database';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
+  const sessionUser = await getCurrentUser();
 
-  let instances: Instance[] = [];
-  if (user) {
-    instances = await db.instance.findMany({
+  let user: (User & { instances: Instance[] }) | null = null;
+  if (sessionUser) {
+    user = await db.user.findUnique({
       where: {
-        userId: user.id,
+        id: sessionUser.id,
       },
-      orderBy: {
-        createdAt: 'desc',
+      include: {
+        instances: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
   }
 
   return (
     <div className="h-full-dvh bg-neutral-950 flex flex-col md:flex-row">
-      {user && <Sidebar user={user} instances={instances} />}
+      {user && <Sidebar sessionUser={sessionUser} user={user} instances={user.instances} />}
       <div className="flex flex-col w-full h-[calc(100%-2.5rem)] max-w-5xl mx-auto">
         <div className="h-full">{children}</div>
       </div>
       <Toaster />
       <OutOfCreditsDialog />
       <ShareLinkDialog />
+      <StripeCheckoutDialog />
       <Navigator />
     </div>
   );

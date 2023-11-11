@@ -11,15 +11,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
+import { useStripeStore } from '@/stores/stripe-store';
+import { User } from 'database';
 
 export function UserInfo({
   user,
+  sessionUser,
 }: {
-  user: {
+  user: User;
+  sessionUser: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-  };
+  } & { id: string };
 }) {
   let initials = user.name
     ? user.name
@@ -29,6 +33,8 @@ export function UserInfo({
     : '';
 
   const [open, setOpen] = useState(false);
+  const createCheckoutSession = useStripeStore((state) => state.createCheckoutSession);
+  const createPortalSession = useStripeStore((state) => state.createPortalSession);
 
   return (
     <div className="w-full h-14 px-2 flex flex-col items-center justify-center">
@@ -42,7 +48,11 @@ export function UserInfo({
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem> */}
-            <DropdownMenuItem>Billing</DropdownMenuItem>
+            {user.stripeSubscriptionId ? (
+              <DropdownMenuItem onClick={() => createPortalSession()}>Manage Subscription</DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => createCheckoutSession()}>Upgrade</DropdownMenuItem>
+            )}
             {/* <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
@@ -63,10 +73,13 @@ export function UserInfo({
       >
         <div className="flex items-center gap-x-2">
           <Avatar className="h-8 w-8 rounded-md">
-            <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
+            <AvatarImage
+              src={sessionUser.image ? sessionUser.image : undefined}
+              alt={sessionUser.name ? sessionUser.name : undefined}
+            />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <div className="text-xs font-bold">{user.name}</div>
+          <div className="text-xs font-bold">{sessionUser.name}</div>
         </div>
         <div>
           <Icons.moreHorizontal />
