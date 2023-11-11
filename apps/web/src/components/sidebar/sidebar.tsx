@@ -15,19 +15,16 @@ import { useDrag } from '@use-gesture/react';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useDialogStore } from '@/stores/dialog-store';
-import { User } from 'database';
 
 export function Sidebar({
-  sessionUser,
   user,
   instances,
 }: {
-  sessionUser: {
+  user: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
   } & { id: string };
-  user: User;
   instances: Instance[];
 }) {
   const pathname = usePathname();
@@ -88,7 +85,7 @@ export function Sidebar({
         <TopActions />
         <PastStories instances={displayedInstances} />
         <AudioSidebar />
-        <UserInfo user={user} sessionUser={sessionUser} />
+        <UserInfo user={user} />
       </div>
 
       <div
@@ -134,7 +131,7 @@ export function Sidebar({
           <TopActions />
           <PastStories instances={displayedInstances} />
           <AudioSidebar />
-          <UserInfo user={user} sessionUser={sessionUser} />
+          <UserInfo user={user} />
         </div>
       </div>
     </>

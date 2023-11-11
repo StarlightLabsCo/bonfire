@@ -9,17 +9,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useStripeStore } from '@/stores/stripe-store';
-import { User } from 'database';
 
 export function UserInfo({
   user,
-  sessionUser,
 }: {
-  user: User;
-  sessionUser: {
+  user: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
@@ -33,8 +30,32 @@ export function UserInfo({
     : '';
 
   const [open, setOpen] = useState(false);
+  const stripeSubscriptionId = useStripeStore((state) => state.stripeSubscriptionId);
   const createCheckoutSession = useStripeStore((state) => state.createCheckoutSession);
   const createPortalSession = useStripeStore((state) => state.createPortalSession);
+
+  useEffect(() => {
+    async function getStripeSubscriptionStatus() {
+      const response = await fetch('/api/user', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        if (data.stripeSubscriptionId) {
+          useStripeStore.setState({ stripeSubscriptionId: data.stripeSubscriptionId });
+        }
+      }
+    }
+
+    getStripeSubscriptionStatus();
+  }, []);
 
   return (
     <div className="w-full h-14 px-2 flex flex-col items-center justify-center">
@@ -48,7 +69,7 @@ export function UserInfo({
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem> */}
-            {user.stripeSubscriptionId ? (
+            {stripeSubscriptionId ? (
               <DropdownMenuItem onClick={() => createPortalSession()}>Manage Subscription</DropdownMenuItem>
             ) : (
               <DropdownMenuItem onClick={() => createCheckoutSession()}>Upgrade</DropdownMenuItem>
@@ -73,13 +94,10 @@ export function UserInfo({
       >
         <div className="flex items-center gap-x-2">
           <Avatar className="h-8 w-8 rounded-md">
-            <AvatarImage
-              src={sessionUser.image ? sessionUser.image : undefined}
-              alt={sessionUser.name ? sessionUser.name : undefined}
-            />
+            <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <div className="text-xs font-bold">{sessionUser.name}</div>
+          <div className="text-xs font-bold">{user.name}</div>
         </div>
         <div>
           <Icons.moreHorizontal />
