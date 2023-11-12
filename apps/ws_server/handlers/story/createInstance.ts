@@ -20,11 +20,14 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     throw new Error('Invalid request type for createInstanceHandler');
   }
 
+  const userId = ws.data.webSocketToken?.userId!;
+  const connectionId = ws.data.connectionId!;
+
   const instance = await db.instance.create({
     data: {
       user: {
         connect: {
-          id: ws.data.webSocketToken!.userId,
+          id: userId,
         },
       },
       description: request.data.description,
@@ -33,16 +36,16 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
 
   // story generation
   let messages = await initStory(instance.id, request.data.description);
-  messages = await createOutline(instance.id, messages);
+  messages = await createOutline(userId, instance.id, messages);
 
-  sendToUser(ws.data.connectionId!, {
+  sendToUser(connectionId, {
     type: StarlightWebSocketResponseType.instanceCreated,
     data: {
       instanceId: instance.id,
     },
   });
 
-  messages = await introduceStory(ws.data.connectionId!, instance.id, messages);
-  messages = await createImage(ws.data.connectionId!, instance.id, messages);
-  messages = await generateActionSuggestions(ws.data.connectionId!, instance.id, messages);
+  messages = await introduceStory(userId, connectionId, instance.id, messages);
+  messages = await createImage(userId, connectionId, instance.id, messages);
+  messages = await generateActionSuggestions(userId, connectionId, instance.id, messages);
 }

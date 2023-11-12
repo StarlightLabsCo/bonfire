@@ -1,12 +1,17 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { openai } from '../services/openai';
+import { logNonStreamedOpenAIResponse, openai } from '../services/openai';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { sendToUser } from '../src/connection';
 import { db } from '../services/db';
 import { MessageRole } from 'database';
 import { uploadImageToR2 } from '../services/cloudflare';
 
-export async function createImage(connectionId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function createImage(
+  userId: string,
+  connectionId: string,
+  instanceId: string,
+  messages: ChatCompletionMessageParam[],
+) {
   let modifiedMessages = messages
     .map((message) => {
       if (message.role == 'function' && message.name == 'generate_image') {
@@ -25,6 +30,7 @@ export async function createImage(connectionId: string, instanceId: string, mess
     })
     .filter((message) => message.role != 'function');
 
+  const startTime = Date.now();
   const response = await openai.chat.completions.create({
     model: 'gpt-4-vision-preview',
     messages: [
@@ -36,10 +42,13 @@ export async function createImage(connectionId: string, instanceId: string, mess
       },
     ],
   });
+  const endTime = Date.now();
 
   if (!response.choices[0].message.content) {
     throw new Error('No content in response');
   }
+
+  logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
 
   const imageResponse = await openai.images.generate({
     model: 'dall-e-3',

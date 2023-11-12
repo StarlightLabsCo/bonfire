@@ -53,5 +53,3 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
     useTranscriptionStore.getState().setupAudioRecorder();
   },
 }));
-
-usePlaybackStore.getState().setup();

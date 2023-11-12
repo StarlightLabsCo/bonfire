@@ -4,9 +4,14 @@ import { MessageRole } from 'database';
 import { sendToUser } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
-import { openai } from '../../services/openai';
+import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 
-export async function continueStory(connectionId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function continueStory(
+  userId: string,
+  connectionId: string,
+  instanceId: string,
+  messages: ChatCompletionMessageParam[],
+) {
   const message = await db.message.create({
     data: {
       instance: {
@@ -30,6 +35,7 @@ export async function continueStory(connectionId: string, instanceId: string, me
 
   await initSpeechStreamConnection(connectionId);
 
+  const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
@@ -56,9 +62,11 @@ export async function continueStory(connectionId: string, instanceId: string, me
   });
 
   // Handle streaming response
+  let chunks = [];
   let buffer = '';
 
   for await (const chunk of response) {
+    chunks.push(chunk);
     let args = chunk.choices[0].delta.function_call?.arguments;
 
     try {
@@ -103,6 +111,7 @@ export async function continueStory(connectionId: string, instanceId: string, me
   }
 
   endSpeechStream(connectionId);
+  const endTime = Date.now();
 
   // Cleanup - need to make this more robust and cleaner
   buffer = buffer.replace(/\\n/g, '');
@@ -117,6 +126,8 @@ export async function continueStory(connectionId: string, instanceId: string, me
       content: buffer,
     },
   });
+
+  logStreamedOpenAIResponse(userId, messages, chunks, endTime - startTime);
 
   const updatedMessage = await db.message.update({
     where: {

@@ -10,9 +10,6 @@ export const MessageZodSchema: z.ZodType<Message> = z
     id: z.string(),
     instanceId: z.string(),
 
-    importance: z.number().nullable(),
-    accessedAt: z.coerce.date().nullable(),
-
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
 

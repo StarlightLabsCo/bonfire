@@ -1,12 +1,17 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { openai } from '../../services/openai';
+import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 import { db } from '../../services/db';
 import { MessageRole } from 'database';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { sendToUser } from '../../src/connection';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
 
-export async function introduceStory(connectionId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function introduceStory(
+  userId: string,
+  connectionId: string,
+  instanceId: string,
+  messages: ChatCompletionMessageParam[],
+) {
   const message = await db.message.create({
     data: {
       instance: {
@@ -30,6 +35,7 @@ export async function introduceStory(connectionId: string, instanceId: string, m
 
   await initSpeechStreamConnection(connectionId);
 
+  const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
@@ -55,9 +61,11 @@ export async function introduceStory(connectionId: string, instanceId: string, m
   });
 
   // Handle streaming response
+  let chunks = [];
   let buffer = '';
 
   for await (const chunk of response) {
+    chunks.push(chunk);
     let args = chunk.choices[0].delta.function_call?.arguments;
 
     try {
@@ -103,6 +111,8 @@ export async function introduceStory(connectionId: string, instanceId: string, m
 
   endSpeechStream(connectionId);
 
+  const endTime = Date.now();
+
   // Cleanup - need to make this more robust and cleaner
   buffer = buffer.replace(/\\n/g, '');
   buffer = buffer.replace(new RegExp(`{\\s*"introduction"\\s*:\\s*"`, 'g'), '');
@@ -116,6 +126,8 @@ export async function introduceStory(connectionId: string, instanceId: string, m
       content: buffer,
     },
   });
+
+  logStreamedOpenAIResponse(userId, messages, chunks, endTime - startTime);
 
   const updatedMessage = await db.message.update({
     where: {

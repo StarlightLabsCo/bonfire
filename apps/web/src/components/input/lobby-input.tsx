@@ -54,7 +54,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
         disabled={submitted}
         className={cn(submitted && 'cursor-not-allowed fade-out-2s')}
       />
-      <div className={cn('flex flex-row flex-wrap gap-x-2 gap-y-2', className, submitted && 'fade-out-2s')}>
+      <div className={cn('flex flex-row flex-wrap gap-x-2 gap-y-2 h-10', submitted && 'fade-out-2s')}>
         {adventureSuggestions &&
           adventureSuggestions.map((suggestion, index) => (
             <button

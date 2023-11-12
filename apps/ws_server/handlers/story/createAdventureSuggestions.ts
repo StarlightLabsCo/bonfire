@@ -12,6 +12,9 @@ export async function createAdventureSuggestionsHandler(
     throw new Error('Invalid request type for createAdventureSuggestionsHandler');
   }
 
+  const userId = ws.data.webSocketToken?.userId!;
+  const connectionId = ws.data.connectionId!;
+
   const instances = await db.instance.findMany({
     where: {
       userId: ws.data.webSocketToken!.userId,
@@ -21,5 +24,5 @@ export async function createAdventureSuggestionsHandler(
     },
   });
 
-  await generateAdventureSuggestions(ws.data.connectionId!, instances);
+  await generateAdventureSuggestions(userId, connectionId, instances);
 }

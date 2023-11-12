@@ -1,9 +1,10 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { db } from '../../services/db';
-import { openai } from '../../services/openai';
+import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { MessageRole } from 'database';
 
-export async function createOutline(instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function createOutline(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+  const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
@@ -27,14 +28,17 @@ export async function createOutline(instanceId: string, messages: ChatCompletion
       name: 'plan_story',
     },
   });
+  const endTime = Date.now();
 
   if (!response.choices[0].message.function_call) {
     throw new Error('No choices returned from GPT-4');
   }
 
+  logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
+
   const args = JSON.parse(response.choices[0].message.function_call.arguments.replace('\\n', ''));
 
-  const message = await db.message.create({
+  await db.message.create({
     data: {
       instance: {
         connect: {

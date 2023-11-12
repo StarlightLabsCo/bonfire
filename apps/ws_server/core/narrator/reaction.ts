@@ -1,15 +1,18 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { openai } from '../../services/openai';
+import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { MessageRole } from 'database';
 import { db } from '../../services/db';
 
-export async function narratorReaction(instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function narratorReaction(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   // ---- Reacting to the player's action & diceroll ----
+  const reactionMessages = [
+    ...messages,
+    { content: '[Narrator Inner Monologue] As the narrator, I feel ', role: MessageRole.assistant },
+  ] as ChatCompletionMessageParam[];
+
+  const reactionStartTime = Date.now();
   const reactionResponse = await openai.chat.completions.create({
-    messages: [
-      ...messages,
-      { content: '[Narrator Inner Monologue] As the narrator, I feel ', role: MessageRole.assistant },
-    ],
+    messages: reactionMessages,
     model: 'gpt-4-1106-preview',
     functions: [
       {
@@ -30,14 +33,17 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
       name: 'generate_narrator_internal_monologue_reaction',
     },
   });
+  const reactionEndTime = Date.now();
 
   if (!reactionResponse.choices[0].message.function_call) {
     throw new Error('[generate_narrator_internal_monologue_reaction] No function call found');
   }
 
+  logNonStreamedOpenAIResponse(userId, reactionMessages, reactionResponse, reactionEndTime - reactionStartTime);
+
   const reactionArgs = JSON.parse(reactionResponse.choices[0].message.function_call.arguments);
 
-  const reactionMessage = await db.message.create({
+  await db.message.create({
     data: {
       instance: {
         connect: {
@@ -51,19 +57,22 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
   });
 
   // ---- Adjusting the story ----
+  const planningMessages = [
+    ...messages,
+    {
+      content: `[Narrator Inner Monologue] As the narrator, I feel ${reactionArgs.reaction}`,
+      role: MessageRole.system,
+      name: 'narrator_internal_monologue_reaction',
+    },
+    {
+      content: '[Narrator Inner Monologue] To adjust the story going forward, I will ',
+      role: MessageRole.assistant,
+    },
+  ] as ChatCompletionMessageParam[];
+
+  const planningStartTime = Date.now();
   const planningResponse = await openai.chat.completions.create({
-    messages: [
-      ...messages,
-      {
-        content: `[Narrator Inner Monologue] As the narrator, I feel ${reactionArgs.reaction}`,
-        role: MessageRole.system,
-        name: 'narrator_internal_monologue_reaction',
-      },
-      {
-        content: '[Narrator Inner Monologue] To adjust the story going forward, I will ',
-        role: MessageRole.assistant,
-      },
-    ],
+    messages: planningMessages,
     model: 'gpt-4-1106-preview',
     functions: [
       {
@@ -84,14 +93,17 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
       name: 'generate_narrator_internal_monologue_plan',
     },
   });
+  const planningEndTime = Date.now();
 
   if (!planningResponse.choices[0].message.function_call) {
     throw new Error('[generate_narrator_internal_monologue_plan] No function call found');
   }
 
+  logNonStreamedOpenAIResponse(userId, planningMessages, planningResponse, planningEndTime - planningStartTime);
+
   const planningArgs = JSON.parse(planningResponse.choices[0].message.function_call.arguments);
 
-  const planningMessage = await db.message.create({
+  await db.message.create({
     data: {
       instance: {
         connect: {

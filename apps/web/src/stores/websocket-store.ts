@@ -133,8 +133,9 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
   ws.addEventListener('close', (event) => {
     set({ socket: null, socketState: 'closed', isAlive: false, heartbeat: null });
 
+    console.log(`WebSocket connection closed. Code: ${event.code} Reason: ${event.reason}`);
+
     if (!event.wasClean) {
-      console.error(`WebSocket connection died, code=${event.code} reason=${event.reason}`);
       Sentry.captureException(event, {
         contexts: {
           websocket: {
@@ -167,5 +168,3 @@ function sendToServer(get: () => WebsocketStore, request: StarlightWebSocketRequ
     console.error(`WebSocket is not in valid state. Current state: ${socketState}. Unable to send data.`);
   }
 }
-
-useWebsocketStore.getState().connect();

@@ -4,7 +4,7 @@ import { generateModifier } from './modifier';
 import { MessageRole } from 'database';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
-export async function rollDice(instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function rollDice(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   let userAction = messages[messages.length - 1].content; // TODO: add validation here
 
   let modifier = null;
@@ -23,7 +23,7 @@ export async function rollDice(instanceId: string, messages: ChatCompletionMessa
 
   // if no modifier, generate one
   if (!modifier) {
-    const result = await generateModifier(instanceId, messages);
+    const result = await generateModifier(userId, messages);
     modifier = result.modifier;
     reason = result.reason;
   }

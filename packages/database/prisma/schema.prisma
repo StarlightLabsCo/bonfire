@@ -125,24 +125,18 @@ enum MessageRole {
 model OpenAIRequestLog {
   id String @id @default(cuid())
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  tag   String?
   model String
 
   messages String @db.Text // Stringified JSON of the messages
 
   streamed Boolean @default(false)
 
-  // ---- Non-Streamed ---
   role         MessageRole?
   content      String?      @db.Text
-  name         String?
   function_call String?
-
-  // ---- Streamed ---
-  response String? @db.Text // SSE stream
 
   // ---- Both ---
   responseTime Int
@@ -153,8 +147,6 @@ model OpenAIRequestLog {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([tag])
 }
 
 model ElevenLabsRequestLog {

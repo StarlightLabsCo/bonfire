@@ -19,13 +19,16 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     throw new Error('Invalid request type for addPlayerMessageHandler');
   }
 
+  const userId = ws.data.webSocketToken?.userId!;
+  const connectionId = ws.data.connectionId!;
+
   const { instanceId, message } = request.data;
 
   // Validation
   const instance = await db.instance.findUnique({
     where: {
       id: instanceId,
-      userId: ws.data.webSocketToken!.userId,
+      userId: userId,
     },
     include: {
       messages: {
@@ -51,11 +54,10 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
       instanceId,
       role: 'user',
       content: message,
-      accessedAt: new Date(),
     },
   });
 
-  sendToUser(ws.data.connectionId!, {
+  sendToUser(connectionId, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId,
@@ -70,9 +72,9 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     return Object.fromEntries(Object.entries(message).filter(([_, v]) => v != null));
   }) as ChatCompletionMessageParam[];
 
-  messages = await rollDice(instance.id, messages);
-  messages = await narratorReaction(instance.id, messages);
-  messages = await continueStory(ws.data.connectionId!, instance.id, messages);
-  messages = await createImage(ws.data.connectionId!, instance.id, messages);
-  messages = await generateActionSuggestions(ws.data.connectionId!, instance.id, messages);
+  messages = await rollDice(userId, instance.id, messages);
+  messages = await narratorReaction(userId, instance.id, messages);
+  messages = await continueStory(userId, connectionId, instance.id, messages);
+  messages = await createImage(userId, connectionId, instance.id, messages);
+  messages = await generateActionSuggestions(userId, connectionId, instance.id, messages);
 }

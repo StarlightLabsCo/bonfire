@@ -9,6 +9,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "latest",
     "@prisma/client": "latest",
+    "gpt-tokenizer": "latest",
     "ioredis": "^5.3.2",
     "openai": "latest",
     "replicate": "^0.18.1",

@@ -8,6 +8,7 @@ import db from '@/lib/db';
 import { Instance } from '@prisma/client';
 import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
 import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
+import { StoreInitializer } from '@/components/store-initializer';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -35,6 +36,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <ShareLinkDialog />
       <StripeCheckoutDialog />
       <Navigator />
+      <StoreInitializer />
     </div>
   );
 }
