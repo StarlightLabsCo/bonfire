@@ -10,6 +10,7 @@ type PlaybackStore = {
   bufferedPlayerNode: AudioWorkletNode | null;
   gainNode: GainNode | null;
   socketState: string;
+  volume: number;
   setVolume: (volume: number) => void;
   clearAudio: () => void;
   setup: () => void;
@@ -21,10 +22,14 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
   gainNode: null,
   socketState: '',
 
-  setVolume: (volume: number) => {
+  volume: 0.75,
+  setVolume: (desiredVolume: number) => {
     const { gainNode } = get();
     if (!gainNode) return;
-    gainNode.gain.value = Math.max(0, Math.min(1, volume));
+
+    const result = Math.max(0, Math.min(1, desiredVolume));
+    gainNode.gain.value = result;
+    set({ volume: result });
   },
 
   clearAudio: () => {
