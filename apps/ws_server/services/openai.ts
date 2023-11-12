@@ -51,7 +51,7 @@ async function logStreamedOpenAIResponse(
 
   // Output
   let content = '';
-  let function_call_name = '';
+  let function_call_name = chunks[0].choices[0].delta.function_call?.name || '';
   let function_call_args = '';
 
   for (const chunk of chunks) {
@@ -59,8 +59,7 @@ async function logStreamedOpenAIResponse(
       content += chunk.choices[0].delta.content;
     }
 
-    if (chunk.choices[0].delta.function_call) {
-      function_call_name += chunk.choices[0].delta.function_call.name;
+    if (chunk.choices[0].delta.function_call?.arguments) {
       function_call_args += chunk.choices[0].delta.function_call.arguments;
     }
   }
