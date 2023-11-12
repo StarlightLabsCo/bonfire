@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 import { setupAudio } from '@/lib/audio';
 import { clearBufferedPlayerNodeBuffer } from '@/lib/audio/playback';

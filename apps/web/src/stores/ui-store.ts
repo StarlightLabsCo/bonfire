@@ -1,3 +1,5 @@
+'use client';
+
 import { ToasterToast } from '@/components/ui/use-toast';
 import { create } from 'zustand';
 

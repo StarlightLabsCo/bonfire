@@ -61,33 +61,65 @@ export function UserInfo({
     <div className="w-full h-14 px-2 flex flex-col items-center justify-center">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger />
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent className="w-56 bg-neutral-950 border-white/10">
+          <DropdownMenuLabel>Community</DropdownMenuLabel>
           <DropdownMenuGroup>
-            {/* <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem> */}
+            <DropdownMenuItem
+              onClick={() => {
+                window.open('https://discord.gg/q4SFyvHzwC', '_blank');
+              }}
+              className="font-light cursor-pointer focus:bg-neutral-800"
+            >
+              <Icons.discord className="mr-2 h-3 w-3" />
+              Discord
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                window.open('https://twitter.com/starlightlabsco', '_blank');
+              }}
+              className="font-light cursor-pointer focus:bg-neutral-800"
+            >
+              <Icons.twitter className="mr-2 h-3 w-3" />
+              Twitter
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuGroup>
             {stripeSubscriptionId ? (
-              <DropdownMenuItem onClick={() => createPortalSession()}>Manage Subscription</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => createPortalSession()}
+                className="font-light cursor-pointer focus:bg-neutral-800"
+              >
+                <Icons.creditCard className="mr-2 h-3 w-3" />
+                Billing
+              </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem onClick={() => createCheckoutSession()}>Upgrade</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => createCheckoutSession()}
+                className="font-light cursor-pointer focus:bg-neutral-800"
+              >
+                <Icons.rocket className="mr-2 h-3 w-3" />
+                Upgrade
+              </DropdownMenuItem>
             )}
-            {/* <DropdownMenuItem>
+            {/* <DropdownMenuItem
+              onClick={() => createCheckoutSession()}
+              className="font-light cursor-pointer focus:bg-neutral-800"
+            >
+              <Icons.gear className="mr-2 h-3 w-3" />
               Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem> */}
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuSeparator className="bg-white/10" />
+          <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer focus:bg-neutral-800">
+            <Icons.exit className="mr-2 h-3 w-3" />
             Log out
-            {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <div
-        className="w-full h-12 flex items-center justify-between p-2 rounded-md hover:bg-white/10"
+        className="w-full h-12 flex items-center justify-between p-2 rounded-md hover:bg-neutral-800"
         onClick={() => {
           setOpen(true);
         }}
