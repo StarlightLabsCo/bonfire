@@ -5,7 +5,6 @@ import { sendToUser } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
 import { openai } from '../../services/openai';
-import { embedMessage } from '../context/embedding';
 
 export async function continueStory(connectionId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   const message = await db.message.create({
@@ -127,8 +126,6 @@ export async function continueStory(connectionId: string, instanceId: string, me
       content: buffer,
     },
   });
-
-  embedMessage(updatedMessage.id, buffer);
 
   return [
     ...messages,

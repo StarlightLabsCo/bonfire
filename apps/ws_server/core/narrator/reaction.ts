@@ -2,7 +2,6 @@ import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { openai } from '../../services/openai';
 import { MessageRole } from 'database';
 import { db } from '../../services/db';
-import { embedMessage } from '../context/embedding';
 
 export async function narratorReaction(instanceId: string, messages: ChatCompletionMessageParam[]) {
   // ---- Reacting to the player's action & diceroll ----
@@ -50,8 +49,6 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
       name: 'narrator_internal_monologue_reaction',
     },
   });
-
-  embedMessage(reactionMessage.id, `[Narrator Inner Monologue] As the narrator, I feel ${reactionArgs.reaction}`);
 
   // ---- Adjusting the story ----
   const planningResponse = await openai.chat.completions.create({
@@ -105,11 +102,6 @@ export async function narratorReaction(instanceId: string, messages: ChatComplet
       role: MessageRole.system,
     },
   });
-
-  embedMessage(
-    planningMessage.id,
-    `[Narrator Inner Monologue] To adjust the story going forward, I will ${planningArgs.plan}`,
-  );
 
   return [
     ...messages,

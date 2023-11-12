@@ -2,13 +2,11 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [vector]
 }
 
 // Next Auth
@@ -71,7 +69,6 @@ model User {
 
   // Payment / Monetization
   stripeCustomerId String? @unique
-  plan             UserPlan @default(FREE)
 
   stripeSubscriptionId     String?
   stripeSubscriptionStatus String?
@@ -82,15 +79,9 @@ model User {
   // Logging / Dataset Collection
   openAIRequestLog     OpenAIRequestLog[]
   elevenLabsRequestLog ElevenLabsRequestLog[]
-  replicateRequestLog  ReplicateRequestLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-enum UserPlan {
-  FREE
-  BASIC
 }
 
 model Instance {
@@ -110,20 +101,14 @@ model Instance {
 }
 
 model Message {
-  // Starlight specific
   id String @id @default(cuid())
 
   instance   Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
   instanceId String
 
-  embedding  Unsupported("vector(1536)")?
-  importance Int?
-  accessedAt DateTime?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // OpenAI
   role         MessageRole
   content      String
   name         String?
@@ -172,34 +157,13 @@ model OpenAIRequestLog {
   @@index([tag])
 }
 
-model ReplicateRequestLog {
-  id String @id @default(cuid())
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  prompt         String @db.Text
-  negativePrompt String @db.Text
-  width          Int
-  height         Int
-  scheduler      String
-  refine         String
-
-  imageURL String?
-
-  time Int?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model ElevenLabsRequestLog {
   id String @id @default(cuid())
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  requestedCharacters String
+  text String
   numCharacters       Int
 
   createdAt DateTime @default(now())
