@@ -12,7 +12,7 @@ export function AudioSidebar() {
     setVolume(value[0] / 100);
   };
 
-  const value = [volume * 100];
+  const value = volume != null ? [volume * 100] : [100];
 
   return (
     <div className="h-10 w-full p-4 flex gap-x-4 items-center">
