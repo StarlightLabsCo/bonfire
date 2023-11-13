@@ -93,7 +93,7 @@ export function ShareLinkDialog() {
 
   return (
     <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-      <DialogContent className="bg-black">
+      <DialogContent className="bg-neutral-950 border-white/10">
         <DialogHeader>
           <DialogTitle>Spread the tales of your journey</DialogTitle>
           <DialogDescription>
@@ -103,7 +103,12 @@ export function ShareLinkDialog() {
                 <Switch checked={checked} onCheckedChange={setInstancePublic} />
                 {checked ? 'Public' : 'Private'}
               </div>
-              <Button variant={'outline'} disabled={!checked} onClick={copyLink}>
+              <Button
+                variant={'outline'}
+                className="bg-neutral-950 border-white/10 hover:bg-neutral-800"
+                disabled={!checked}
+                onClick={copyLink}
+              >
                 Copy Link
               </Button>
             </div>

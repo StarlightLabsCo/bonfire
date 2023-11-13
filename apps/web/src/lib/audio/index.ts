@@ -14,14 +14,19 @@ export async function setupAudio() {
 
   // Gain node for volume control / mute
   const gainNode = audioContext.createGain();
-  gainNode.gain.value = 1;
 
   bufferedPlayerNode.connect(gainNode);
   gainNode.connect(audioContext.destination);
+
+  // Retrieve browser volume from local storage
+  let volume = localStorage.getItem('volume') ? parseFloat(localStorage.getItem('volume') as string) : 0.75;
+
+  gainNode.gain.value = volume;
 
   return {
     audioContext,
     bufferedPlayerNode,
     gainNode,
+    volume,
   };
 }

@@ -20,7 +20,7 @@ export function StripeCheckoutDialog() {
 
   return (
     <Dialog open={isStripeCheckoutDialogOpen} onOpenChange={setIsStripeCheckoutDialogOpen}>
-      <DialogContent className="bg-black max-h-[90%] overflow-auto">
+      <DialogContent className="bg-neutral-950 border-white/10 max-h-[90%] overflow-auto">
         <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
           <EmbeddedCheckout />
         </EmbeddedCheckoutProvider>

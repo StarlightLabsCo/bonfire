@@ -12,44 +12,45 @@ type PlaybackStore = {
   bufferedPlayerNode: AudioWorkletNode | null;
   gainNode: GainNode | null;
   socketState: string;
-  volume: number;
+  volume: number | null;
   setVolume: (volume: number) => void;
   clearAudio: () => void;
   setup: () => void;
 };
 
-export const usePlaybackStore = create<PlaybackStore>((set, get) => ({
-  audioContext: null,
-  bufferedPlayerNode: null,
-  gainNode: null,
-  socketState: '',
+export const usePlaybackStore = create<PlaybackStore>((set, get) => {
+  return {
+    audioContext: null,
+    bufferedPlayerNode: null,
+    gainNode: null,
+    socketState: '',
+    volume: null,
+    setVolume: (desiredVolume: number) => {
+      const { gainNode } = get();
+      if (!gainNode) return;
 
-  volume: 0.75,
-  setVolume: (desiredVolume: number) => {
-    const { gainNode } = get();
-    if (!gainNode) return;
+      const result = Math.max(0, Math.min(1, desiredVolume));
+      gainNode.gain.value = result;
+      set({ volume: result });
 
-    const result = Math.max(0, Math.min(1, desiredVolume));
-    gainNode.gain.value = result;
-    set({ volume: result });
-  },
+      localStorage.setItem('volume', result.toString());
+    },
+    clearAudio: () => {
+      const sendToServer = useWebsocketStore.getState().sendToServer;
+      sendToServer({
+        type: StarlightWebSocketRequestType.stopAudio,
+        data: {},
+      } as StopAudioRequest);
 
-  clearAudio: () => {
-    const sendToServer = useWebsocketStore.getState().sendToServer;
-    sendToServer({
-      type: StarlightWebSocketRequestType.stopAudio,
-      data: {},
-    } as StopAudioRequest);
+      const { bufferedPlayerNode } = get();
+      clearBufferedPlayerNodeBuffer(bufferedPlayerNode);
+    },
+    setup: async () => {
+      const { audioContext, bufferedPlayerNode, gainNode, volume } = await setupAudio();
 
-    const { bufferedPlayerNode } = get();
-    clearBufferedPlayerNodeBuffer(bufferedPlayerNode);
-  },
+      set({ audioContext, bufferedPlayerNode, gainNode, volume });
 
-  setup: async () => {
-    const { audioContext, bufferedPlayerNode, gainNode } = await setupAudio();
-
-    set({ audioContext, bufferedPlayerNode, gainNode });
-
-    useTranscriptionStore.getState().setupAudioRecorder();
-  },
-}));
+      useTranscriptionStore.getState().setupAudioRecorder();
+    },
+  };
+});

@@ -10,15 +10,13 @@ export function OutOfCreditsDialog() {
 
   return (
     <Dialog open={isCreditsDialogOpen} onOpenChange={setIsCreditsDialogOpen}>
-      <DialogContent className="bg-black">
+      <DialogContent className="bg-neutral-950 border-white/10">
         <DialogHeader>
           <DialogTitle>Want to continue the adventure?</DialogTitle>
-          {/* Swap to stripe payment link */}
           <DialogDescription>
-            <div className="mb-5">Join our Discord community, and reach out!</div>
-            <a href="https://discord.gg/pnQkCHaz4M">
-              <Button>Join</Button>
-            </a>
+            <div className="mb-5">Upgrade to the premium tier to continue today.</div>
+
+            <Button>Subscribe</Button>
           </DialogDescription>
           <DialogDescription className="text-xs pt-5 text-gray-600">
             (We&apos;ve unfortunately run out of free credits to give you.)

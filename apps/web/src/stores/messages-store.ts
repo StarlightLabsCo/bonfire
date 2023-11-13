@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { Message } from '@prisma/client';
+import { MessageRole } from 'database';
 
 type MessagesStore = {
   messages: Array<Message>;
@@ -13,28 +14,51 @@ type MessagesStore = {
 
   submittedMessage: string | null;
   setSubmittedMessage: (submittedMessage: string | null) => void;
+
+  streamedMessageId: string | null;
+  streamedWords: Array<string> | null;
 };
 
-export const useMessagesStore = create<MessagesStore>((set) => ({
+export const useMessagesStore = create<MessagesStore>((set, get) => ({
   messages: [],
   setMessages: (messages) => set(() => ({ messages })),
-  addMessage: (message: Message) =>
-    set((state) => ({
-      messages: [...state.messages, message],
-    })),
-  appendMessage: (messageId: string, delta: string) =>
+  addMessage: (message: Message) => {
+    if (message.role === MessageRole.assistant) {
+      set((state) => ({
+        messages: [...state.messages, message],
+        streamedMessageId: message.id,
+        streamedWords: message.content.split(' '),
+      }));
+    } else {
+      set((state) => ({
+        messages: [...state.messages, message],
+        streamedMessageId: null,
+        streamedWords: null,
+      }));
+    }
+  },
+  appendMessage: (messageId: string, delta: string) => {
+    let content: string | null = null;
+    let streamedMessageId: string | null = null;
+
     set((state) => ({
       messages: state.messages.map((m) => {
         if (m.id === messageId) {
+          streamedMessageId = m.id;
+          content = m.content + delta;
+
           return {
             ...m,
-            content: m.content + delta,
+            content,
           };
         }
         return m;
       }),
-    })),
-  replaceMessage: (messageId: string, content: string) =>
+      streamedMessageId,
+      streamedWords: content!.split(' '),
+    }));
+  },
+  replaceMessage: (messageId: string, content: string) => {
     set((state) => ({
       messages: state.messages.map((m) => {
         if (m.id === messageId) {
@@ -45,7 +69,10 @@ export const useMessagesStore = create<MessagesStore>((set) => ({
         }
         return m;
       }),
-    })),
+      streamedMessageId: null,
+      streamedWords: null,
+    }));
+  },
   deleteMessage: (id: string) =>
     set((state) => ({
       messages: state.messages.filter((m) => m.id !== id),
@@ -53,4 +80,7 @@ export const useMessagesStore = create<MessagesStore>((set) => ({
 
   submittedMessage: null,
   setSubmittedMessage: (submittedMessage: string | null) => set(() => ({ submittedMessage })),
+
+  streamedWords: null,
+  streamedMessageId: null,
 }));

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Instance, Message } from '@prisma/client';
 import { IBM_Plex_Serif } from 'next/font/google';
@@ -30,13 +30,10 @@ export function Story({
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
   const messages = useMessagesStore((state) => state.messages);
   const setMessages = useMessagesStore((state) => state.setMessages);
-  const submittedMessage = useMessagesStore((state) => state.submittedMessage);
 
-  const [latestMessage, setLatestMessage] = useState<{
-    id: string;
-    role: string;
-    words: string[];
-  }>();
+  const submittedMessage = useMessagesStore((state) => state.submittedMessage);
+  const streamedMessageId = useMessagesStore((state) => state.streamedMessageId);
+  const streamedWords = useMessagesStore((state) => state.streamedWords);
 
   useEffect(() => {
     setMessages(dbMessages);
@@ -56,18 +53,6 @@ export function Story({
     }
   }, [messages, submittedMessage]);
 
-  useEffect(() => {
-    const lastAssistantMessage = messages.filter((message) => message.role === 'assistant').slice(-1)[0];
-
-    if (lastAssistantMessage) {
-      setLatestMessage({
-        id: lastAssistantMessage.id,
-        role: lastAssistantMessage.role,
-        words: lastAssistantMessage.content.split(' '),
-      });
-    }
-  }, [messages]);
-
   return (
     <div className="flex flex-col items-center w-full h-full px-8 pb-2 md:px-16">
       {user && <OpenSidebar />}
@@ -75,10 +60,10 @@ export function Story({
         className={`${cormorantGaramond.className} h-full flex flex-col items-center w-full overflow-y-auto gap-y-8 leading-8 font-[400] text-sm md:text-lg pt-8`}
       >
         {messages.map((message: Message) => {
-          if (message.id === latestMessage?.id && message.role === 'assistant') {
+          if (streamedMessageId === message.id && streamedWords) {
             return (
               <div key={message.id} className="w-full">
-                {latestMessage.words.map((word, index) => (
+                {streamedWords.map((word, index) => (
                   <span key={`${message.id}-${index}`} className="fade-in-fast">
                     {word}{' '}
                   </span>
