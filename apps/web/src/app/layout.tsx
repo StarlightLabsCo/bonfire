@@ -5,6 +5,7 @@ import { PHProvider, PostHogPageview } from '@/components/analytics/posthog';
 import { PosthogIdentify } from '@/components/analytics/posthog';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Analytics } from '@vercel/analytics/react';
+import { AxiomWebVitals } from 'next-axiom';
 
 import SessionProvider from '@/components/session-provider';
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
               {children}
               <Analytics />
+              <AxiomWebVitals />
               <PosthogIdentify />
             </ThemeProvider>
           </SessionProvider>

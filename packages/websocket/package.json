@@ -4,7 +4,7 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "dependencies": {
-    "database": "workspace:*",
+    "database": "*",
     "zod": "^3.22.4"
   }
 }

@@ -1,7 +1,14 @@
+import * as Sentry from '@sentry/bun';
+
+Sentry.init({
+  dsn: 'https://eb3b2ac19b33d61180ea7f2c6d1bc974@o4506103705174016.ingest.sentry.io/4506217287778304',
+  tracesSampleRate: 1.0,
+});
+
 import { WebSocketAuthenticationToken } from 'database';
 import { db } from '../services/db';
 
-import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
+import { StarlightWebSocketRequestType } from 'websocket/types';
 import { validateRequest } from 'websocket/utils';
 
 import { clearWebsocketFromConnection, handleWebsocketConnected } from './connection';

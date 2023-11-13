@@ -10,10 +10,10 @@
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
     "turbo": "latest",
-    "tsconfig": "workspace:*"
+    "tsconfig": "*"
   },
   "name": "bonfire",
-  "packageManager": "bun@1.0.10",
+  "packageManager": "npm@10.2.3",
   "workspaces": [
     "apps/*",
     "packages/*"
