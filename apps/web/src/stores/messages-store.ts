@@ -8,8 +8,8 @@ type MessagesStore = {
   messages: Array<Message>;
   setMessages: (messages: Array<Message>) => void;
   addMessage: (message: Message) => void;
-  appendMessage: (messageId: string, delta: string) => void;
   replaceMessage: (messageId: string, content: string) => void;
+  upsertMessage: (message: Message) => void;
   deleteMessage: (id: string) => void;
 
   submittedMessage: string | null;
@@ -37,27 +37,6 @@ export const useMessagesStore = create<MessagesStore>((set, get) => ({
       }));
     }
   },
-  appendMessage: (messageId: string, delta: string) => {
-    let content: string | null = null;
-    let streamedMessageId: string | null = null;
-
-    set((state) => ({
-      messages: state.messages.map((m) => {
-        if (m.id === messageId) {
-          streamedMessageId = m.id;
-          content = m.content + delta;
-
-          return {
-            ...m,
-            content,
-          };
-        }
-        return m;
-      }),
-      streamedMessageId,
-      streamedWords: content!.split(' '),
-    }));
-  },
   replaceMessage: (messageId: string, content: string) => {
     set((state) => ({
       messages: state.messages.map((m) => {
@@ -72,6 +51,24 @@ export const useMessagesStore = create<MessagesStore>((set, get) => ({
       streamedMessageId: null,
       streamedWords: null,
     }));
+  },
+  upsertMessage: (message: Message) => {
+    let found = false;
+
+    set((state) => ({
+      messages: state.messages.map((m) => {
+        if (m.id === message.id) {
+          found = true;
+          return message;
+        }
+        return m;
+      }),
+      streamedWords: state.streamedMessageId === message.id ? message.content.split(' ') : null,
+    }));
+
+    if (!found) {
+      get().addMessage(message);
+    }
   },
   deleteMessage: (id: string) =>
     set((state) => ({

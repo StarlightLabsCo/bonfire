@@ -64,6 +64,7 @@ export async function continueStory(
   // Handle streaming response
   let chunks = [];
   let buffer = '';
+  let content = '';
 
   for await (const chunk of response) {
     chunks.push(chunk);
@@ -95,12 +96,17 @@ export async function continueStory(
         continue;
       }
 
+      content += args;
+
       sendToUser(connectionId, {
-        type: StarlightWebSocketResponseType.messageAppend,
+        type: StarlightWebSocketResponseType.messageUpsert,
         data: {
           instanceId: instanceId,
-          messageId: message.id,
-          delta: args,
+          message: {
+            ...message,
+            content,
+            updatedAt: new Date(),
+          },
         },
       });
 

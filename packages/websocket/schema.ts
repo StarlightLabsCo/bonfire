@@ -145,19 +145,6 @@ export const MessageAddedResponseZodSchema: z.ZodType<Types.MessageAddedResponse
   })
   .strict();
 
-export const MessageAppendResponseZodSchema: z.ZodType<Types.MessageAppendResponse> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketResponseType.messageAppend),
-    data: z
-      .object({
-        instanceId: z.string(),
-        messageId: z.string(),
-        delta: z.string(),
-      })
-      .strict(),
-  })
-  .strict();
-
 export const MessageReplaceResponseZodSchema: z.ZodType<Types.MessageReplaceResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.messageReplace),
@@ -166,6 +153,18 @@ export const MessageReplaceResponseZodSchema: z.ZodType<Types.MessageReplaceResp
         instanceId: z.string(),
         messageId: z.string(),
         content: z.string(),
+      })
+      .strict(),
+  })
+  .strict();
+
+export const MessageUpsertResponseZodSchema: z.ZodType<Types.MessageUpsertResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.messageUpsert),
+    data: z
+      .object({
+        instanceId: z.string(),
+        message: MessageZodSchema,
       })
       .strict(),
   })
@@ -267,8 +266,8 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.adventureSuggestionsCreated]: AdventureSuggestionsCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceCreated]: InstanceCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageAdded]: MessageAddedResponseZodSchema,
-  [Types.StarlightWebSocketResponseType.messageAppend]: MessageAppendResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageReplace]: MessageReplaceResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.messageUpsert]: MessageUpsertResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageDeleted]: MessageDeletedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.audioCreated]: AudioCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed]: VoiceTranscriptionProcessedResponseZodSchema,

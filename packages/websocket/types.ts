@@ -117,8 +117,8 @@ export type StarlightWebSocketResponse =
   | AdventureSuggestionsCreatedResponse
   | InstanceCreatedResponse
   | MessageAddedResponse
-  | MessageAppendResponse
   | MessageReplaceResponse
+  | MessageUpsertResponse
   | MessageDeletedResponse
   | AudioCreatedResponse
   | VoiceTranscriptionProcessedResponse
@@ -136,8 +136,8 @@ export enum StarlightWebSocketResponseType {
   adventureSuggestionsCreated,
   instanceCreated,
   messageAdded,
-  messageAppend,
   messageReplace,
+  messageUpsert,
   messageDeleted,
   audioCreated,
   voiceTranscriptionProcessed,
@@ -184,18 +184,6 @@ export type ActionSuggestion = {
   modifier: number;
 };
 
-// Message Updated
-export type MessageAppendResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.messageAppend,
-  MessageAppendData
->;
-
-export type MessageAppendData = {
-  instanceId: string;
-  messageId: string;
-  delta: string;
-};
-
 // Message Replace
 export type MessageReplaceResponse = GenericStarlightWebSocketResponse<
   StarlightWebSocketResponseType.messageReplace,
@@ -206,6 +194,17 @@ export type MessageReplaceData = {
   instanceId: string;
   messageId: string;
   content: string;
+};
+
+// Message Upsert
+export type MessageUpsertResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.messageUpsert,
+  MessageUpsertData
+>;
+
+export type MessageUpsertData = {
+  instanceId: string;
+  message: Message;
 };
 
 // Message Deleted

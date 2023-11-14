@@ -10,7 +10,7 @@ import { handleMessageDeleted } from './message/messageDeleted';
 import { handleOutOfCredits } from './outOfCredits';
 import { handleError } from './error';
 import { handleMessageReplace } from './message/messageReplace';
-import { handleMessageAppend } from './message/messageAppend';
+import { handleMessageUpsert } from './message/messageUpsert';
 
 export const handlers = {
   [StarlightWebSocketResponseType.heartbeatServerRequest]: handleHeartbeatRequest,
@@ -19,8 +19,8 @@ export const handlers = {
   [StarlightWebSocketResponseType.adventureSuggestionsCreated]: handleAdventureSuggestionsCreated,
   [StarlightWebSocketResponseType.instanceCreated]: handleInstanceCreated,
   [StarlightWebSocketResponseType.messageAdded]: handleMessageAdded,
-  [StarlightWebSocketResponseType.messageAppend]: handleMessageAppend,
   [StarlightWebSocketResponseType.messageReplace]: handleMessageReplace,
+  [StarlightWebSocketResponseType.messageUpsert]: handleMessageUpsert,
   [StarlightWebSocketResponseType.messageDeleted]: handleMessageDeleted,
   [StarlightWebSocketResponseType.audioCreated]: handleAudioCreated,
   [StarlightWebSocketResponseType.voiceTranscriptionProcessed]: handleVoiceTranscriptionProcessed,

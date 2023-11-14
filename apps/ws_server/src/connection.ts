@@ -34,6 +34,8 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 
   // Delete the queue after sending
   await redis.del(key);
+
+  // TODO: reroute any old conenctionid messages to the new connectionid
 }
 
 export function sendToUser(connectionId: string, data: StarlightWebSocketResponse) {

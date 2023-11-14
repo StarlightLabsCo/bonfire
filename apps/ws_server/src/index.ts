@@ -115,9 +115,9 @@ const server = Bun.serve<WebSocketData>({
 
       clearHeartbeat(ws);
 
-      if (!ws.data.connectionId) return;
-
-      clearWebsocketFromConnection(ws.data.connectionId);
+      if (ws.data.connectionId) {
+        clearWebsocketFromConnection(ws.data.connectionId);
+      }
     },
   },
 });
