@@ -14,6 +14,9 @@
       "cache": false,
       "persistent": true
     },
+    "start": {
+      "dependsOn": ["^db:generate", "^build"]
+    },
     "build": {
       "dependsOn": ["^db:generate", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
