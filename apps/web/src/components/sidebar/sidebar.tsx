@@ -77,7 +77,7 @@ export function Sidebar({
       {/* Mobile */}
       <div
         className={cn(
-          'absolute z-20 w-full max-w-xs h-screen max-h-screen bg-black border-r border-white/10 overflow-auto md:hidden flex flex-col transition-transform duration-200 ease-in-out',
+          'absolute z-20 w-full max-w-xs h-[100dvh] max-h-[100dvh] bg-black border-r border-white/10 overflow-auto md:hidden flex flex-col transition-transform duration-200 ease-in-out',
           isSidebarOpen ? 'transform translate-x-0' : 'transform -translate-x-full',
         )}
         onTransitionEnd={handleTransitionEnd}
@@ -90,7 +90,7 @@ export function Sidebar({
 
       <div
         {...bind()}
-        className={`h-screen w-screen z-10 bg-black/80 fixed top-0 left-0 md:hidden  ${
+        className={`h-[100dvh] w-screen z-10 bg-black/80 fixed top-0 left-0 md:hidden  ${
           isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
         }`}
       />

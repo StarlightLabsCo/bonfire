@@ -168,8 +168,4 @@
   .animate-background-transition {
     animation: background-image-transition 5s ease-in-out;
   }
-
-  .h-full-dvh {
-    height: 100dvh;
-  }
 }
