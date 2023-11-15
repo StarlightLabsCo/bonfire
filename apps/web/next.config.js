@@ -7,7 +7,14 @@ const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['websocket'],
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: process.env.NEXT_PUBLIC_IMAGES_HOSTNAME }],
+    remotePatterns: [
+      { protocol: 'https', hostname: process.env.NEXT_PUBLIC_IMAGES_HOSTNAME },
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_OPENAI_DALLE3_HOSTNAME,
+        pathname: process.env.NEXT_PUBLIC_OPENAI_DALLE3_PATHNAME,
+      },
+    ],
   },
 };
 
