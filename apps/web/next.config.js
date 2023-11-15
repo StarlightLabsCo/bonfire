@@ -7,7 +7,7 @@ const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['websocket'],
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: process.env.NEXT_PUBLIC_S3_PUBLIC_URL }],
+    remotePatterns: [{ protocol: 'https', hostname: process.env.NEXT_PUBLIC_IMAGES_HOSTNAME }],
   },
 };
 
