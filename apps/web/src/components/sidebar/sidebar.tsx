@@ -90,6 +90,7 @@ export function Sidebar({
 
       <div
         {...bind()}
+        onClick={() => closeSidebar()}
         className={`h-[100dvh] w-screen z-10 bg-black/80 fixed top-0 left-0 md:hidden  ${
           isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
         }`}
