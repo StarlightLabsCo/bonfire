@@ -6,12 +6,7 @@ import { StarlightWebSocketResponseType } from 'websocket/types';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
 import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 
-export async function continueStory(
-  userId: string,
-  connectionId: string,
-  instanceId: string,
-  messages: ChatCompletionMessageParam[],
-) {
+export async function continueStory(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   const message = await db.message.create({
     data: {
       instance: {
@@ -25,7 +20,7 @@ export async function continueStory(
     },
   });
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId: instanceId,
@@ -33,7 +28,7 @@ export async function continueStory(
     },
   });
 
-  await initSpeechStreamConnection(connectionId);
+  await initSpeechStreamConnection(userId);
 
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
@@ -98,7 +93,7 @@ export async function continueStory(
 
       content += args;
 
-      sendToUser(connectionId, {
+      sendToUser(userId, {
         type: StarlightWebSocketResponseType.messageUpsert,
         data: {
           instanceId: instanceId,
@@ -110,13 +105,13 @@ export async function continueStory(
         },
       });
 
-      appendToSpeechStream(connectionId, args);
+      appendToSpeechStream(userId, args);
     } catch (err) {
       console.error(err);
     }
   }
 
-  endSpeechStream(connectionId);
+  endSpeechStream(userId);
   const endTime = Date.now();
 
   // Cleanup - need to make this more robust and cleaner
@@ -124,7 +119,7 @@ export async function continueStory(
   buffer = buffer.replace(new RegExp(`{\\s*"story"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageReplace,
     data: {
       instanceId: instanceId,

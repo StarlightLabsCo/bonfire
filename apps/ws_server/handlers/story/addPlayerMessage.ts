@@ -20,7 +20,6 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
   }
 
   const userId = ws.data.webSocketToken?.userId!;
-  const connectionId = ws.data.connectionId!;
 
   const { instanceId, message } = request.data;
 
@@ -57,7 +56,7 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     },
   });
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId,
@@ -74,7 +73,7 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
 
   messages = await rollDice(userId, instance.id, messages);
   messages = await narratorReaction(userId, instance.id, messages);
-  messages = await continueStory(userId, connectionId, instance.id, messages);
-  messages = await createImage(userId, connectionId, instance.id, messages);
-  messages = await generateActionSuggestions(userId, connectionId, instance.id, messages);
+  messages = await continueStory(userId, instance.id, messages);
+  messages = await createImage(userId, instance.id, messages);
+  messages = await generateActionSuggestions(userId, instance.id, messages);
 }

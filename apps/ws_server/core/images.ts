@@ -6,12 +6,7 @@ import { db } from '../services/db';
 import { MessageRole } from 'database';
 import { uploadImageToR2 } from '../services/cloudflare';
 
-export async function createImage(
-  userId: string,
-  connectionId: string,
-  instanceId: string,
-  messages: ChatCompletionMessageParam[],
-) {
+export async function createImage(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   let modifiedMessages = messages
     .map((message) => {
       if (message.role == 'function' && message.name == 'generate_image') {
@@ -73,7 +68,7 @@ export async function createImage(
     },
   });
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId: instanceId,

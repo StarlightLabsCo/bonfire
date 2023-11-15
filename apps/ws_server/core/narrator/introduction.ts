@@ -6,12 +6,7 @@ import { StarlightWebSocketResponseType } from 'websocket/types';
 import { sendToUser } from '../../src/connection';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
 
-export async function introduceStory(
-  userId: string,
-  connectionId: string,
-  instanceId: string,
-  messages: ChatCompletionMessageParam[],
-) {
+export async function introduceStory(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
   const message = await db.message.create({
     data: {
       instance: {
@@ -25,7 +20,7 @@ export async function introduceStory(
     },
   });
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId: instanceId,
@@ -33,7 +28,7 @@ export async function introduceStory(
     },
   });
 
-  await initSpeechStreamConnection(connectionId);
+  await initSpeechStreamConnection(userId);
 
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
@@ -97,7 +92,7 @@ export async function introduceStory(
 
       content += args;
 
-      sendToUser(connectionId, {
+      sendToUser(userId, {
         type: StarlightWebSocketResponseType.messageUpsert,
         data: {
           instanceId: instanceId,
@@ -109,13 +104,13 @@ export async function introduceStory(
         },
       });
 
-      appendToSpeechStream(connectionId, args);
+      appendToSpeechStream(userId, args);
     } catch (err) {
       console.error(err);
     }
   }
 
-  endSpeechStream(connectionId);
+  endSpeechStream(userId);
 
   const endTime = Date.now();
 
@@ -124,7 +119,7 @@ export async function introduceStory(
   buffer = buffer.replace(new RegExp(`{\\s*"introduction"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageReplace,
     data: {
       instanceId: instanceId,

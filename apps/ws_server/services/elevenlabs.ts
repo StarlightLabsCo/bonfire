@@ -6,9 +6,9 @@ if (!process.env.ELEVEN_LABS_API_KEY) {
   throw new Error('ELEVEN_LABS_API_KEY is not defined');
 }
 
-const connectionIdToElevenLabsWs: { [key: string]: WebSocket } = {};
+const userIdToElevenLabsWs: { [key: string]: WebSocket } = {};
 
-export function initSpeechStreamConnection(connectionId: string, narratorId: string = '1Tbay5PQasIwgSzUscmj') {
+export function initSpeechStreamConnection(userId: string, narratorId: string = '1Tbay5PQasIwgSzUscmj') {
   return new Promise<WebSocket>((resolve) => {
     let ws = new WebSocket(
       `wss://api.elevenlabs.io/v1/text-to-speech/${narratorId}/stream-input?model_id=eleven_monolingual_v1&output_format=pcm_44100`,
@@ -26,7 +26,7 @@ export function initSpeechStreamConnection(connectionId: string, narratorId: str
         }),
       );
 
-      connectionIdToElevenLabsWs[connectionId] = ws;
+      userIdToElevenLabsWs[userId] = ws;
       resolve(ws);
     });
 
@@ -34,7 +34,7 @@ export function initSpeechStreamConnection(connectionId: string, narratorId: str
       const data = JSON.parse(event.data.toString());
 
       if (data.audio) {
-        sendToUser(connectionId, {
+        sendToUser(userId, {
           type: StarlightWebSocketResponseType.audioCreated,
           data: {
             audio: data.audio,
@@ -44,19 +44,19 @@ export function initSpeechStreamConnection(connectionId: string, narratorId: str
     });
 
     ws.addEventListener('error', (err) => {
-      delete connectionIdToElevenLabsWs[connectionId];
+      delete userIdToElevenLabsWs[userId];
       console.error(`Error from 11 labs.`, err);
     });
 
     ws.addEventListener('close', (event) => {
-      delete connectionIdToElevenLabsWs[connectionId];
+      delete userIdToElevenLabsWs[userId];
       console.log(`Disconnected from 11 labs.`, event.code, event.reason);
     });
   });
 }
 
-export function appendToSpeechStream(connectionId: string, args: string) {
-  const ws = connectionIdToElevenLabsWs[connectionId];
+export function appendToSpeechStream(userId: string, args: string) {
+  const ws = userIdToElevenLabsWs[userId];
   if (!ws || ws.readyState != WebSocket.OPEN) {
     console.error(`Tried to append word to speech stream but not connected to 11 labs.`);
     return;
@@ -65,8 +65,8 @@ export function appendToSpeechStream(connectionId: string, args: string) {
   ws.send(JSON.stringify({ text: args }));
 }
 
-export function endSpeechStream(connectionId: string) {
-  const ws = connectionIdToElevenLabsWs[connectionId];
+export function endSpeechStream(userId: string) {
+  const ws = userIdToElevenLabsWs[userId];
   if (!ws || ws.readyState != WebSocket.OPEN) {
     console.error(`Tried to end speech stream but not connected to 11 labs.`);
     return;

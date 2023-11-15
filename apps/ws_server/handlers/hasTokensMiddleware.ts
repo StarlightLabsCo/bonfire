@@ -29,7 +29,7 @@ export function hasTokensMiddleware(
       console.log(`[hasTokensMiddleware] User ${user.id} does not have active subscription, checking tokens...`);
       const tokens = await db.openAIRequestLog.aggregate({
         where: {
-          userId: ws.data.webSocketToken?.userId,
+          userId: user.id,
         },
         _sum: {
           totalTokens: true,
@@ -40,7 +40,7 @@ export function hasTokensMiddleware(
 
       if (tokens._sum.totalTokens && tokens._sum.totalTokens > 100000) {
         console.log(`[hasTokensMiddleware] Sending out of credits message...`);
-        sendToUser(ws.data.connectionId!, {
+        sendToUser(user.id, {
           type: StarlightWebSocketResponseType.outOfCredits,
           data: {},
         });

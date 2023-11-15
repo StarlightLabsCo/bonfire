@@ -4,7 +4,7 @@ import { sendToUser } from '../../src/connection';
 import { Instance } from 'database';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
-export async function generateAdventureSuggestions(userId: string, connectionId: string, instances: Instance[]) {
+export async function generateAdventureSuggestions(userId: string, instances: Instance[]) {
   const messages = [
     {
       role: 'system',
@@ -58,7 +58,7 @@ export async function generateAdventureSuggestions(userId: string, connectionId:
   const args = response.choices[0].message.function_call.arguments;
   const argsJSON = JSON.parse(args);
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.adventureSuggestionsCreated,
     data: {
       suggestions: argsJSON.new_adventure_suggestions,

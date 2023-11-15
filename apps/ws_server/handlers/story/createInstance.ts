@@ -21,7 +21,6 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
   }
 
   const userId = ws.data.webSocketToken?.userId!;
-  const connectionId = ws.data.connectionId!;
 
   const instance = await db.instance.create({
     data: {
@@ -38,14 +37,14 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
   let messages = await initStory(instance.id, request.data.description);
   messages = await createOutline(userId, instance.id, messages);
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.instanceCreated,
     data: {
       instanceId: instance.id,
     },
   });
 
-  messages = await introduceStory(userId, connectionId, instance.id, messages);
-  messages = await createImage(userId, connectionId, instance.id, messages);
-  messages = await generateActionSuggestions(userId, connectionId, instance.id, messages);
+  messages = await introduceStory(userId, instance.id, messages);
+  messages = await createImage(userId, instance.id, messages);
+  messages = await generateActionSuggestions(userId, instance.id, messages);
 }

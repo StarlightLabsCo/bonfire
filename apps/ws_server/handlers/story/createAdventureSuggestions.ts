@@ -13,7 +13,6 @@ export async function createAdventureSuggestionsHandler(
   }
 
   const userId = ws.data.webSocketToken?.userId!;
-  const connectionId = ws.data.connectionId!;
 
   const instances = await db.instance.findMany({
     where: {
@@ -24,5 +23,5 @@ export async function createAdventureSuggestionsHandler(
     },
   });
 
-  await generateAdventureSuggestions(userId, connectionId, instances);
+  await generateAdventureSuggestions(userId, instances);
 }

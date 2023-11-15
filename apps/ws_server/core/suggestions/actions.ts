@@ -7,7 +7,6 @@ import { MessageRole } from 'database';
 
 export async function generateActionSuggestions(
   userId: string,
-  connectionId: string,
   instanceId: string,
   messages: ChatCompletionMessageParam[],
 ) {
@@ -78,7 +77,7 @@ export async function generateActionSuggestions(
     },
   });
 
-  sendToUser(connectionId, {
+  sendToUser(userId, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId,

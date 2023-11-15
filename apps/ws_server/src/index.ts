@@ -4,7 +4,7 @@ import { db } from '../services/db';
 import { StarlightWebSocketRequestType } from 'websocket/types';
 import { validateRequest } from 'websocket/utils';
 
-import { clearWebsocketFromConnection, handleWebsocketConnected } from './connection';
+import { handleWebsocketConnected } from './connection';
 import { handlers } from '../handlers';
 import {
   clearHeartbeat,
@@ -78,8 +78,6 @@ const server = Bun.serve<WebSocketData>({
       const request = validateRequest(message);
       if (!request) return;
 
-      console.log('Received request: ', StarlightWebSocketRequestType[request.type]);
-
       // Heartbeat
       if (request.type === StarlightWebSocketRequestType.heartbeatClientRequest) {
         heartbeatClientRequestHandler(ws, request); // Client sent us a ping, we need to respond
@@ -107,10 +105,6 @@ const server = Bun.serve<WebSocketData>({
       });
 
       clearHeartbeat(ws);
-
-      if (ws.data.connectionId) {
-        clearWebsocketFromConnection(ws.data.connectionId);
-      }
     },
   },
 });

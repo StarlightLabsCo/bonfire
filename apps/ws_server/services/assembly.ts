@@ -4,7 +4,7 @@ import { StarlightWebSocketResponseType, VoiceTranscriptionProcessedResponse } f
 import { sendToUser } from '../src/connection';
 
 const SAMPLE_RATE = 44100;
-const connectionIdToAssemblyWebsockets: { [key: string]: WebSocket } = {};
+const userIdToAssemblyWebsockets: { [key: string]: WebSocket } = {};
 
 // ** --------------------------------- Types --------------------------------- **
 // ** Request **
@@ -81,7 +81,7 @@ const assemblyErrors: { [key: number]: string } = {
 };
 
 // ** --------------------------------- Code --------------------------------- **
-async function initAssemblyWs(connectionId: string) {
+async function initAssemblyWs(userId: string) {
   return await new Promise<WebSocket>((resolve) => {
     if (!process.env.ASSEMBLYAI_API_KEY) {
       throw new Error('ASSEMBLYAI_API_KEY is not defined');
@@ -94,7 +94,7 @@ async function initAssemblyWs(connectionId: string) {
     });
 
     ws.addEventListener('open', () => {
-      connectionIdToAssemblyWebsockets[connectionId] = ws;
+      userIdToAssemblyWebsockets[userId] = ws;
       resolve(ws);
     });
 
@@ -104,7 +104,7 @@ async function initAssemblyWs(connectionId: string) {
       // TODO: validate message
 
       if (data.text) {
-        sendToUser(connectionId, {
+        sendToUser(userId, {
           type: StarlightWebSocketResponseType.voiceTranscriptionProcessed,
           data: {
             transcription: data.text,
@@ -117,18 +117,18 @@ async function initAssemblyWs(connectionId: string) {
         ws.send(JSON.stringify({ terminate_session: true } as TerminateSession));
       } else if (data.message_type === 'SessionTerminated') {
         ws.close();
-        delete connectionIdToAssemblyWebsockets[connectionId];
+        delete userIdToAssemblyWebsockets[userId];
       }
     });
 
     ws.addEventListener('error', (err) => {
-      delete connectionIdToAssemblyWebsockets[connectionId];
+      delete userIdToAssemblyWebsockets[userId];
       console.error(`Error from AssemblyAI.`, err);
     });
 
     ws.addEventListener('close', (event) => {
       console.log(`Disconnected from AssemblyAI.`);
-      delete connectionIdToAssemblyWebsockets[connectionId];
+      delete userIdToAssemblyWebsockets[userId];
 
       if (event.code in assemblyErrors) {
         console.error(`Error from AssemblyAI: ${assemblyErrors[event.code]}`);
@@ -137,11 +137,11 @@ async function initAssemblyWs(connectionId: string) {
   });
 }
 
-async function transcribeAudio(connectionId: string, base64Audio: string) {
-  let ws = connectionIdToAssemblyWebsockets[connectionId];
+async function transcribeAudio(userId: string, base64Audio: string) {
+  let ws = userIdToAssemblyWebsockets[userId];
   if (!ws) {
     console.log(`Initializing AssemblyAI websocket.`);
-    ws = await initAssemblyWs(connectionId);
+    ws = await initAssemblyWs(userId);
   }
 
   try {
@@ -152,8 +152,8 @@ async function transcribeAudio(connectionId: string, base64Audio: string) {
   }
 }
 
-async function finishTranscription(connectionId: string) {
-  const assemblyWs = connectionIdToAssemblyWebsockets[connectionId];
+async function finishTranscription(userId: string) {
+  const assemblyWs = userIdToAssemblyWebsockets[userId];
 
   if (assemblyWs) {
     const base64Buffer = Buffer.alloc(44100 * 2).toString('base64');
