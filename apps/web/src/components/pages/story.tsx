@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 import { Instance, Message } from '@prisma/client';
 import { IBM_Plex_Serif } from 'next/font/google';
@@ -89,7 +90,13 @@ export function Story({
               if (message.name === 'generate_image') {
                 return (
                   <div key={message.id} className="w-full fade-in-fast">
-                    <img src={message.content} className="rounded-2xl fade-in-2s" alt="Generated image" />
+                    <Image
+                      src={message.content}
+                      width={1792}
+                      height={1024}
+                      className="rounded-2xl fade-in-2s"
+                      alt="Generated image"
+                    />
                   </div>
                 );
               } else return null;

@@ -6,6 +6,9 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['websocket'],
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: process.env.NEXT_PUBLIC_S3_PUBLIC_URL }],
+  },
 };
 
 module.exports = withAxiom(
