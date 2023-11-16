@@ -33,6 +33,7 @@ export function Sidebar({
   const setShowSidebarOpen = useSidebarStore((state) => state.setShowSidebarOpenButton);
   const openSidebar = useSidebarStore((state) => state.openSidebar);
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
+  const mobileHeaderHeight = useSidebarStore((state) => state.mobileHeaderHeight);
 
   const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
 
@@ -74,7 +75,7 @@ export function Sidebar({
 
   return (
     <>
-      {/* Mobile */}
+      {/* Mobile Sidebar */}
       <div
         className={cn(
           'absolute z-20 w-full max-w-xs h-[100dvh] max-h-[100dvh] bg-black border-r border-white/10 overflow-auto md:hidden flex flex-col transition-transform duration-200 ease-in-out',
@@ -88,6 +89,7 @@ export function Sidebar({
         <UserInfo user={user} />
       </div>
 
+      {/* Mobile Background Overlay */}
       <div
         {...bind()}
         onClick={() => closeSidebar()}
@@ -96,10 +98,13 @@ export function Sidebar({
           isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
         }`}
       />
+
+      {/* Mobile Header */}
       <div
-        className={cn(
-          'sticky top-0 z-1 flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200  md:hidden',
-        )}
+        className={
+          'absolute h-10 z-10 w-full flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200 md:hidden'
+        }
+        style={{ top: `${mobileHeaderHeight}px` }}
       >
         <button className="h-10 w-10 flex-shrink-0 flex items-center justify-center" onClick={() => openSidebar()}>
           <Icons.hamburger />
