@@ -61,10 +61,12 @@ export function Story({
     const handleScroll = () => {
       if (!messageContainerRef.current) return;
 
-      const scrollTop = useSidebarStore.getState().storyMessageContainerScrollTop;
-      const setScrollTop = useSidebarStore.getState().setStoryMessageContainerScrollTop;
-      const mobileHeaderHeight = useSidebarStore.getState().mobileHeaderHeight;
-      const setMobileHeaderHeight = useSidebarStore.getState().setMobileHeaderHeight;
+      const {
+        storyMessageContainerScrollTop: scrollTop,
+        setStoryMessageContainerScrollTop: setScrollTop,
+        mobileHeaderHeight,
+        setMobileHeaderHeight,
+      } = useSidebarStore.getState();
 
       if (messageContainerRef.current.scrollTop < scrollTop) {
         setMobileHeaderHeight(Math.min(0, mobileHeaderHeight + scrollTop - messageContainerRef.current.scrollTop));

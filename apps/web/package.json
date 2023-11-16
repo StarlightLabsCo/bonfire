@@ -37,6 +37,7 @@
     "posthog-node": "^3.1.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-medium-image-zoom": "^5.1.8",
     "stripe": "^14.3.0",
     "websocket": "*",
     "zustand": "^4.4.4"
@@ -52,8 +53,8 @@
     "clsx": "^2.0.0",
     "postcss": "^8",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7",
     "tailwindcss": "^3",
+    "tailwindcss-animate": "^1.0.7",
     "tsconfig": "*",
     "typescript": "^5.0.0"
   }
