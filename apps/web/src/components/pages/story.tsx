@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
 
 import { Instance, Message } from '@prisma/client';
 import { IBM_Plex_Serif } from 'next/font/google';
@@ -121,13 +123,15 @@ export function Story({
               if (message.name === 'generate_image') {
                 return (
                   <div key={message.id} className="w-full fade-in-fast">
-                    <Image
-                      src={message.content}
-                      width={1792}
-                      height={1024}
-                      className="rounded-2xl fade-in-2s"
-                      alt="Generated image"
-                    />
+                    <Zoom>
+                      <Image
+                        src={message.content}
+                        width={1792}
+                        height={1024}
+                        className="rounded-2xl fade-in-2s"
+                        alt="Generated image"
+                      />
+                    </Zoom>
                   </div>
                 );
               } else return null;
