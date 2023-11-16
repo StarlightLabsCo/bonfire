@@ -7,8 +7,6 @@ import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } fro
 import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 
 export async function continueStory(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
-  console.log(`mesages: ${JSON.stringify(messages)}`);
-
   // TODO: trigger both async commands at once
   const message = await db.message.create({
     data: {

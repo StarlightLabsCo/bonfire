@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Zoom from 'react-medium-image-zoom';
-import 'react-medium-image-zoom/dist/styles.css';
+import './image-zoom-styles.css';
 
 import { Instance, Message } from '@prisma/client';
 import { IBM_Plex_Serif } from 'next/font/google';

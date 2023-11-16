@@ -6,7 +6,6 @@ import { OpenSidebar } from '../open-sidebar';
 import { LobbyInput } from '../input/lobby-input';
 import { cn } from '@/lib/utils';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
-import { StarlightWebSocketRequestType } from 'websocket';
 import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';

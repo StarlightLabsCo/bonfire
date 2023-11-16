@@ -31,7 +31,6 @@ export async function introduceStory(userId: string, instanceId: string, message
   await initSpeechStreamConnection(userId);
 
   const startTime = Date.now();
-  console.log('messages', messages);
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
@@ -40,7 +39,7 @@ export async function introduceStory(userId: string, instanceId: string, message
       {
         name: 'introduce_story_and_characters',
         description:
-          'Given the pre-created plan, paint a vibrant and irresistible hook of the very beginning of story, the exposition. Colorfully show the setting and characters ending with a clear decision point where the story begins for the listener. Do not skip any major events or decisions. Reveal portions of the plan that will effectively set the stage and engage the listener, but withhold elements of the story that are not causally relevant or that could be used to build intrigue later. It is most important that this introduction immerses the listener in the world. Do not exceed a paragraph. Be creative!',
+          'Given the pre-created plan, paint a vibrant and irresistible hook of the very beginning of story, the exposition. Colorfully show the setting and characters ending with a clear decision point where the story begins for the listener. Do not skip any major events or decisions. Reveal portions of the plan that will effectively set the stage and engage the listener. It is most important that this introduction immerses the listener in the world. Do not exceed a paragraph. Be creative!',
         parameters: {
           type: 'object',
           properties: {

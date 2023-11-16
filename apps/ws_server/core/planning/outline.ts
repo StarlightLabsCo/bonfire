@@ -12,7 +12,7 @@ export async function createOutline(userId: string, instanceId: string, messages
       {
         name: 'plan_story',
         description:
-          'Craft a detailed plan for the story. Describe, fully, the overarching story, the main characters, twists, and the main goal. This outline should also include smaller scale beats and memorable moments, but should never allow the story to get so cluttered that it is no longer followable. The consequences of each plot point should have bearing on every other plot point and on the story as a whole, thereby weaving an interconnected tapestry of events. Be specific in your plan, naming characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead to make the story feel alive. This outline will only be referenced by yourself, the storyteller, and should not be shared with the listener. No newlines.',
+          'Craft a detailed plan for the story. Describe, fully, the overarching story, the main characters, twists, and the main goal. This outline should also include smaller scale beats and memorable moments, but should never allow the story to get so cluttered that it is no longer followable. The consequences of each plot point should have bearing on every other plot point and on the story as a whole, thereby weaving an interconnected tapestry of events. Be specific in your plan, naming characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead to make the story feel alive. This outline will only be referenced by yourself, the storyteller, and should not be shared with the listener.',
         parameters: {
           type: 'object',
           properties: {

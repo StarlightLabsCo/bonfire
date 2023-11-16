@@ -43,7 +43,7 @@ export async function createImage(userId: string, instanceId: string, messages: 
     throw new Error('No content in response');
   }
 
-  console.log(`Image prompt: ${response.choices[0].message.content}`);
+  console.log(response.choices[0].message.content);
 
   logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
 
