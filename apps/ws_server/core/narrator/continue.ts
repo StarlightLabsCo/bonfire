@@ -7,6 +7,9 @@ import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } fro
 import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 
 export async function continueStory(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+  console.log(`mesages: ${JSON.stringify(messages)}`);
+
+  // TODO: trigger both async commands at once
   const message = await db.message.create({
     data: {
       instance: {
@@ -32,20 +35,23 @@ export async function continueStory(userId: string, instanceId: string, messages
 
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
-    messages: messages,
+    messages: [
+      ...messages,
+      {
+        role: 'system',
+        content: `Continue narrating the story based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward. Feel free to inject drama that will surprise the player, but keep these dramatic elements relevant to the story plan and consistent with the world you have created. Your descriptions of the occurrences in your continuation of the story must not, under any circumstances, use vague language to obfuscate the listener's understanding of the narrative. \n\nMake sure to keep track of the narrative tempo of your story as well. If the actions that are transpiring in the story are low-stakes and mundane, take on a more reflective and descriptive voice, intent on providing the listener with as much circumstantial information on which to act as possible. If the actions that are transpiring in the story are climactic and consequential, portray events exactly as they happen, preserving the causality of moment in the form of an overly thorough "play-by-play" and assuming a tone that is more cinematic Expand upon the plan made previously.`,
+      },
+    ],
     model: 'gpt-4-1106-preview',
     stream: true,
     functions: [
       {
         name: 'continue_story',
-        description:
-          'Continue narratoring the story based on the previous messages, integrating what the players said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward, but with correct pacing. Stories should be interesting, but not too fast paced, and not too slow. Expand upon the plan made previously.',
         parameters: {
           type: 'object',
           properties: {
             story: {
               type: 'string',
-              description: 'The new story to add to the existing story. Keep it short and punchy. No newlines.',
             },
           },
         },
@@ -92,6 +98,9 @@ export async function continueStory(userId: string, instanceId: string, messages
       }
 
       content += args;
+      content = content.replace(/\\n/g, '\n');
+      content = content.replace(/\\"/g, '"');
+      content = content.replace(/\\'/g, "'");
 
       sendToUser(userId, {
         type: StarlightWebSocketResponseType.messageUpsert,
@@ -105,7 +114,11 @@ export async function continueStory(userId: string, instanceId: string, messages
         },
       });
 
-      appendToSpeechStream(userId, args);
+      let cleanedArgs = args.replace(/\\n/g, '\n');
+      cleanedArgs = cleanedArgs.replace(/\\"/g, '"');
+      cleanedArgs = cleanedArgs.replace(/\\'/g, "'");
+
+      appendToSpeechStream(userId, cleanedArgs);
     } catch (err) {
       console.error(err);
     }
@@ -115,7 +128,9 @@ export async function continueStory(userId: string, instanceId: string, messages
   const endTime = Date.now();
 
   // Cleanup - need to make this more robust and cleaner
-  buffer = buffer.replace(/\\n/g, '');
+  buffer = buffer.replace(/\\n/g, '\n');
+  buffer = buffer.replace(/\\"/g, '"');
+  buffer = buffer.replace(/\\'/g, "'");
   buffer = buffer.replace(new RegExp(`{\\s*"story"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 
@@ -141,6 +156,6 @@ export async function continueStory(userId: string, instanceId: string, messages
 
   return [
     ...messages,
-    { role: MessageRole.assistant, content: updatedMessage.content, name: 'next_story_beat' },
+    { role: MessageRole.assistant, content: updatedMessage.content, name: 'story_beat' },
   ] as ChatCompletionMessageParam[];
 }

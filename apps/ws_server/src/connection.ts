@@ -32,8 +32,6 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
   if (keys.length > 0) {
     await redis.del(keys);
   }
-
-  // TODO: reroute any old conenctionid messages to the new connectionid
 }
 
 export function sendToUser(userId: string, data: StarlightWebSocketResponse) {

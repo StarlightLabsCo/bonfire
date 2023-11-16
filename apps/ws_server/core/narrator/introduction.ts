@@ -31,6 +31,7 @@ export async function introduceStory(userId: string, instanceId: string, message
   await initSpeechStreamConnection(userId);
 
   const startTime = Date.now();
+  console.log('messages', messages);
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
@@ -39,7 +40,7 @@ export async function introduceStory(userId: string, instanceId: string, message
       {
         name: 'introduce_story_and_characters',
         description:
-          'Given the pre-created plan, paint a vibrant and irrestiable hook of the very beginning of story, the exposition. Colorfully show the setting, and characters ending with a clear decision point where the story begins for the players. Do not skip any major events or decisions. Do not reveal the plan of the story. Do not hint about the path ahead or reveal the outcome. Keep it short and punchy. Do not exceed a paragraph. Be creative! No newlines.',
+          'Given the pre-created plan, paint a vibrant and irresistible hook of the very beginning of story, the exposition. Colorfully show the setting and characters ending with a clear decision point where the story begins for the listener. Do not skip any major events or decisions. Reveal portions of the plan that will effectively set the stage and engage the listener, but withhold elements of the story that are not causally relevant or that could be used to build intrigue later. It is most important that this introduction immerses the listener in the world. Do not exceed a paragraph. Be creative!',
         parameters: {
           type: 'object',
           properties: {
@@ -91,6 +92,9 @@ export async function introduceStory(userId: string, instanceId: string, message
       }
 
       content += args;
+      content = content.replace(/\\n/g, '\n');
+      content = content.replace(/\\"/g, '"');
+      content = content.replace(/\\'/g, "'");
 
       sendToUser(userId, {
         type: StarlightWebSocketResponseType.messageUpsert,
@@ -104,7 +108,11 @@ export async function introduceStory(userId: string, instanceId: string, message
         },
       });
 
-      appendToSpeechStream(userId, args);
+      let cleanedArgs = args.replace(/\\n/g, '\n');
+      cleanedArgs = cleanedArgs.replace(/\\"/g, '"');
+      cleanedArgs = cleanedArgs.replace(/\\'/g, "'");
+
+      appendToSpeechStream(userId, cleanedArgs);
     } catch (err) {
       console.error(err);
     }
@@ -115,7 +123,9 @@ export async function introduceStory(userId: string, instanceId: string, message
   const endTime = Date.now();
 
   // Cleanup - need to make this more robust and cleaner
-  buffer = buffer.replace(/\\n/g, '');
+  buffer = buffer.replace(/\\n/g, '\n');
+  buffer = buffer.replace(/\\"/g, '"');
+  buffer = buffer.replace(/\\'/g, "'");
   buffer = buffer.replace(new RegExp(`{\\s*"introduction"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 

@@ -97,11 +97,16 @@ export function Story({
           if (streamedMessageId === message.id && streamedWords) {
             return (
               <div key={message.id} className="w-full">
-                {streamedWords.map((word, index) => (
-                  <span key={`${message.id}-${index}`} className="fade-in-fast">
-                    {word}{' '}
-                  </span>
-                ))}
+                {streamedWords.map((word, index) => {
+                  if (word === '\n') return <br key={`${message.id}-${index}`} />;
+                  else {
+                    return (
+                      <span key={`${message.id}-${index}`} className="fade-in-fast">
+                        {word}{' '}
+                      </span>
+                    );
+                  }
+                })}
               </div>
             );
           }
@@ -114,9 +119,10 @@ export function Story({
                 </div>
               );
             case 'assistant':
+              const modifiedContent = message.content.replace('\n', '<br />');
               return (
                 <div key={message.id} className="w-full">
-                  {message.content}
+                  {modifiedContent}
                 </div>
               );
             case 'function':

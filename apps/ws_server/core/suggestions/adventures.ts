@@ -11,11 +11,11 @@ export async function generateAdventureSuggestions(userId: string, instances: In
       content:
         'You are an experienced storyteller, with a sharp wit, a heart of gold and a love for stories. Your goal is to bring people on new experiences.' +
         (instances.length > 0
-          ? `In the past the player has requested these adventures, but don't format the phraseology of the titles based on these: ${instances
+          ? `In the past the listener has requested these stories, but don't format the phraseology of the titles based on these: ${instances
               .map((instance) => '- ' + instance.description + '\n')
               .join('')}.\n`
           : '') +
-        ' Come up with three, entirely new, short, curiosity-inspiring title, devoid of alliteration, for adventures this player may enjoy. The title should be completely unrelated to the previous adventures, in different genres too! I repeat, no alliteration!!! Priortize readable and story potential over literary flare. Use verbs for the story premise, and make sure the verbs are something that a person could do. Avoid abstract words & concepts. Adjectives should be meaningful to the nouns they modify. Verbs should be meaningful to their corespoding direct objects. Be creative! Be clear! Be memorable!',
+        '  Come up with three, entirely new, short, curiosity-inspiring titles, devoid of alliteration, for adventures the listener may enjoy. The title should be completely unrelated to the previous adventures, in different genres too! I repeat, no alliteration!!! Prioritize readability and story potential over literary flare. Use verbs for the story premise, and make sure the verbs are something that a person could do. Avoid abstract words & concepts. Adjectives should be meaningful to the nouns they modify. Verbs should be meaningful to their corresponding direct objects. Be creative! Be clear! Be memorable!',
     },
   ] as ChatCompletionMessageParam[];
 
@@ -23,7 +23,6 @@ export async function generateAdventureSuggestions(userId: string, instances: In
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
-    temperature: 0.95,
     functions: [
       {
         name: 'generate_new_adventure_suggestions',

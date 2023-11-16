@@ -32,16 +32,18 @@ export async function createImage(userId: string, instanceId: string, messages: 
       ...(modifiedMessages as any),
       {
         role: 'system',
-        content:
-          'Based on the story, pick the most interesting concept, character, or idea from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Keep it consistent with the story. Only output the prompt.',
+        content: `Based on the story, pick the most interesting concept, or character from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Keep it consistent with the story, and the style of past images. Ensure that your prompt describes an image that is guranteed to be perceived as symbolic within the story, and avoid breaking the listener's immersion at all costs. Only output the prompt as it will be feed directly to the image generation AI.`,
       },
     ],
+    max_tokens: 256,
   });
   const endTime = Date.now();
 
   if (!response.choices[0].message.content) {
     throw new Error('No content in response');
   }
+
+  console.log(`Image prompt: ${response.choices[0].message.content}`);
 
   logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
 

@@ -37,6 +37,9 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
           name: true,
           function_call: true,
         },
+        orderBy: {
+          createdAt: 'asc',
+        },
       },
     },
   });

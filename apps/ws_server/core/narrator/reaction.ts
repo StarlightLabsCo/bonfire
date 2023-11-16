@@ -18,7 +18,7 @@ export async function narratorReaction(userId: string, instanceId: string, messa
       {
         name: 'generate_narrator_internal_monologue_reaction',
         description:
-          'From the perspective of the narrator, create a one sentence reaction based on the last player action (and the correspodning dice roll) and its impact on the story beginning with the words "I feel" with a reasoning as well. Include the full sentence. Do not exactly copy prior information. Stick to new info. No newlines.',
+          'From the perspective of the narrator, create a one sentence reaction based on the last player action (and the corresponding dice roll) and its impact on the story beginning with the words "I feel" with a reasoning as well. Include the full sentence. Do not exactly copy prior information. Stick to new info. No newlines.',
         parameters: {
           type: 'object',
           properties: {
@@ -112,6 +112,7 @@ export async function narratorReaction(userId: string, instanceId: string, messa
       },
       content: `[Narrator Inner Monologue] To adjust the story going forward, I will ${planningArgs.plan}`,
       role: MessageRole.system,
+      name: 'narrator_internal_monologue_plan',
     },
   });
 

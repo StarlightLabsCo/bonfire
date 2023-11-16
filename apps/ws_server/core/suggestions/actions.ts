@@ -18,7 +18,7 @@ export async function generateActionSuggestions(
       {
         name: 'generate_action_suggestions',
         description:
-          "List 1-3 optimal actions for players, described in up to 3 words, based on the story. Analyze how past events affect each action's potential success, without predicting outcomes. Assign a unique modifier (-10 to 10) to each action for a d20 roll, reflecting pre-established conditions. Explain the reasoning for each modifier before stating its value.",
+          "List 1-3 optimal actions for players, described in up to 4 words, based on the story. Analyze how past events affect each action's potential success, without predicting outcomes. Assign a unique modifier (-10 to 10) to each action for a d20 roll, reflecting pre-established conditions. Explain the reasoning for each modifier before stating its value.",
         parameters: {
           type: 'object',
           properties: {
@@ -30,7 +30,7 @@ export async function generateActionSuggestions(
                 properties: {
                   action: {
                     type: 'string',
-                    description: 'A suggested action for the player to take. [Min: 1 word, Max: 3 words]',
+                    description: 'A suggested action for the player to take. [Min: 1 word, Max: 4 words]',
                   },
                   modifier_reason: {
                     type: 'string',
