@@ -16,6 +16,8 @@ type WebsocketStore = {
   heartbeat: NodeJS.Timeout | null;
   isAlive: boolean;
 
+  disconnectedByServer: boolean;
+
   sendToServer: (request: StarlightWebSocketRequest) => void;
 };
 
@@ -30,6 +32,8 @@ export const useWebsocketStore = create<WebsocketStore>((set, get) => ({
   heartbeat: null,
   isAlive: false,
 
+  disconnectedByServer: false,
+
   sendToServer: (request) => sendToServer(get, request),
 }));
 
@@ -38,6 +42,7 @@ type WebsocketStoreSet = (arg0: {
   connectionId?: string;
   socketState?: string;
   isAlive?: boolean;
+  disconnectedByServer?: boolean;
   exponentialBackoff?: number;
   heartbeat?: NodeJS.Timeout | null;
 }) => void;
@@ -48,6 +53,8 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
   }
 
   try {
+    set({ disconnectedByServer: false });
+
     // Clear existing socket (if any)
     const { socket } = get();
     if (socket) {
@@ -150,19 +157,23 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
         });
       }
 
-      setTimeout(() => {
-        set({ exponentialBackoff: get().exponentialBackoff * 2 });
-        get().connect();
-      }, get().exponentialBackoff);
+      if (!get().disconnectedByServer) {
+        setTimeout(() => {
+          set({ exponentialBackoff: get().exponentialBackoff * 2 });
+          get().connect();
+        }, get().exponentialBackoff);
+      }
     });
   } catch (error) {
     console.error('Error in connecting to WebSocket:', error);
     Sentry.captureException(error);
 
-    setTimeout(() => {
-      set({ exponentialBackoff: get().exponentialBackoff * 2 });
-      get().connect();
-    }, get().exponentialBackoff);
+    if (!get().disconnectedByServer) {
+      setTimeout(() => {
+        set({ exponentialBackoff: get().exponentialBackoff * 2 });
+        get().connect();
+      }, get().exponentialBackoff);
+    }
   }
 }
 

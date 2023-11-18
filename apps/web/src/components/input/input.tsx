@@ -34,7 +34,9 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
     setTranscription('');
   }
 
-  if (socketState !== 'open') {
+  if (socketState === 'disconnected') {
+    return <div className="w-full flex items-center justify-center">Disconnected</div>;
+  } else if (socketState !== 'open') {
     return <div className="w-full flex items-center justify-center">Connecting...</div>;
   }
 

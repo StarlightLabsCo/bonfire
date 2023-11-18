@@ -9,6 +9,7 @@ import { Instance } from '@prisma/client';
 import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
 import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
 import { StoreInitializer } from '@/components/store-initializer';
+import { AnotherOpenTabDialog } from '@/components/dialog/another-open-tab-dialog';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -32,9 +33,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="h-full">{children}</div>
       </div>
       <Toaster />
-      <OutOfCreditsDialog />
       <ShareLinkDialog />
+      <OutOfCreditsDialog />
       <StripeCheckoutDialog />
+      <AnotherOpenTabDialog />
       <Navigator />
       <StoreInitializer />
     </div>

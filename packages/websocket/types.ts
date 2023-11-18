@@ -123,6 +123,7 @@ export type StarlightWebSocketResponse =
   | AudioCreatedResponse
   | VoiceTranscriptionProcessedResponse
   | OutOfCreditsResponse
+  | AnotherOpenTabResponse
   | ErrorResponse
   | HeartbeatServerRequest
   | HeartbeatServerResponse;
@@ -142,6 +143,7 @@ export enum StarlightWebSocketResponseType {
   audioCreated,
   voiceTranscriptionProcessed,
   outOfCredits,
+  anotherOpenTab,
   error,
   heartbeatServerRequest,
   heartbeatServerResponse,
@@ -245,6 +247,14 @@ export type OutOfCreditsResponse = GenericStarlightWebSocketResponse<
 >;
 
 export type OutOfCreditsData = {};
+
+// Another Open Tab
+export type AnotherOpenTabResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.anotherOpenTab,
+  AnotherOpenTabData
+>;
+
+export type AnotherOpenTabData = {};
 
 // Error
 export type ErrorResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.error, ErrorData>;

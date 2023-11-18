@@ -6,11 +6,12 @@ import { handleAudioCreated } from './audio/audioCreated';
 import { handleVoiceTranscriptionProcessed } from './audio/voiceTranscriptionProcessed';
 import { handleInstanceCreated } from './instance/instanceCreated';
 import { handleMessageAdded } from './message/messageAdded';
+import { handleMessageUpsert } from './message/messageUpsert';
+import { handleMessageReplace } from './message/messageReplace';
 import { handleMessageDeleted } from './message/messageDeleted';
 import { handleOutOfCredits } from './outOfCredits';
+import { handleAnotherOpenTab } from './anotherOpenTab';
 import { handleError } from './error';
-import { handleMessageReplace } from './message/messageReplace';
-import { handleMessageUpsert } from './message/messageUpsert';
 
 export const handlers = {
   [StarlightWebSocketResponseType.heartbeatServerRequest]: handleHeartbeatRequest,
@@ -25,5 +26,6 @@ export const handlers = {
   [StarlightWebSocketResponseType.audioCreated]: handleAudioCreated,
   [StarlightWebSocketResponseType.voiceTranscriptionProcessed]: handleVoiceTranscriptionProcessed,
   [StarlightWebSocketResponseType.outOfCredits]: handleOutOfCredits,
+  [StarlightWebSocketResponseType.anotherOpenTab]: handleAnotherOpenTab,
   [StarlightWebSocketResponseType.error]: handleError,
 };

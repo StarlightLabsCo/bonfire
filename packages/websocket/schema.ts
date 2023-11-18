@@ -211,6 +211,13 @@ export const OutOfCreditsResponseZodSchema: z.ZodType<Types.OutOfCreditsResponse
   })
   .strict();
 
+export const AnotherOpenTabResponseZodSchema: z.ZodType<Types.AnotherOpenTabResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.anotherOpenTab),
+    data: z.object({}).strict(),
+  })
+  .strict();
+
 export const ErrorResponseZodSchema: z.ZodType<Types.ErrorResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.error),
@@ -272,6 +279,7 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.audioCreated]: AudioCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed]: VoiceTranscriptionProcessedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.outOfCredits]: OutOfCreditsResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.anotherOpenTab]: AnotherOpenTabResponseZodSchema,
   [Types.StarlightWebSocketResponseType.error]: ErrorResponseZodSchema,
   [Types.StarlightWebSocketResponseType.heartbeatServerRequest]: HeartbeatServerRequestZodSchema,
   [Types.StarlightWebSocketResponseType.heartbeatServerResponse]: HeartbeatServerResponseZodSchema,

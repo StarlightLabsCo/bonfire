@@ -8,12 +8,18 @@ type DialogState = {
 
   isCreditsDialogOpen: boolean;
   setIsCreditsDialogOpen: (open: boolean) => void;
+
+  isAnotherOpenTabDialogOpen: boolean;
+  setIsAnotherOpenTabDialogOpen: (open: boolean) => void;
 };
 
 export const useDialogStore = create<DialogState>((set) => ({
   isShareDialogOpen: false,
-  setIsShareDialogOpen: (isOpen) => set(() => ({ isShareDialogOpen: isOpen })),
+  setIsShareDialogOpen: (open) => set(() => ({ isShareDialogOpen: open })),
 
   isCreditsDialogOpen: false,
   setIsCreditsDialogOpen: (open) => set(() => ({ isCreditsDialogOpen: open })),
+
+  isAnotherOpenTabDialogOpen: false,
+  setIsAnotherOpenTabDialogOpen: (open) => set(() => ({ isAnotherOpenTabDialogOpen: open })),
 }));

@@ -12,7 +12,11 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 
   const existingWebsocket = userIdToWebSocket[userId];
   if (existingWebsocket) {
-    console.log('Existing websocket found, closing it'); // TODO: add a message to the user saying they've been disconnected
+    console.log('Existing websocket found, closing it');
+    sendToUser(userId, {
+      type: StarlightWebSocketResponseType.anotherOpenTab,
+      data: {},
+    });
     existingWebsocket.close();
   }
 
