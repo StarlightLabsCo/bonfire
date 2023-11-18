@@ -94,7 +94,7 @@ export function Sidebar({
         {...bind()}
         onClick={() => closeSidebar()}
         onTouchStart={() => closeSidebar()}
-        className={`h-[100dvh] w-screen z-10 bg-black/80 fixed top-0 left-0 md:hidden  ${
+        className={`h-[100dvh] w-screen z-[15] bg-black/80 fixed top-0 left-0 md:hidden  ${
           isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
         }`}
       />
