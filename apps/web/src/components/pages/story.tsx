@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Zoom from 'react-medium-image-zoom';
 import './image-zoom-styles.css';
@@ -13,6 +13,7 @@ import { User } from 'next-auth';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
+import React from 'react';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -119,10 +120,15 @@ export function Story({
                 </div>
               );
             case 'assistant':
-              const modifiedContent = message.content.replace('\n', '<br />');
+              const contentLines = message.content.split('\n');
               return (
                 <div key={message.id} className="w-full">
-                  {modifiedContent}
+                  {contentLines.map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      <br />
+                    </React.Fragment>
+                  ))}
                 </div>
               );
             case 'function':
