@@ -88,7 +88,7 @@ export function Story({
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full h-full px-8 pb-2 md:px-16 md:pt-0 pt-4">
+    <div className="flex flex-col items-center w-full h-full px-8 pb-2 md:px-16">
       {user && <OpenSidebar />}
       <div
         ref={messageContainerRef}
