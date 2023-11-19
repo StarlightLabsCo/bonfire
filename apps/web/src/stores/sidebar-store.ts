@@ -30,7 +30,6 @@ export const useSidebarStore = create<SidebarStore>((set) => ({
     set((state) => ({ ...state, storyMessageContainerScrollTop: value })),
   setMobileHeaderHeight: (value: number) =>
     set((state) => {
-      console.log('setMobileHeaderHeight', value);
       return { ...state, mobileHeaderHeight: value };
     }),
 }));
