@@ -99,14 +99,23 @@ export function Story({
             return (
               <div key={message.id} className="w-full">
                 {streamedWords.map((word, index) => {
-                  if (word === '\n') return <br key={`${message.id}-${index}`} />;
-                  else {
-                    return (
-                      <span key={`${message.id}-${index}`} className="fade-in-fast">
-                        {word}{' '}
-                      </span>
-                    );
-                  }
+                  const lines = word.split('\n');
+                  return lines.map((line, lineIndex) => {
+                    if (lineIndex < lines.length - 1) {
+                      return (
+                        <React.Fragment key={`${message.id}-${index}-${lineIndex}`}>
+                          {line}
+                          <br />
+                        </React.Fragment>
+                      );
+                    } else {
+                      return (
+                        <span key={`${message.id}-${index}-${lineIndex}`} className="fade-in-fast">
+                          {line}{' '}
+                        </span>
+                      );
+                    }
+                  });
                 })}
               </div>
             );
