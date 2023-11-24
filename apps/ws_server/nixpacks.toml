@@ -1,4 +1,0 @@
-[phases.setup]
-    nixpkgsArchive = '00d4968679d4943b33639891a041daa07a4f7395' # https://github.com/NixOS/nixpkgs/commit/f53263caceb5f2a92eb2269e8eed9ef7a065fb7a
-    nixPkgs = ['...', 'bun']
-    nixLibs = ['...', 'openssl']
