@@ -1,6 +1,6 @@
 [build]
 builder = "DOCKERFILE"
-watchPatterns = ["apps/ws_server"]
+watchPatterns = ["./Dockerfile", "./apps/ws_server/**/*", "./packages/**/*"]
 
 [deploy]
 restartPolicyType = "ALWAYS"
