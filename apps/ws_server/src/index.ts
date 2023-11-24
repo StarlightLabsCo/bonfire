@@ -1,3 +1,7 @@
+console.log(
+  `[Bun: ${Bun.version}] [Node: ${process.version}] [PID: ${process.pid}] [ENV: ${process.env.NODE_ENV}] Starting websocket server...`,
+);
+
 import { WebSocketAuthenticationToken } from 'database';
 import { db } from '../services/db';
 
