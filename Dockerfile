@@ -14,7 +14,6 @@ RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n \
 COPY . .
 ARG DATABASE_URL
 ARG DIRECT_URL
-RUN dir -s    
 RUN cd ./apps/ws_server && bun install --frozen-lockfile && cd /usr/src/app
 
 ENV NODE_ENV=production

@@ -1,0 +1,13 @@
+[build]
+builder = "DOCKERFILE"
+watchPatterns = ["./Dockerfile", "./apps/ws_server/**/*", "./packages/**/*"]
+
+[deploy]
+restartPolicyType = "ALWAYS"
+restartPolicyMaxRetries = 10
+
+[environments.production.deploy]
+numReplicas = 10
+
+[environments.dev.deploy]
+numReplicas = 2
