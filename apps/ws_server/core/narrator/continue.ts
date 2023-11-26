@@ -1,18 +1,18 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { db } from '../../services/db';
-import { MessageRole } from 'database';
-import { sendToUser } from '../../src/connection';
+import { Instance, MessageRole } from 'database';
+import { sendToInstanceSubscribers, sendToUser } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
 import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 
-export async function continueStory(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function continueStory(instance: Instance & { messages: ChatCompletionMessageParam[] }) {
   // TODO: trigger both async commands at once
   const message = await db.message.create({
     data: {
       instance: {
         connect: {
-          id: instanceId,
+          id: instance.id,
         },
       },
       content: '',
@@ -21,10 +21,10 @@ export async function continueStory(userId: string, instanceId: string, messages
     },
   });
 
-  sendToUser(userId, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
-      instanceId: instanceId,
+      instanceId: instance.id,
       message: message,
     },
   });

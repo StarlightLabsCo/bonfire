@@ -1,17 +1,17 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 import { db } from '../../services/db';
-import { MessageRole } from 'database';
-import { StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser } from '../../src/connection';
+import { Instance, Message, MessageRole } from 'database';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
+import { sendToInstanceSubscribers } from '../../src/connection';
+import { StarlightWebSocketResponseType } from 'websocket/types';
 
-export async function introduceStory(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function introduceStory(instance: Instance & { messages: Message[] }) {
   const message = await db.message.create({
     data: {
       instance: {
         connect: {
-          id: instanceId,
+          id: instance.id,
         },
       },
       content: '',
@@ -20,10 +20,10 @@ export async function introduceStory(userId: string, instanceId: string, message
     },
   });
 
-  sendToUser(userId, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
-      instanceId: instanceId,
+      instanceId: instance.id,
       message: message,
     },
   });
@@ -95,10 +95,10 @@ export async function introduceStory(userId: string, instanceId: string, message
       content = content.replace(/\\"/g, '"');
       content = content.replace(/\\'/g, "'");
 
-      sendToUser(userId, {
+      sendToInstanceSubscribers(instance.id, {
         type: StarlightWebSocketResponseType.messageUpsert,
         data: {
-          instanceId: instanceId,
+          instanceId: instance.id,
           message: {
             ...message,
             content,
@@ -128,16 +128,16 @@ export async function introduceStory(userId: string, instanceId: string, message
   buffer = buffer.replace(new RegExp(`{\\s*"introduction"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 
-  sendToUser(userId, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageReplace,
     data: {
-      instanceId: instanceId,
+      instanceId: instance.id,
       messageId: message.id,
       content: buffer,
     },
   });
 
-  logStreamedOpenAIResponse(userId, messages, chunks, endTime - startTime);
+  logStreamedOpenAIResponse(instance.userId, messages, chunks, endTime - startTime);
 
   const updatedMessage = await db.message.update({
     where: {

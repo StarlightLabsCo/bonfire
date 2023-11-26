@@ -1,10 +1,9 @@
 import { ActionSuggestion } from 'websocket/types';
 import { db } from '../../services/db';
 import { generateModifier } from './modifier';
-import { MessageRole } from 'database';
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
+import { Instance, Message, MessageRole } from 'database';
 
-export async function rollDice(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function rollDice(instance: Instance & { messages: Message[] }) {
   let userAction = messages[messages.length - 1].content; // TODO: add validation here
 
   let modifier = null;

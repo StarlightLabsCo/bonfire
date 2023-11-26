@@ -6,37 +6,26 @@ import {
   StarlightWebSocketResponseType,
 } from 'websocket/types';
 import { db } from '../../services/db';
-import { sendToUser } from '../../src/connection';
-import { rollDice } from '../../core/dice/roll';
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { narratorReaction } from '../../core/narrator/reaction';
-import { continueStory } from '../../core/narrator/continue';
-import { createImage } from '../../core/images';
-import { generateActionSuggestions } from '../../core/suggestions/actions';
+import { InstanceStage, MessageRole } from 'database';
+import { sendToInstanceSubscribers } from '../../src/connection';
+import { stepInstanceUntil } from '../../core/stateMachine';
 
 export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.addPlayerMessage) {
     throw new Error('Invalid request type for addPlayerMessageHandler');
   }
 
-  const userId = ws.data.webSocketToken?.userId!;
-
   const { instanceId, message } = request.data;
 
   // Validation
-  const instance = await db.instance.findUnique({
+  let instance = await db.instance.findUnique({
     where: {
       id: instanceId,
-      userId: userId,
+      userId: ws.data.webSocketToken?.userId!,
+      stage: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
     },
     include: {
       messages: {
-        select: {
-          role: true,
-          content: true,
-          name: true,
-          function_call: true,
-        },
         orderBy: {
           createdAt: 'asc',
         },
@@ -45,38 +34,38 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
   });
 
   if (!instance) {
-    throw new Error('Instance not found');
+    throw new Error('Instance not found'); // either the instance doesn't exist, or the user doesn't own it, or it's not in the right stage
   }
 
-  // TODO: add a step to check that the instance state is valid and it can properly accept a user action
-
-  // Add message
-  const addedMessage = await db.message.create({
+  instance = await db.instance.update({
+    where: {
+      id: instanceId,
+    },
     data: {
-      instanceId,
-      role: 'user',
-      content: message,
+      messages: {
+        create: {
+          role: MessageRole.user,
+          content: message,
+        },
+      },
+      stage: InstanceStage.ADD_PLAYER_MESSAGE_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
-  sendToUser(userId, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId,
-      message: addedMessage,
+      message: instance.messages[instance.messages.length - 1],
     },
   });
 
-  let messages = [...instance.messages, { role: 'user', content: message }] as ChatCompletionMessageParam[];
-
-  // filter out any null-valued keys
-  messages = messages.map((message) => {
-    return Object.fromEntries(Object.entries(message).filter(([_, v]) => v != null));
-  }) as ChatCompletionMessageParam[];
-
-  messages = await rollDice(userId, instance.id, messages);
-  messages = await narratorReaction(userId, instance.id, messages);
-  messages = await continueStory(userId, instance.id, messages);
-  messages = await createImage(userId, instance.id, messages);
-  messages = await generateActionSuggestions(userId, instance.id, messages);
+  await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 }

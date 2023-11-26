@@ -1,28 +1,14 @@
 import { ServerWebSocket } from 'bun';
-import { WebSocketData } from '../../src';
-import {
-  StarlightWebSocketRequest,
-  StarlightWebSocketRequestType,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
-import { db } from '../../services/db';
-import { sendToUser } from '../../src/connection';
-
-// Story generation
-import { initStory } from '../../core/init';
-import { createOutline } from '../../core/planning/outline';
-import { introduceStory } from '../../core/narrator/introduction';
-import { createImage } from '../../core/images';
-import { generateActionSuggestions } from '../../core/suggestions/actions';
 import { InstanceStage, MessageRole } from 'database';
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
+import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
+import { WebSocketData } from '../../src';
+import { db } from '../../services/db';
+import { stepInstanceUntil } from '../../core/stateMachine';
 
 export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.createInstance) {
     throw new Error('Invalid request type for createInstanceHandler');
   }
-
-  const userId = ws.data.webSocketToken?.userId!;
 
   // init instance
   let initPrompt =
@@ -36,11 +22,11 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     name: 'system_prompt',
   };
 
-  const instance = await db.instance.create({
+  let instance = await db.instance.create({
     data: {
       user: {
         connect: {
-          id: userId,
+          id: ws.data.webSocketToken?.userId!,
         },
       },
       description: request.data.description,
@@ -49,26 +35,10 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
       },
       stage: InstanceStage.INIT_STORY_FINISH,
     },
-  });
-
-  // TODO: now go through and run it through the state machine, passing messages as needed
-  // TODO: would need to figure out how to let the systme know which steps it should complete and which it should stop at
-  // TODO: oh shit, maybe you can give it a desired end state and say, loop until you get to this end state or error
-  // TODO: so like stepUntil(instance.id, InstaceStage.GENERATE_ACTIONS_SUGGESTION_FINISH)
-
-  // story generation
-  let messages = [initMessage as ChatCompletionMessageParam];
-
-  messages = await createOutline(userId, instance.id, messages);
-
-  sendToUser(userId, {
-    type: StarlightWebSocketResponseType.instanceCreated,
-    data: {
-      instanceId: instance.id,
+    include: {
+      messages: true,
     },
   });
 
-  messages = await introduceStory(userId, instance.id, messages);
-  messages = await createImage(userId, instance.id, messages);
-  messages = await generateActionSuggestions(userId, instance.id, messages);
+  await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 }

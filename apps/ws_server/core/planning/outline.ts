@@ -1,9 +1,14 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { db } from '../../services/db';
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
-import { MessageRole } from 'database';
+import { Instance, InstanceStage, Message, MessageRole } from 'database';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
+import { sendToInstanceSubscribers } from '../../src/connection';
+import { StarlightWebSocketResponseType } from 'websocket/types';
 
-export async function createOutline(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function createOutline(instance: Instance & { messages: Message[] }) {
+  const messages = convertInstanceToChatCompletionMessageParams(instance);
+
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
@@ -33,25 +38,42 @@ export async function createOutline(userId: string, instanceId: string, messages
     throw new Error('No choices returned from GPT-4');
   }
 
-  logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
+  logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
   const args = JSON.parse(response.choices[0].message.function_call.arguments.replace('\\n', ''));
 
-  await db.message.create({
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
     data: {
-      instance: {
-        connect: {
-          id: instanceId,
+      messages: {
+        create: {
+          role: MessageRole.system,
+          content: args.plan,
+          name: 'story_outline',
         },
       },
-      role: MessageRole.system,
-      content: args.plan,
-      name: 'story_outline',
+      stage: InstanceStage.CREATE_OUTLINE_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
-  return [
-    ...messages,
-    { role: MessageRole.system, content: args.plan, name: 'story_outline' },
-  ] as ChatCompletionMessageParam[];
+  // Now that we've generated the outline we can direct the users to the next step
+  // TODO: this seems strange, i don't know if there's ever gonna be a case where we have to do this
+  // TODO: although I guess this would support lobbies?
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceCreated,
+    data: {
+      instanceId: instance.id,
+    },
+  });
+
+  return updatedInstance;
 }

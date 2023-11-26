@@ -59,3 +59,8 @@ export function sendToUser(userId: string, data: StarlightWebSocketResponse) {
     redis.rpush(websocket.data.connectionId!, JSON.stringify(data));
   }
 }
+
+export function sendToInstanceSubscribers(instanceId: string, data: StarlightWebSocketResponse) {
+  console.log('Sending to instance subscribers', instanceId, StarlightWebSocketResponseType[data.type]);
+  throw Error('Not implemented');
+}

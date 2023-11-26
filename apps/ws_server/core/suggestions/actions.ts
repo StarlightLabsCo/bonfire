@@ -1,15 +1,10 @@
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { db } from '../../services/db';
+import { Instance, Message, MessageRole } from 'database';
+import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser } from '../../src/connection';
-import { MessageRole } from 'database';
 
-export async function generateActionSuggestions(
-  userId: string,
-  instanceId: string,
-  messages: ChatCompletionMessageParam[],
-) {
+export async function generateActionSuggestions(instance: Instance & { messages: Message[] }) {
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
@@ -60,7 +55,7 @@ export async function generateActionSuggestions(
     throw new Error('No arguments found in response');
   }
 
-  logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
+  logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
   const argsJSON = JSON.parse(args);
 
@@ -77,10 +72,10 @@ export async function generateActionSuggestions(
     },
   });
 
-  sendToUser(userId, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
-      instanceId,
+      instanceId: instance.id,
       message,
     },
   });
