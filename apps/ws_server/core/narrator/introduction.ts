@@ -1,34 +1,47 @@
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logStreamedOpenAIResponse, openai } from '../../services/openai';
 import { db } from '../../services/db';
-import { Instance, Message, MessageRole } from 'database';
+import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
 import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 
 export async function introduceStory(instance: Instance & { messages: Message[] }) {
-  const message = await db.message.create({
+  const messages = convertInstanceToChatCompletionMessageParams(instance);
+
+  let updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+      stage: InstanceStage.CREATE_OUTLINE_FINISH, // TODO: is there a more unified way to do this, maybe just an if statement at the top of the function?
+    },
     data: {
-      instance: {
-        connect: {
-          id: instance.id,
+      messages: {
+        create: {
+          role: MessageRole.assistant,
+          content: '',
+          name: 'introduction',
         },
       },
-      content: '',
-      role: MessageRole.assistant,
-      name: 'introduction',
+      stage: InstanceStage.INTRODUCE_STORY_START,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
-  sendToInstanceSubscribers(instance.id, {
+  sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
-      instanceId: instance.id,
-      message: message,
+      instanceId: updatedInstance.id,
+      message: updatedInstance.messages[updatedInstance.messages.length - 1],
     },
   });
 
-  await initSpeechStreamConnection(userId);
+  await initSpeechStreamConnection(updatedInstance.id);
 
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
@@ -81,12 +94,10 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
         `{ "introduction": "`.includes(buffer) ||
         `{ "introduction":"`.includes(buffer)
       ) {
-        console.log('skipping beginning');
         continue;
       }
 
       if (args.includes('}')) {
-        console.log('skipping end');
         continue;
       }
 
@@ -95,12 +106,12 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
       content = content.replace(/\\"/g, '"');
       content = content.replace(/\\'/g, "'");
 
-      sendToInstanceSubscribers(instance.id, {
+      sendToInstanceSubscribers(updatedInstance.id, {
         type: StarlightWebSocketResponseType.messageUpsert,
         data: {
-          instanceId: instance.id,
+          instanceId: updatedInstance.id,
           message: {
-            ...message,
+            ...updatedInstance.messages[updatedInstance.messages.length - 1],
             content,
             updatedAt: new Date(),
           },
@@ -111,13 +122,13 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
       cleanedArgs = cleanedArgs.replace(/\\"/g, '"');
       cleanedArgs = cleanedArgs.replace(/\\'/g, "'");
 
-      appendToSpeechStream(userId, cleanedArgs);
+      appendToSpeechStream(instance.id, cleanedArgs);
     } catch (err) {
       console.error(err);
     }
   }
 
-  endSpeechStream(userId);
+  endSpeechStream(instance.id);
 
   const endTime = Date.now();
 
@@ -128,28 +139,42 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
   buffer = buffer.replace(new RegExp(`{\\s*"introduction"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 
-  sendToInstanceSubscribers(instance.id, {
+  sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.messageReplace,
     data: {
-      instanceId: instance.id,
-      messageId: message.id,
+      instanceId: updatedInstance.id,
+      messageId: updatedInstance.messages[updatedInstance.messages.length - 1].id,
       content: buffer,
     },
   });
 
-  logStreamedOpenAIResponse(instance.userId, messages, chunks, endTime - startTime);
+  logStreamedOpenAIResponse(updatedInstance.userId, messages, chunks, endTime - startTime);
 
-  const updatedMessage = await db.message.update({
+  updatedInstance = await db.instance.update({
     where: {
-      id: message.id,
+      id: updatedInstance.id,
     },
     data: {
-      content: buffer,
+      messages: {
+        update: {
+          where: {
+            id: updatedInstance.messages[updatedInstance.messages.length - 1].id,
+          },
+          data: {
+            content: buffer,
+          },
+        },
+      },
+      stage: InstanceStage.INTRODUCE_STORY_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
-  return [
-    ...messages,
-    { role: MessageRole.assistant, content: updatedMessage.content, name: 'introduction' },
-  ] as ChatCompletionMessageParam[];
+  return updatedInstance;
 }

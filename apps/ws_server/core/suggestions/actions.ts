@@ -1,10 +1,13 @@
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { db } from '../../services/db';
-import { Instance, Message, MessageRole } from 'database';
+import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 
 export async function generateActionSuggestions(instance: Instance & { messages: Message[] }) {
+  const messages = convertInstanceToChatCompletionMessageParams(instance);
+
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
@@ -59,16 +62,26 @@ export async function generateActionSuggestions(instance: Instance & { messages:
 
   const argsJSON = JSON.parse(args);
 
-  const message = await db.message.create({
+  let updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
     data: {
-      instance: {
-        connect: {
-          id: instanceId,
+      messages: {
+        create: {
+          role: MessageRole.function,
+          content: JSON.stringify(argsJSON.actions),
+          name: 'action_suggestions',
         },
       },
-      role: 'function',
-      content: JSON.stringify(argsJSON.actions),
-      name: 'action_suggestions',
+      stage: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
@@ -76,12 +89,9 @@ export async function generateActionSuggestions(instance: Instance & { messages:
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId: instance.id,
-      message,
+      message: updatedInstance.messages[updatedInstance.messages.length - 1],
     },
   });
 
-  return [
-    ...messages,
-    { role: MessageRole.function, content: JSON.stringify(argsJSON.actions), name: 'action_suggestions' },
-  ];
+  return updatedInstance;
 }

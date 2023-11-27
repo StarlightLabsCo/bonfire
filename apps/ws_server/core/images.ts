@@ -1,13 +1,16 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logNonStreamedOpenAIResponse, openai } from '../services/openai';
 import { db } from '../services/db';
-import { Instance, Message, MessageRole } from 'database';
+import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { uploadImageToR2 } from '../services/cloudflare';
 import { sendToInstanceSubscribers } from '../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
+import { convertInstanceToChatCompletionMessageParams } from '../src/utils';
 
 export async function createImage(instance: Instance & { messages: Message[] }) {
-  let modifiedMessages = instance.messages
+  // Step 1 - Use Vision API to create a prompt for the image
+  let messages = convertInstanceToChatCompletionMessageParams(instance);
+  let modifiedMessages = messages
     .map((message) => {
       if (message.role == 'function' && message.name == 'generate_image') {
         return {
@@ -45,8 +48,14 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     throw new Error('No content in response');
   }
 
-  logNonStreamedOpenAIResponse(instance.id, modifiedMessages, response, endTime - startTime);
+  logNonStreamedOpenAIResponse(
+    instance.userId,
+    modifiedMessages as ChatCompletionMessageParam[],
+    response,
+    endTime - startTime,
+  );
 
+  // Step 2 - Use DALL-E to generate an image that matches the art style of the story for a new concept
   const imageResponse = await openai.images.generate({
     model: 'dall-e-3',
     prompt: response.choices[0].message.content,
@@ -69,6 +78,7 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
           name: 'generate_image',
         },
       },
+      stage: InstanceStage.CREATE_IMAGE_FINISH,
     },
     include: {
       messages: {

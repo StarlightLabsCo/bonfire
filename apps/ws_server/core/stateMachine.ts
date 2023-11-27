@@ -25,14 +25,14 @@ export const InstanceFunctions = {
 
   // TODO: add proper error handling
   // Errors
-  [InstanceStage.INIT_STORY_ERROR]: () => Promise.reject('Instance failed to initialize'),
-  [InstanceStage.CREATE_OUTLINE_ERROR]: () => Promise.reject('Instance failed to create outline'),
-  [InstanceStage.INTRODUCE_STORY_ERROR]: () => Promise.reject('Instance failed to introduce story'),
-  [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
-  [InstanceStage.ROLL_DICE_ERROR]: () => Promise.reject('Instance failed to roll dice'),
-  [InstanceStage.NARRATOR_REACTION_ERROR]: () => Promise.reject('Instance failed to react to player message'),
-  [InstanceStage.CONTINUE_STORY_ERROR]: () => Promise.reject('Instance failed to continue story'),
-  [InstanceStage.CREATE_IMAGE_ERROR]: () => Promise.reject('Instance failed to create image'),
+  // [InstanceStage.INIT_STORY_ERROR]: () => Promise.reject('Instance failed to initialize'),
+  // [InstanceStage.CREATE_OUTLINE_ERROR]: () => Promise.reject('Instance failed to create outline'),
+  // [InstanceStage.INTRODUCE_STORY_ERROR]: () => Promise.reject('Instance failed to introduce story'),
+  // [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
+  // [InstanceStage.ROLL_DICE_ERROR]: () => Promise.reject('Instance failed to roll dice'),
+  // [InstanceStage.NARRATOR_REACTION_ERROR]: () => Promise.reject('Instance failed to react to player message'),
+  // [InstanceStage.CONTINUE_STORY_ERROR]: () => Promise.reject('Instance failed to continue story'),
+  // [InstanceStage.CREATE_IMAGE_ERROR]: () => Promise.reject('Instance failed to create image'),
 };
 
 export async function stepInstance(instance: Instance & { messages: Message[] }) {
@@ -40,8 +40,12 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
   try {
     const nextStep = InstanceFunctions[instance.stage as keyof typeof InstanceFunctions];
     if (!nextStep) {
-      throw new Error(`Invalid instance stage: ${instance.stage}`);
+      throw new Error(`No function founder for: ${instance.stage}`);
     }
+
+    console.log(
+      `[${Date.now()}][State Machine][Instance: ${instance.id}] ${instance.stage} ---executing---> ${nextStep.name}`,
+    );
 
     updatedInstance = await nextStep(instance);
   } catch (error) {
@@ -53,9 +57,14 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
       },
       data: {
         stage: InstanceStage[(instance.stage + 1) as keyof typeof InstanceStage], // Switch from current stage to related error stage
+        error: error as string,
       },
       include: {
-        messages: true,
+        messages: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
       },
     });
   }
@@ -70,7 +79,7 @@ export async function stepInstanceUntil(instance: Instance & { messages: Message
   let updatedInstance = instance;
   while (updatedInstance.stage !== endStage) {
     if (counter > MAX_ITERATIONS) {
-      throw new Error('Possible infinite loop detected');
+      throw new Error('Possible infinite loop detected'); // TODO: add recovery here
     }
 
     updatedInstance = await stepInstance(updatedInstance);

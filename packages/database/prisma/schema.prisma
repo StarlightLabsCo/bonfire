@@ -130,6 +130,7 @@ model Instance {
   userId String
 
   stage InstanceStage @default(INIT_STORY_START)
+  error String?
 
   description String
 

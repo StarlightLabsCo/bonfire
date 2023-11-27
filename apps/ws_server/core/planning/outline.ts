@@ -1,4 +1,3 @@
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { db } from '../../services/db';
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { Instance, InstanceStage, Message, MessageRole } from 'database';
@@ -65,9 +64,6 @@ export async function createOutline(instance: Instance & { messages: Message[] }
     },
   });
 
-  // Now that we've generated the outline we can direct the users to the next step
-  // TODO: this seems strange, i don't know if there's ever gonna be a case where we have to do this
-  // TODO: although I guess this would support lobbies?
   sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.instanceCreated,
     data: {

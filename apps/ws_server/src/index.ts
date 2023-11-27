@@ -38,7 +38,8 @@ const server = Bun.serve<WebSocketData>({
       return new Response('Missing authentication token.', { status: 400 });
     }
 
-    // TODO: figure out a way to have websocket auth tokens already in memory - remote db call makes things slow
+    // TODO: Rather than the NextJS Serverless function pinging the postgresdb, we can have it ping the Bun server directly
+    // TODO: which can then store it in redis. Should be faster?
     const webSocketToken = await db.webSocketAuthenticationToken.findUnique({
       where: {
         token,
