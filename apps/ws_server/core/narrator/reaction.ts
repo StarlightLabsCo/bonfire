@@ -1,10 +1,12 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
-import { MessageRole } from 'database';
+import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { db } from '../../services/db';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 
-export async function narratorReaction(userId: string, instanceId: string, messages: ChatCompletionMessageParam[]) {
+export async function narratorReaction(instance: Instance & { messages: Message[] }) {
   // ---- Reacting to the player's action & diceroll ----
+  const messages = convertInstanceToChatCompletionMessageParams(instance);
   const reactionMessages = [
     ...messages,
     { content: '[Narrator Inner Monologue] As the narrator, I feel ', role: MessageRole.assistant },
@@ -39,20 +41,34 @@ export async function narratorReaction(userId: string, instanceId: string, messa
     throw new Error('[generate_narrator_internal_monologue_reaction] No function call found');
   }
 
-  logNonStreamedOpenAIResponse(userId, reactionMessages, reactionResponse, reactionEndTime - reactionStartTime);
+  logNonStreamedOpenAIResponse(
+    instance.userId,
+    reactionMessages,
+    reactionResponse,
+    reactionEndTime - reactionStartTime,
+  );
 
   const reactionArgs = JSON.parse(reactionResponse.choices[0].message.function_call.arguments);
 
-  await db.message.create({
+  let updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
     data: {
-      instance: {
-        connect: {
-          id: instanceId,
+      messages: {
+        create: {
+          role: MessageRole.system,
+          content: `[Narrator Inner Monologue] As the narrator, I feel ${reactionArgs.reaction}`,
+          name: 'narrator_internal_monologue_reaction',
         },
       },
-      content: `[Narrator Inner Monologue] As the narrator, I feel ${reactionArgs.reaction}`,
-      role: MessageRole.system,
-      name: 'narrator_internal_monologue_reaction',
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
@@ -99,34 +115,37 @@ export async function narratorReaction(userId: string, instanceId: string, messa
     throw new Error('[generate_narrator_internal_monologue_plan] No function call found');
   }
 
-  logNonStreamedOpenAIResponse(userId, planningMessages, planningResponse, planningEndTime - planningStartTime);
+  logNonStreamedOpenAIResponse(
+    updatedInstance.userId,
+    planningMessages,
+    planningResponse,
+    planningEndTime - planningStartTime,
+  );
 
   const planningArgs = JSON.parse(planningResponse.choices[0].message.function_call.arguments);
 
-  await db.message.create({
+  updatedInstance = await db.instance.update({
+    where: {
+      id: updatedInstance.id,
+    },
     data: {
-      instance: {
-        connect: {
-          id: instanceId,
+      messages: {
+        create: {
+          role: MessageRole.system,
+          content: `[Narrator Inner Monologue] To adjust the story going forward, I will ${planningArgs.plan}`,
+          name: 'narrator_internal_monologue_plan',
         },
       },
-      content: `[Narrator Inner Monologue] To adjust the story going forward, I will ${planningArgs.plan}`,
-      role: MessageRole.system,
-      name: 'narrator_internal_monologue_plan',
+      stage: InstanceStage.NARRATOR_REACTION_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
-  return [
-    ...messages,
-    {
-      content: `[Narrator Inner Monologue] As the narrator, I feel ${reactionArgs.reaction}`,
-      role: MessageRole.system,
-      name: 'narrator_internal_monologue_reaction',
-    },
-    {
-      content: `[Narrator Inner Monologue] To adjust the story going forward, I will ${planningArgs.plan}`,
-      role: MessageRole.system,
-      name: 'narrator_internal_monologue_plan',
-    },
-  ];
+  return updatedInstance;
 }

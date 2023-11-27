@@ -6,6 +6,7 @@ import { validateResponse } from 'websocket/utils';
 
 // This map maintains the most updated websocket for each user. Stored as a map of userId-connectionId to websocket
 const userIdToWebSocket: Record<string, ServerWebSocket<WebSocketData>> = {};
+const instanceSubscriptions: Record<string, string[]> = {};
 
 export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData>) {
   const userId = ws.data.webSocketToken!.userId!;
@@ -38,8 +39,8 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
   }
 }
 
+// *** User ***
 export function sendToUser(userId: string, data: StarlightWebSocketResponse) {
-  console.log('Sending to user', userId, StarlightWebSocketResponseType[data.type]);
   const websocket = userIdToWebSocket[userId];
 
   if (typeof websocket === 'undefined') {
@@ -57,5 +58,29 @@ export function sendToUser(userId: string, data: StarlightWebSocketResponse) {
   if (status === 0) {
     console.log('Message failed to send, queueing message');
     redis.rpush(websocket.data.connectionId!, JSON.stringify(data));
+  }
+}
+
+// *** Instance Publish / Subscribe ***
+export function subscribeUserToInstance(userId: string, instanceId: string) {
+  if (!instanceSubscriptions[instanceId]) {
+    instanceSubscriptions[instanceId] = [];
+  }
+  instanceSubscriptions[instanceId].push(userId);
+}
+
+export function unsubscribeUserFromInstance(userId: string, instanceId: string) {
+  const subscribers = instanceSubscriptions[instanceId];
+  if (subscribers) {
+    instanceSubscriptions[instanceId] = subscribers.filter((subscriber) => subscriber !== userId);
+  }
+}
+
+export function sendToInstanceSubscribers(instanceId: string, data: StarlightWebSocketResponse) {
+  const subscribers = instanceSubscriptions[instanceId];
+  if (subscribers) {
+    subscribers.forEach((userId) => {
+      sendToUser(userId, data);
+    });
   }
 }

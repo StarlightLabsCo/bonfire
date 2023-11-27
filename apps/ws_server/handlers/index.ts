@@ -7,7 +7,7 @@ import { stopAudioHandler } from './audio/stopAudio';
 import { processVoiceTranscriptionHandler } from './audio/processVoiceTranscription';
 import { finishVoiceTranscriptionHandler } from './audio/finishVoiceTranscription';
 
-import { createAdventureSuggestionsHandler } from './story/createAdventureSuggestions';
+import { createAdventureSuggestionsHandler } from './lobby/createAdventureSuggestions';
 import { createInstanceHandler } from './story/createInstance';
 import { addPlayerMessageHandler } from './story/addPlayerMessage';
 import { undoMessageHandler } from './story/undoMessage';

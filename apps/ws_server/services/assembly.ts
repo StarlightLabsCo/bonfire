@@ -102,7 +102,6 @@ async function initAssemblyWs(userId: string) {
       const data = JSON.parse(event.data as string);
 
       // TODO: validate message
-
       if (data.text) {
         sendToUser(userId, {
           type: StarlightWebSocketResponseType.voiceTranscriptionProcessed,

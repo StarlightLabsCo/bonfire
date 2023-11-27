@@ -16,7 +16,7 @@ export async function createAdventureSuggestionsHandler(
 
   const instances = await db.instance.findMany({
     where: {
-      userId: ws.data.webSocketToken!.userId,
+      userId,
     },
     orderBy: {
       createdAt: 'desc',

@@ -1,9 +1,11 @@
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
+import { Instance, Message } from 'database';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 
-export async function generateModifier(userId: string, messages: ChatCompletionMessageParam[]) {
+export async function generateModifier(instance: Instance & { messages: Message[] }) {
+  const messages = convertInstanceToChatCompletionMessageParams(instance);
+
   const startTime = Date.now();
-
   const response = await openai.chat.completions.create({
     messages: messages,
     model: 'gpt-4-1106-preview',
@@ -40,7 +42,7 @@ export async function generateModifier(userId: string, messages: ChatCompletionM
     throw new Error('No arguments found in response');
   }
 
-  logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
+  logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
   const argsJSON = JSON.parse(args);
 

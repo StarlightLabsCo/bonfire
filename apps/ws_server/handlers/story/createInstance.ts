@@ -1,50 +1,47 @@
 import { ServerWebSocket } from 'bun';
+import { InstanceStage, MessageRole } from 'database';
+import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
 import { WebSocketData } from '../../src';
-import {
-  StarlightWebSocketRequest,
-  StarlightWebSocketRequestType,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
 import { db } from '../../services/db';
-import { sendToUser } from '../../src/connection';
-
-// Story generation
-import { initStory } from '../../core/init';
-import { createOutline } from '../../core/planning/outline';
-import { introduceStory } from '../../core/narrator/introduction';
-import { createImage } from '../../core/images';
-import { generateActionSuggestions } from '../../core/suggestions/actions';
+import { stepInstanceUntil } from '../../core/stateMachine';
+import { subscribeUserToInstance } from '../../src/connection';
 
 export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.createInstance) {
     throw new Error('Invalid request type for createInstanceHandler');
   }
 
-  const userId = ws.data.webSocketToken?.userId!;
+  // TODO, turn this into a function?
+  let initPrompt =
+    "You are a master storyteller. You have a wit as sharp as a dagger, and a heart as pure as gold. Given the description below create a thrilling, vibrant, and detailed story with deep multi-faceted characters, and clean followable structure that features the listener (whom you talk about in the 2nd person) as the main character. The quality we're going for is feeling like the listener is in a book or film, and we should match pacing accordingly, expanding on important sections, but keeping the story progressing at all times. When it's appropriate you can even imitate characters in the story for dialogue sections. Incorporate a climax moment that represents the culmination of all the plot elements of the story.\n\n" +
+      'The requested story is as follows: ' +
+      request.data.description ?? 'Suprise me!';
 
-  const instance = await db.instance.create({
+  let initMessage = {
+    content: initPrompt,
+    role: MessageRole.system,
+    name: 'system_prompt',
+  };
+
+  let instance = await db.instance.create({
     data: {
       user: {
         connect: {
-          id: userId,
+          id: ws.data.webSocketToken?.userId!,
         },
       },
       description: request.data.description,
+      messages: {
+        create: initMessage,
+      },
+      stage: InstanceStage.INIT_STORY_FINISH,
+    },
+    include: {
+      messages: true,
     },
   });
 
-  // story generation
-  let messages = await initStory(instance.id, request.data.description);
-  messages = await createOutline(userId, instance.id, messages);
+  subscribeUserToInstance(ws.data.webSocketToken?.userId!, instance.id);
 
-  sendToUser(userId, {
-    type: StarlightWebSocketResponseType.instanceCreated,
-    data: {
-      instanceId: instance.id,
-    },
-  });
-
-  messages = await introduceStory(userId, instance.id, messages);
-  messages = await createImage(userId, instance.id, messages);
-  messages = await generateActionSuggestions(userId, instance.id, messages);
+  await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 }

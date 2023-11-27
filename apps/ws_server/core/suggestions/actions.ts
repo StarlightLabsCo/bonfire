@@ -1,15 +1,13 @@
-import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { db } from '../../services/db';
+import { Instance, InstanceStage, Message, MessageRole } from 'database';
+import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser } from '../../src/connection';
-import { MessageRole } from 'database';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 
-export async function generateActionSuggestions(
-  userId: string,
-  instanceId: string,
-  messages: ChatCompletionMessageParam[],
-) {
+export async function generateActionSuggestions(instance: Instance & { messages: Message[] }) {
+  const messages = convertInstanceToChatCompletionMessageParams(instance);
+
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
@@ -60,33 +58,40 @@ export async function generateActionSuggestions(
     throw new Error('No arguments found in response');
   }
 
-  logNonStreamedOpenAIResponse(userId, messages, response, endTime - startTime);
+  logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
   const argsJSON = JSON.parse(args);
 
-  const message = await db.message.create({
+  let updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
     data: {
-      instance: {
-        connect: {
-          id: instanceId,
+      messages: {
+        create: {
+          role: MessageRole.function,
+          content: JSON.stringify(argsJSON.actions),
+          name: 'action_suggestions',
         },
       },
-      role: 'function',
-      content: JSON.stringify(argsJSON.actions),
-      name: 'action_suggestions',
+      stage: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
-  sendToUser(userId, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
-      instanceId,
-      message,
+      instanceId: instance.id,
+      message: updatedInstance.messages[updatedInstance.messages.length - 1],
     },
   });
 
-  return [
-    ...messages,
-    { role: MessageRole.function, content: JSON.stringify(argsJSON.actions), name: 'action_suggestions' },
-  ];
+  return updatedInstance;
 }
