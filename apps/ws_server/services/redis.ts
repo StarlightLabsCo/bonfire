@@ -1,4 +1,11 @@
 // Documentation: https://www.npmjs.com/package/ioredis
 import Redis from 'ioredis';
 
-export const redis = new Redis(process.env.REDIS_PRIVATE_URL as string);
+const redisURL = new URL(process.env.REDIS_PRIVATE_URL as string);
+
+export const redis = new Redis({
+  host: redisURL.hostname,
+  port: Number(redisURL.port),
+  username: redisURL.username,
+  password: redisURL.password,
+});
