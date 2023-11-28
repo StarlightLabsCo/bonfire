@@ -1,10 +1,10 @@
-import { db } from '../../services/db';
+import { db } from '../../../services/db';
 import { Instance, InstanceStage, Message, MessageRole } from 'database';
-import { sendToInstanceSubscribers } from '../../src/connection';
+import { sendToInstanceSubscribers } from '../../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
-import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../services/elevenlabs';
-import { logStreamedOpenAIResponse, openai } from '../../services/openai';
-import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
+import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } from '../../../services/elevenlabs';
+import { logStreamedOpenAIResponse, openai } from '../../../services/openai';
+import { convertInstanceToChatCompletionMessageParams } from '../../../src/utils';
 
 export async function continueStory(instance: Instance & { messages: Message[] }) {
   const messages = convertInstanceToChatCompletionMessageParams(instance);

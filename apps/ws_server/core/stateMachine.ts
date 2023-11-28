@@ -1,12 +1,16 @@
 import { Instance, InstanceStage, Message } from 'database';
-import { createOutline } from './planning/outline';
-import { introduceStory } from './narrator/introduction';
-import { createImage } from './images';
-import { generateActionSuggestions } from './suggestions/actions';
-import { rollDice } from './dice/roll';
-import { narratorReaction } from './narrator/reaction';
-import { continueStory } from './narrator/continue';
 import { db } from '../services/db';
+
+import { introduceStory } from './instance/introduction/introduction';
+import { createOutline, retryCreateOutline } from './instance/introduction/outline';
+
+import { rollDice } from './instance/continue/dice';
+import { narratorReaction } from './instance/continue/reaction';
+import { narratorPlanning } from './instance/continue/planning';
+import { continueStory } from './instance/continue/continue';
+
+import { createImage } from './instance/images';
+import { generateActionSuggestions } from './instance/actions';
 
 export const InstanceFunctions = {
   // Introduction sequence
@@ -17,7 +21,8 @@ export const InstanceFunctions = {
   // Action sequence
   [InstanceStage.ADD_PLAYER_MESSAGE_FINISH]: rollDice,
   [InstanceStage.ROLL_DICE_FINISH]: narratorReaction,
-  [InstanceStage.NARRATOR_REACTION_FINISH]: continueStory,
+  [InstanceStage.NARRATOR_REACTION_FINISH]: narratorPlanning,
+  [InstanceStage.NARRATOR_PLANNING_FINISH]: continueStory,
   [InstanceStage.CONTINUE_STORY_FINISH]: createImage,
 
   // Shared
@@ -26,7 +31,7 @@ export const InstanceFunctions = {
   // TODO: add proper error handling
   // Errors
   // [InstanceStage.INIT_STORY_ERROR]: () => Promise.reject('Instance failed to initialize'),
-  // [InstanceStage.CREATE_OUTLINE_ERROR]: () => Promise.reject('Instance failed to create outline'),
+  [InstanceStage.CREATE_OUTLINE_ERROR]: retryCreateOutline,
   // [InstanceStage.INTRODUCE_STORY_ERROR]: () => Promise.reject('Instance failed to introduce story'),
   // [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
   // [InstanceStage.ROLL_DICE_ERROR]: () => Promise.reject('Instance failed to roll dice'),

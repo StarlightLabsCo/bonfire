@@ -1,11 +1,11 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { logNonStreamedOpenAIResponse, openai } from '../services/openai';
-import { db } from '../services/db';
+import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
+import { db } from '../../services/db';
 import { Instance, InstanceStage, Message, MessageRole } from 'database';
-import { uploadImageToR2 } from '../services/cloudflare';
-import { sendToInstanceSubscribers } from '../src/connection';
+import { uploadImageToR2 } from '../../services/cloudflare';
+import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
-import { convertInstanceToChatCompletionMessageParams } from '../src/utils';
+import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 
 export async function createImage(instance: Instance & { messages: Message[] }) {
   // Step 1 - Use Vision API to create a prompt for the image

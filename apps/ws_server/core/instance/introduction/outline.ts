@@ -1,8 +1,8 @@
-import { db } from '../../services/db';
-import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
+import { db } from '../../../services/db';
+import { logNonStreamedOpenAIResponse, openai } from '../../../services/openai';
 import { Instance, InstanceStage, Message, MessageRole } from 'database';
-import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
-import { sendToInstanceSubscribers } from '../../src/connection';
+import { convertInstanceToChatCompletionMessageParams } from '../../../src/utils';
+import { sendToInstanceSubscribers } from '../../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 
 export async function createOutline(instance: Instance & { messages: Message[] }) {
@@ -68,6 +68,35 @@ export async function createOutline(instance: Instance & { messages: Message[] }
     type: StarlightWebSocketResponseType.instanceCreated,
     data: {
       instanceId: instance.id,
+    },
+  });
+
+  return updatedInstance;
+}
+
+export async function retryCreateOutline(instance: Instance & { messages: Message[] }) {
+  const lastMessage = instance.messages[instance.messages.length - 1];
+  if (lastMessage.role === MessageRole.system && lastMessage.name === 'story_outline') {
+    await db.message.delete({
+      where: {
+        id: lastMessage.id,
+      },
+    });
+  }
+
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      stage: InstanceStage.INIT_STORY_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
     },
   });
 
