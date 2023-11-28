@@ -5,7 +5,6 @@ if (!process.env.REDIS_PRIVATE_URL) {
   throw new Error('REDIS_PRIVATE_URL not found');
 }
 
-console.log(process.env.REDIS_PRIVATE_URL);
 const redisURL = new URL(process.env.REDIS_PRIVATE_URL);
 
 export const redis = new Redis({
