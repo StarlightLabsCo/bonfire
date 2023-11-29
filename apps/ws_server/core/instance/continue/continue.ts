@@ -21,6 +21,9 @@ export async function continueStory(instance: Instance & { messages: Message[] }
           name: 'story_beat',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.CONTINUE_STORY_START,
     },
     include: {
@@ -166,6 +169,9 @@ export async function continueStory(instance: Instance & { messages: Message[] }
             content: buffer,
           },
         },
+      },
+      history: {
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.CONTINUE_STORY_FINISH,
     },

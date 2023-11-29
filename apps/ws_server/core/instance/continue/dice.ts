@@ -47,6 +47,9 @@ export async function rollDice(instance: Instance & { messages: Message[] }) {
           name: 'roll_dice',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.ROLL_DICE_FINISH,
     },
     include: {
@@ -109,4 +112,33 @@ export async function generateModifier(instance: Instance & { messages: Message[
     modifier: argsJSON.action_modifier,
     reason: argsJSON.reason,
   };
+}
+
+export async function resetRollDice(instance: Instance & { messages: Message[] }) {
+  const lastMessage = instance.messages[instance.messages.length - 1];
+  if (lastMessage.role === MessageRole.system && lastMessage.name === 'roll_dice') {
+    await db.message.delete({
+      where: {
+        id: lastMessage.id,
+      },
+    });
+  }
+
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      stage: InstanceStage.ADD_PLAYER_MESSAGE_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  return updatedInstance;
 }

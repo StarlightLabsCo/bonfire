@@ -74,6 +74,9 @@ export async function generateActionSuggestions(instance: Instance & { messages:
           name: 'action_suggestions',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
     },
     include: {

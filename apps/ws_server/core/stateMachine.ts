@@ -2,11 +2,11 @@ import { Instance, InstanceStage, Message } from 'database';
 import { db } from '../services/db';
 
 import { introduceStory } from './instance/introduction/introduction';
-import { createOutline, retryCreateOutline } from './instance/introduction/outline';
+import { createOutline, resetCreateOutline } from './instance/introduction/outline';
 
 import { rollDice } from './instance/continue/dice';
-import { narratorReaction } from './instance/continue/reaction';
-import { narratorPlanning } from './instance/continue/planning';
+import { narratorReaction, resetNarratorReaction } from './instance/continue/reaction';
+import { narratorPlanning, resetNarratorPlanning } from './instance/continue/planning';
 import { continueStory } from './instance/continue/continue';
 
 import { createImage } from './instance/images';
@@ -28,14 +28,14 @@ export const InstanceFunctions = {
   // Shared
   [InstanceStage.CREATE_IMAGE_FINISH]: generateActionSuggestions,
 
-  // TODO: add proper error handling
   // Errors
   // [InstanceStage.INIT_STORY_ERROR]: () => Promise.reject('Instance failed to initialize'),
-  [InstanceStage.CREATE_OUTLINE_ERROR]: retryCreateOutline,
+  [InstanceStage.CREATE_OUTLINE_ERROR]: resetCreateOutline,
   // [InstanceStage.INTRODUCE_STORY_ERROR]: () => Promise.reject('Instance failed to introduce story'),
   // [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
-  // [InstanceStage.ROLL_DICE_ERROR]: () => Promise.reject('Instance failed to roll dice'),
-  // [InstanceStage.NARRATOR_REACTION_ERROR]: () => Promise.reject('Instance failed to react to player message'),
+  [InstanceStage.ROLL_DICE_ERROR]: resetCreateOutline,
+  [InstanceStage.NARRATOR_REACTION_ERROR]: resetNarratorReaction,
+  [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
   // [InstanceStage.CONTINUE_STORY_ERROR]: () => Promise.reject('Instance failed to continue story'),
   // [InstanceStage.CREATE_IMAGE_ERROR]: () => Promise.reject('Instance failed to create image'),
 };

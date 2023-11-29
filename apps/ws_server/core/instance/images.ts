@@ -78,6 +78,9 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
           name: 'generate_image',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.CREATE_IMAGE_FINISH,
     },
     include: {

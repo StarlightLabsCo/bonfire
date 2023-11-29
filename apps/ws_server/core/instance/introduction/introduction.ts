@@ -22,6 +22,9 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
           name: 'introduction',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.INTRODUCE_STORY_START,
     },
     include: {
@@ -164,6 +167,9 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
             content: buffer,
           },
         },
+      },
+      history: {
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.INTRODUCE_STORY_FINISH,
     },

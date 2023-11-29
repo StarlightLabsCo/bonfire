@@ -86,8 +86,6 @@ model User {
 }
 
 enum InstanceStage {
-  INIT_STORY_START
-  INIT_STORY_ERROR
   INIT_STORY_FINISH
 
   CREATE_OUTLINE_START
@@ -133,7 +131,8 @@ model Instance {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  stage InstanceStage @default(INIT_STORY_START)
+  stage InstanceStage @default(INIT_STORY_FINISH)
+  history InstanceStage[]
   error String?
 
   description String

@@ -53,6 +53,9 @@ export async function createOutline(instance: Instance & { messages: Message[] }
           name: 'story_outline',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.CREATE_OUTLINE_FINISH,
     },
     include: {
@@ -74,7 +77,7 @@ export async function createOutline(instance: Instance & { messages: Message[] }
   return updatedInstance;
 }
 
-export async function retryCreateOutline(instance: Instance & { messages: Message[] }) {
+export async function resetCreateOutline(instance: Instance & { messages: Message[] }) {
   const lastMessage = instance.messages[instance.messages.length - 1];
   if (lastMessage.role === MessageRole.system && lastMessage.name === 'story_outline') {
     await db.message.delete({
@@ -89,6 +92,9 @@ export async function retryCreateOutline(instance: Instance & { messages: Messag
       id: instance.id,
     },
     data: {
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.INIT_STORY_FINISH,
     },
     include: {

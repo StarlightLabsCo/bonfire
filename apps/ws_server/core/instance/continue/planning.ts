@@ -62,7 +62,42 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
           name: 'narrator_internal_monologue_plan',
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.NARRATOR_PLANNING_FINISH,
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  return updatedInstance;
+}
+
+export async function resetNarratorPlanning(instance: Instance & { messages: Message[] }) {
+  const lastMessage = instance.messages[instance.messages.length - 1];
+  if (lastMessage.role === MessageRole.system && lastMessage.name === 'narrator_internal_monologue_plan') {
+    await db.message.delete({
+      where: {
+        id: lastMessage.id,
+      },
+    });
+  }
+
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      history: {
+        push: instance.stage,
+      },
+      stage: InstanceStage.NARRATOR_REACTION_FINISH,
     },
     include: {
       messages: {
