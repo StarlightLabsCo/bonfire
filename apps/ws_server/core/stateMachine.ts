@@ -1,4 +1,4 @@
-import { Instance, InstanceStage, Message } from 'database';
+import { Instance, InstanceStage, Message, Prisma } from 'database';
 import { db } from '../services/db';
 
 import { introduceStory } from './instance/introduction/introduction';
@@ -54,7 +54,25 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
 
     updatedInstance = await nextStep(instance);
   } catch (error) {
-    console.error(error);
+    console.error(`[StateMachine] Error: `, error);
+
+    let errorMessage: string;
+
+    // TODO: more robust error handling
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = error.message;
+    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+      errorMessage = error.message;
+    } else if (error instanceof Prisma.PrismaClientRustPanicError) {
+      errorMessage = error.message;
+    } else if (error instanceof Prisma.PrismaClientInitializationError) {
+      errorMessage = error.message;
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      errorMessage = error.message;
+    } else {
+      // Handle all other errors
+      errorMessage = (error as Error).toString();
+    }
 
     updatedInstance = await db.instance.update({
       where: {
@@ -65,7 +83,7 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
           push: instance.stage,
         },
         stage: InstanceStage[(instance.stage + 1) as keyof typeof InstanceStage], // Switch from current stage to related error stage
-        error: error as string,
+        error: errorMessage,
       },
       include: {
         messages: {
