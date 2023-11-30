@@ -104,3 +104,35 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
 
   return updatedInstance;
 }
+
+export async function resetCreateImage(instance: Instance & { messages: Message[] }) {
+  const lastMessage = instance.messages[instance.messages.length - 1];
+  if (lastMessage.role === MessageRole.function && lastMessage.name === 'generate_image') {
+    await db.message.delete({
+      where: {
+        id: lastMessage.id,
+      },
+    });
+  }
+
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      history: {
+        push: instance.stage,
+      },
+      stage: instance.history[instance.history.length - 1], // Go back to the previous stage (could be CONTINUE_STORY_FINISH or INTRODUCE_STORY_FINISH)
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  return updatedInstance;
+}

@@ -9,7 +9,7 @@ import { narratorReaction, resetNarratorReaction } from './instance/continue/rea
 import { narratorPlanning, resetNarratorPlanning } from './instance/continue/planning';
 import { continueStory } from './instance/continue/continue';
 
-import { createImage } from './instance/images';
+import { createImage, resetCreateImage } from './instance/images';
 import { generateActionSuggestions } from './instance/actions';
 
 export const InstanceFunctions = {
@@ -37,7 +37,7 @@ export const InstanceFunctions = {
   [InstanceStage.NARRATOR_REACTION_ERROR]: resetNarratorReaction,
   [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
   // [InstanceStage.CONTINUE_STORY_ERROR]: () => Promise.reject('Instance failed to continue story'),
-  // [InstanceStage.CREATE_IMAGE_ERROR]: () => Promise.reject('Instance failed to create image'),
+  [InstanceStage.CREATE_IMAGE_ERROR]: resetCreateImage,
 };
 
 export async function stepInstance(instance: Instance & { messages: Message[] }) {
