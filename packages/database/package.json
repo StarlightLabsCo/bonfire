@@ -11,6 +11,6 @@
   },
   "scripts": {
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate"
+    "db:push": "doppler run -- prisma db push --skip-generate"
   }
 }

@@ -1,0 +1,3 @@
+setup:
+  project: bonfire-nextjs
+  config: dev

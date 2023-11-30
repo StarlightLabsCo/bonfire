@@ -4,7 +4,7 @@
   "module": "./src/index.ts",
   "main": "./src/index.ts",
   "scripts": {
-    "dev": "bun --hot run ./src/index.ts",
+    "dev": "doppler run --  bun --hot run ./src/index.ts",
     "start": "bun run ./src/index.ts"
   },
   "dependencies": {
