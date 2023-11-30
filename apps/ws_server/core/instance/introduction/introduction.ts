@@ -184,3 +184,37 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
 
   return updatedInstance;
 }
+
+export async function resetIntroduceStory(instance: Instance & { messages: Message[] }) {
+  const lastMessage = instance.messages[instance.messages.length - 1];
+  if (lastMessage.role === MessageRole.assistant && lastMessage.name === 'introduction') {
+    await db.message.delete({
+      where: {
+        id: lastMessage.id,
+      },
+    });
+
+    // TODO: send message delete to subscribers
+  }
+
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      history: {
+        push: instance.stage,
+      },
+      stage: instance.history[instance.history.length - 1],
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  return updatedInstance;
+}

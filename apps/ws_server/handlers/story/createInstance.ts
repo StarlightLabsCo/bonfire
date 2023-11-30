@@ -22,6 +22,7 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     name: 'system_prompt',
   };
 
+  // TODO: how to best handle error handling outside of the state machine?
   let instance = await db.instance.create({
     data: {
       user: {

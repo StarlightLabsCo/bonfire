@@ -11,6 +11,7 @@ export default async function Home() {
     redirect('/login');
   }
 
+  // TODO: add suspend barrier for this data
   const messages = await prisma.message.findMany({
     orderBy: {
       createdAt: 'desc',

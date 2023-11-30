@@ -186,3 +186,35 @@ export async function continueStory(instance: Instance & { messages: Message[] }
 
   return updatedInstance;
 }
+
+export async function resetContinueStory(instance: Instance & { messages: Message[] }) {
+  const lastMessage = instance.messages[instance.messages.length - 1];
+  if (lastMessage.role === MessageRole.assistant && lastMessage.name === 'story_beat') {
+    await db.message.delete({
+      where: {
+        id: lastMessage.id,
+      },
+    });
+  }
+
+  const updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      history: {
+        push: instance.stage,
+      },
+      stage: instance.history[instance.history.length - 1],
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  return updatedInstance;
+}

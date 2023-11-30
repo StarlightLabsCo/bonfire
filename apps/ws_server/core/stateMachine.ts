@@ -1,13 +1,13 @@
 import { Instance, InstanceStage, Message, Prisma } from 'database';
 import { db } from '../services/db';
 
-import { introduceStory } from './instance/introduction/introduction';
+import { introduceStory, resetIntroduceStory } from './instance/introduction/introduction';
 import { createOutline, resetCreateOutline } from './instance/introduction/outline';
 
 import { resetRollDice, rollDice } from './instance/continue/dice';
 import { narratorReaction, resetNarratorReaction } from './instance/continue/reaction';
 import { narratorPlanning, resetNarratorPlanning } from './instance/continue/planning';
-import { continueStory } from './instance/continue/continue';
+import { continueStory, resetContinueStory } from './instance/continue/continue';
 
 import { createImage, resetCreateImage } from './instance/images';
 import { generateActionSuggestions } from './instance/actions';
@@ -31,12 +31,12 @@ export const InstanceFunctions = {
   // Errors
   // [InstanceStage.INIT_STORY_ERROR]: () => Promise.reject('Instance failed to initialize'),
   [InstanceStage.CREATE_OUTLINE_ERROR]: resetCreateOutline,
-  // [InstanceStage.INTRODUCE_STORY_ERROR]: () => Promise.reject('Instance failed to introduce story'),
+  [InstanceStage.INTRODUCE_STORY_ERROR]: resetIntroduceStory,
   // [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
   [InstanceStage.ROLL_DICE_ERROR]: resetRollDice,
   [InstanceStage.NARRATOR_REACTION_ERROR]: resetNarratorReaction,
   [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
-  // [InstanceStage.CONTINUE_STORY_ERROR]: () => Promise.reject('Instance failed to continue story'),
+  [InstanceStage.CONTINUE_STORY_ERROR]: resetContinueStory,
   [InstanceStage.CREATE_IMAGE_ERROR]: resetCreateImage,
 };
 
