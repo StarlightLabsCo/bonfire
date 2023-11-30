@@ -4,7 +4,7 @@ import { db } from '../services/db';
 import { introduceStory } from './instance/introduction/introduction';
 import { createOutline, resetCreateOutline } from './instance/introduction/outline';
 
-import { rollDice } from './instance/continue/dice';
+import { resetRollDice, rollDice } from './instance/continue/dice';
 import { narratorReaction, resetNarratorReaction } from './instance/continue/reaction';
 import { narratorPlanning, resetNarratorPlanning } from './instance/continue/planning';
 import { continueStory } from './instance/continue/continue';
@@ -33,7 +33,7 @@ export const InstanceFunctions = {
   [InstanceStage.CREATE_OUTLINE_ERROR]: resetCreateOutline,
   // [InstanceStage.INTRODUCE_STORY_ERROR]: () => Promise.reject('Instance failed to introduce story'),
   // [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
-  [InstanceStage.ROLL_DICE_ERROR]: resetCreateOutline,
+  [InstanceStage.ROLL_DICE_ERROR]: resetRollDice,
   [InstanceStage.NARRATOR_REACTION_ERROR]: resetNarratorReaction,
   [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
   // [InstanceStage.CONTINUE_STORY_ERROR]: () => Promise.reject('Instance failed to continue story'),

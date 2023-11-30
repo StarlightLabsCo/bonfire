@@ -95,7 +95,7 @@ export async function resetCreateOutline(instance: Instance & { messages: Messag
       history: {
         push: instance.stage,
       },
-      stage: InstanceStage.INIT_STORY_FINISH,
+      stage: instance.history[instance.history.length - 1],
     },
     include: {
       messages: {

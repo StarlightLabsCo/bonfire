@@ -96,7 +96,7 @@ export async function resetNarratorReaction(instance: Instance & { messages: Mes
       history: {
         push: instance.stage,
       },
-      stage: InstanceStage.ROLL_DICE_FINISH,
+      stage: instance.history[instance.history.length - 1],
     },
     include: {
       messages: {

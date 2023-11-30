@@ -97,7 +97,7 @@ export async function resetNarratorPlanning(instance: Instance & { messages: Mes
       history: {
         push: instance.stage,
       },
-      stage: InstanceStage.NARRATOR_REACTION_FINISH,
+      stage: instance.history[instance.history.length - 1],
     },
     include: {
       messages: {

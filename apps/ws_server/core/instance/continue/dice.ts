@@ -129,7 +129,10 @@ export async function resetRollDice(instance: Instance & { messages: Message[] }
       id: instance.id,
     },
     data: {
-      stage: InstanceStage.ADD_PLAYER_MESSAGE_FINISH,
+      history: {
+        push: instance.stage,
+      },
+      stage: instance.history[instance.history.length - 1],
     },
     include: {
       messages: {
