@@ -9,5 +9,5 @@ restartPolicyMaxRetries = 10
 [environments.production.deploy]
 numReplicas = 10
 
-[environments.dev.deploy]
+[environments.staging.deploy]
 numReplicas = 2

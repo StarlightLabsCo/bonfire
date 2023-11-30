@@ -61,6 +61,9 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
         id: instance.id,
       },
       data: {
+        history: {
+          push: instance.stage,
+        },
         stage: InstanceStage[(instance.stage + 1) as keyof typeof InstanceStage], // Switch from current stage to related error stage
         error: error as string,
       },
