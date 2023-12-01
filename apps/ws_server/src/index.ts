@@ -5,10 +5,10 @@ console.log(
 import { WebSocketAuthenticationToken } from 'database';
 import { db } from '../services/db';
 
-import { StarlightWebSocketRequestType } from 'websocket/types';
+import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateRequest } from 'websocket/utils';
 
-import { handleWebsocketConnected } from './connection';
+import { handleWebsocketConnected, sendToUser } from './connection';
 import { handlers } from '../handlers';
 import {
   clearHeartbeat,
@@ -85,18 +85,36 @@ const server = Bun.serve<WebSocketData>({
 
       // Heartbeat
       if (request.type === StarlightWebSocketRequestType.heartbeatClientRequest) {
-        heartbeatClientRequestHandler(ws, request); // Client sent us a ping, we need to respond
-        return;
-      } else if (request.type === StarlightWebSocketRequestType.heartbeatClientResponse) {
-        heartbeatClientResponseHandler(ws, request); // Client responded to our ping
-        return;
+        return heartbeatClientRequestHandler(ws, request); // Client sent us a ping, we need to respond
       }
 
+      if (request.type === StarlightWebSocketRequestType.heartbeatClientResponse) {
+        return heartbeatClientResponseHandler(ws, request); // Client responded to our ping
+      }
+
+      // Handle request
       const handler = handlers[request.type as keyof typeof handlers];
-      if (handler) {
-        handler(ws, request);
-      } else {
+
+      if (!handler) {
         console.error('No handler found for ' + request.type);
+        return sendToUser(ws.data.webSocketToken!.userId, {
+          type: StarlightWebSocketResponseType.error,
+          data: {
+            message: 'Invalid request.',
+          },
+        });
+      }
+
+      try {
+        handler(ws, request);
+      } catch (error) {
+        console.error('Error handling request: ', error);
+        sendToUser(ws.data.webSocketToken!.userId, {
+          type: StarlightWebSocketResponseType.error,
+          data: {
+            message: 'Error handling request. Please try again.',
+          },
+        });
       }
     },
 

@@ -195,6 +195,14 @@ export async function resetContinueStory(instance: Instance & { messages: Messag
         id: lastMessage.id,
       },
     });
+
+    sendToInstanceSubscribers(instance.id, {
+      type: StarlightWebSocketResponseType.messageDeleted,
+      data: {
+        instanceId: instance.id,
+        messageId: lastMessage.id,
+      },
+    });
   }
 
   const updatedInstance = await db.instance.update({

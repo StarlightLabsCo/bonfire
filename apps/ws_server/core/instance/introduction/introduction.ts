@@ -194,7 +194,13 @@ export async function resetIntroduceStory(instance: Instance & { messages: Messa
       },
     });
 
-    // TODO: send message delete to subscribers
+    sendToInstanceSubscribers(instance.id, {
+      type: StarlightWebSocketResponseType.messageDeleted,
+      data: {
+        instanceId: instance.id,
+        messageId: lastMessage.id,
+      },
+    });
   }
 
   const updatedInstance = await db.instance.update({

@@ -1,19 +1,19 @@
 import { Instance, InstanceStage, Message, Prisma } from 'database';
-import { db } from '../services/db';
+import { db } from '../../services/db';
 
-import { introduceStory, resetIntroduceStory } from './instance/introduction/introduction';
-import { createOutline, resetCreateOutline } from './instance/introduction/outline';
+import { introduceStory, resetIntroduceStory } from './introduction/introduction';
+import { createOutline, resetCreateOutline } from './introduction/outline';
 
-import { resetRollDice, rollDice } from './instance/continue/dice';
-import { narratorReaction, resetNarratorReaction } from './instance/continue/reaction';
-import { narratorPlanning, resetNarratorPlanning } from './instance/continue/planning';
-import { continueStory, resetContinueStory } from './instance/continue/continue';
+import { resetRollDice, rollDice } from './continue/dice';
+import { narratorReaction, resetNarratorReaction } from './continue/reaction';
+import { narratorPlanning, resetNarratorPlanning } from './continue/planning';
+import { continueStory, resetContinueStory } from './continue/continue';
 
-import { createImage, resetCreateImage } from './instance/images';
-import { generateActionSuggestions } from './instance/actions';
+import { createImage, resetCreateImage } from './images';
+import { generateActionSuggestions } from './actions';
 import OpenAI from 'openai';
 
-export const InstanceFunctions = {
+export const InstanceStageTransitions = {
   // Introduction sequence
   [InstanceStage.INIT_STORY_FINISH]: createOutline,
   [InstanceStage.CREATE_OUTLINE_FINISH]: introduceStory,
@@ -30,10 +30,8 @@ export const InstanceFunctions = {
   [InstanceStage.CREATE_IMAGE_FINISH]: generateActionSuggestions,
 
   // Errors
-  // [InstanceStage.INIT_STORY_ERROR]: () => Promise.reject('Instance failed to initialize'),
   [InstanceStage.CREATE_OUTLINE_ERROR]: resetCreateOutline,
   [InstanceStage.INTRODUCE_STORY_ERROR]: resetIntroduceStory,
-  // [InstanceStage.ADD_PLAYER_MESSAGE_ERROR]: () => Promise.reject('Instance failed to add player message'),
   [InstanceStage.ROLL_DICE_ERROR]: resetRollDice,
   [InstanceStage.NARRATOR_REACTION_ERROR]: resetNarratorReaction,
   [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
@@ -41,12 +39,29 @@ export const InstanceFunctions = {
   [InstanceStage.CREATE_IMAGE_ERROR]: resetCreateImage,
 };
 
+export const InstanceStageToError = {
+  // Introduction sequence
+  [InstanceStage.INIT_STORY_FINISH]: InstanceStage.CREATE_OUTLINE_ERROR,
+  [InstanceStage.CREATE_OUTLINE_FINISH]: InstanceStage.INTRODUCE_STORY_ERROR,
+  [InstanceStage.INTRODUCE_STORY_FINISH]: InstanceStage.CREATE_IMAGE_ERROR,
+
+  // Action sequence
+  [InstanceStage.ADD_PLAYER_MESSAGE_FINISH]: InstanceStage.ROLL_DICE_ERROR,
+  [InstanceStage.ROLL_DICE_FINISH]: InstanceStage.NARRATOR_REACTION_ERROR,
+  [InstanceStage.NARRATOR_REACTION_FINISH]: InstanceStage.NARRATOR_PLANNING_ERROR,
+  [InstanceStage.NARRATOR_PLANNING_FINISH]: InstanceStage.CONTINUE_STORY_ERROR,
+  [InstanceStage.CONTINUE_STORY_FINISH]: InstanceStage.CREATE_IMAGE_ERROR,
+
+  // Shared
+  [InstanceStage.CREATE_IMAGE_FINISH]: InstanceStage.GENERATE_ACTION_SUGGESTIONS_ERROR,
+};
+
 export async function stepInstance(instance: Instance & { messages: Message[] }) {
   let updatedInstance: Instance & { messages: Message[] };
   try {
-    const nextStep = InstanceFunctions[instance.stage as keyof typeof InstanceFunctions];
+    const nextStep = InstanceStageTransitions[instance.stage as keyof typeof InstanceStageTransitions];
     if (!nextStep) {
-      throw new Error(`No function founder for: ${instance.stage}`);
+      throw new Error(`No function found for: ${instance.stage}`);
     }
 
     console.log(
@@ -58,8 +73,6 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
     console.error(`[StateMachine] Error: `, error);
 
     let errorMessage: string;
-
-    // TODO: more robust error handling
     if (error instanceof OpenAI.APIError) {
       errorMessage = 'OpenAI [' + error.status + ']: ' + error.message;
     } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -88,7 +101,7 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
         history: {
           push: instance.stage,
         },
-        stage: InstanceStage[(instance.stage + 1) as keyof typeof InstanceStage], // Switch from current stage to related error stage
+        stage: InstanceStageToError[instance.stage as keyof typeof InstanceStageToError],
         error: errorMessage,
       },
       include: {
@@ -111,7 +124,7 @@ export async function stepInstanceUntil(instance: Instance & { messages: Message
   let updatedInstance = instance;
   while (updatedInstance.stage !== endStage) {
     if (counter > MAX_ITERATIONS) {
-      throw new Error('Possible infinite loop detected'); // TODO: add recovery here
+      throw new Error('Possible infinite loop detected');
     }
 
     updatedInstance = await stepInstance(updatedInstance);

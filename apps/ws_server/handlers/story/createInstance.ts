@@ -3,7 +3,7 @@ import { InstanceStage, MessageRole } from 'database';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
 import { WebSocketData } from '../../src';
 import { db } from '../../services/db';
-import { stepInstanceUntil } from '../../core/stateMachine';
+import { stepInstanceUntil } from '../../core/instance/stateMachine';
 import { subscribeUserToInstance } from '../../src/connection';
 
 export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {

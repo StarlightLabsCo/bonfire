@@ -8,7 +8,7 @@ import {
 import { db } from '../../services/db';
 import { InstanceStage, MessageRole } from 'database';
 import { sendToInstanceSubscribers } from '../../src/connection';
-import { stepInstanceUntil } from '../../core/stateMachine';
+import { stepInstanceUntil } from '../../core/instance/stateMachine';
 
 export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.addPlayerMessage) {
@@ -17,7 +17,6 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
 
   const { instanceId, message } = request.data;
 
-  // Validation
   let instance = await db.instance.findUnique({
     where: {
       id: instanceId,
