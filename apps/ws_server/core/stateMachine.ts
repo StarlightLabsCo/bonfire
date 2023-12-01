@@ -11,6 +11,7 @@ import { continueStory, resetContinueStory } from './instance/continue/continue'
 
 import { createImage, resetCreateImage } from './instance/images';
 import { generateActionSuggestions } from './instance/actions';
+import OpenAI from 'openai';
 
 export const InstanceFunctions = {
   // Introduction sequence
@@ -59,8 +60,10 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
     let errorMessage: string;
 
     // TODO: more robust error handling
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      errorMessage = error.message;
+    if (error instanceof OpenAI.APIError) {
+      errorMessage = 'OpenAI [' + error.status + ']: ' + error.message;
+    } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      errorMessage = `Prisma [` + error.code + `]: ` + error.message;
     } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
       errorMessage = error.message;
     } else if (error instanceof Prisma.PrismaClientRustPanicError) {
@@ -69,9 +72,12 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
       errorMessage = error.message;
     } else if (error instanceof Prisma.PrismaClientValidationError) {
       errorMessage = error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
     } else {
       // Handle all other errors
-      errorMessage = (error as Error).toString();
+      console.error(`[StateMachine] Unhandled error: `, error);
+      errorMessage = 'Unhandled error';
     }
 
     updatedInstance = await db.instance.update({
