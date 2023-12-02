@@ -51,23 +51,27 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
     messages: messages,
     model: 'gpt-4-1106-preview',
     stream: true,
-    functions: [
+    tools: [
       {
-        name: 'introduce_story_and_characters',
-        description:
-          'Given the pre-created plan, paint a vibrant and irresistible hook of the very beginning of story, the exposition. Colorfully show the setting and characters ending with a clear decision point where the story begins for the listener. Do not skip any major events or decisions. Reveal portions of the plan that will effectively set the stage and engage the listener. It is most important that this introduction immerses the listener in the world. Do not exceed a paragraph. Be creative!',
-        parameters: {
-          type: 'object',
-          properties: {
-            introduction: {
-              type: 'string',
+        type: 'function',
+        function: {
+          name: 'introduce_story_and_characters',
+          description:
+            "Given the story outline you created above, paint a vibrant and irresistible hook of the very beginning of story, the exposition. Remember that the player has not seen any of the information above, so make sure to introduce anything you mention properly. Colorfully show the setting and characters ending with a clear decision point where the story begins for the player. Show don't tell. Do not skip any major events or decisions. It is most important that this introduction player the listener in the world. Do not exceed a paragraph. Be creative!",
+          parameters: {
+            type: 'object',
+            properties: {
+              introduction: {
+                type: 'string',
+              },
             },
           },
         },
       },
     ],
-    function_call: {
-      name: 'introduce_story_and_characters',
+    tool_choice: {
+      type: 'function',
+      function: { name: 'introduce_story_and_characters' },
     },
   });
 
@@ -78,7 +82,17 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
 
   for await (const chunk of response) {
     chunks.push(chunk);
-    let args = chunk.choices[0].delta.function_call?.arguments;
+    let args;
+    if (
+      chunk.choices &&
+      chunk.choices[0].delta &&
+      chunk.choices[0].delta.tool_calls &&
+      chunk.choices[0].delta.tool_calls[0].function
+    ) {
+      args = chunk.choices[0].delta.tool_calls[0].function.arguments;
+    } else {
+      continue;
+    }
 
     try {
       if (!args) continue;

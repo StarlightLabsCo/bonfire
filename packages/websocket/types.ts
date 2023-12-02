@@ -121,6 +121,7 @@ export type StarlightWebSocketResponse =
   | MessageUpsertResponse
   | MessageDeletedResponse
   | AudioCreatedResponse
+  | AudioTimingsCreatedResponse
   | VoiceTranscriptionProcessedResponse
   | OutOfCreditsResponse
   | AnotherOpenTabResponse
@@ -141,6 +142,7 @@ export enum StarlightWebSocketResponseType {
   messageUpsert,
   messageDeleted,
   audioCreated,
+  audioTimingsCreated,
   voiceTranscriptionProcessed,
   outOfCredits,
   anotherOpenTab,
@@ -228,6 +230,22 @@ export type AudioCreatedResponse = GenericStarlightWebSocketResponse<
 
 export type AudioCreatedData = {
   audio: string; // base64 encoded audio
+};
+
+// Audio Timings Created
+export type AudioTimingsCreatedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.audioTimingsCreated,
+  AudioTimingsCreatedData
+>;
+
+export type AudioTimings = {
+  words: string[];
+  wordStartTimesMs: number[];
+  wordDurationsMs: number[];
+};
+
+export type AudioTimingsCreatedData = {
+  timings: AudioTimings;
 };
 
 // Voice Transcription Processed

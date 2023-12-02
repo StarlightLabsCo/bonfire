@@ -16,31 +16,36 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
   const planningResponse = await openai.chat.completions.create({
     messages: planningMessages,
     model: 'gpt-4-1106-preview',
-    functions: [
+    tools: [
       {
-        name: 'generate_narrator_internal_monologue_plan',
-        description:
-          'One sentence describing how you, the narrator, will adjust the story based on the player\'s last action and its corresponding dice roll. (The impact of an action that recieves an average dice roll should still have a meaningful impact on the immediate events in the story.) Your plan should be a single sentence that begins with "I will". Provide an indepth thought process. Do not repeat prior information. No newlines.',
-        parameters: {
-          type: 'object',
-          properties: {
-            plan: {
-              type: 'string',
+        type: 'function',
+        function: {
+          name: 'generate_narrator_internal_monologue_plan',
+          description:
+            'One sentence describing how you, the narrator, will adjust the story based on the player\'s last action and its corresponding dice roll. (The impact of an action that recieves an average dice roll should still have a meaningful impact on the immediate events in the story.) Your plan should be a single sentence that begins with "I will". Provide an indepth thought process. Do not repeat prior information. No newlines.',
+          parameters: {
+            type: 'object',
+            properties: {
+              plan: {
+                type: 'string',
+              },
             },
           },
         },
       },
     ],
-    function_call: {
-      name: 'generate_narrator_internal_monologue_plan',
+    tool_choice: {
+      type: 'function',
+      function: {
+        name: 'generate_narrator_internal_monologue_plan',
+      },
     },
   });
   const planningEndTime = Date.now();
 
-  if (!planningResponse.choices[0].message.function_call) {
+  if (!planningResponse.choices[0].message.tool_calls) {
     throw new Error('[generate_narrator_internal_monologue_plan] No function call found');
   }
-
   logNonStreamedOpenAIResponse(
     instance.userId,
     planningMessages,
@@ -48,7 +53,7 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
     planningEndTime - planningStartTime,
   );
 
-  const planningArgs = JSON.parse(planningResponse.choices[0].message.function_call.arguments);
+  const planningArgs = JSON.parse(planningResponse.choices[0].message.tool_calls[0].function.arguments);
 
   let updatedInstance = await db.instance.update({
     where: {

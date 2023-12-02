@@ -92,7 +92,7 @@ export function Story({
       {user && <OpenSidebar />}
       <div
         ref={messageContainerRef}
-        className={`${cormorantGaramond.className} h-full flex flex-col items-center w-full overflow-y-auto gap-y-8 leading-8 font-[400] text-sm md:text-lg pt-8`}
+        className={`${cormorantGaramond.className} h-full flex flex-col items-center w-full overflow-y-auto gap-y-8 font-[400] text-sm md:text-lg pt-8`}
       >
         {messages.map((message: Message) => {
           if (streamedMessageId === message.id && streamedWords) {

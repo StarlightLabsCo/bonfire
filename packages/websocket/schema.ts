@@ -193,6 +193,25 @@ export const AudioCreatedResponseZodSchema: z.ZodType<Types.AudioCreatedResponse
   })
   .strict();
 
+export const AudioTimingsSchema: z.ZodType<Types.AudioTimings> = z
+  .object({
+    words: z.array(z.string()),
+    wordStartTimesMs: z.array(z.number()),
+    wordDurationsMs: z.array(z.number()),
+  })
+  .strict();
+
+export const AudioTimingsCreatedResponseZodSchema: z.ZodType<Types.AudioTimingsCreatedResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.audioTimingsCreated),
+    data: z
+      .object({
+        timings: AudioTimingsSchema,
+      })
+      .strict(),
+  })
+  .strict();
+
 export const VoiceTranscriptionProcessedResponseZodSchema: z.ZodType<Types.VoiceTranscriptionProcessedResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed),
@@ -277,6 +296,7 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.messageUpsert]: MessageUpsertResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageDeleted]: MessageDeletedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.audioCreated]: AudioCreatedResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.audioTimingsCreated]: AudioTimingsCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed]: VoiceTranscriptionProcessedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.outOfCredits]: OutOfCreditsResponseZodSchema,
   [Types.StarlightWebSocketResponseType.anotherOpenTab]: AnotherOpenTabResponseZodSchema,

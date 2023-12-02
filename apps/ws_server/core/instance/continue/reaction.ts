@@ -15,28 +15,34 @@ export async function narratorReaction(instance: Instance & { messages: Message[
   const reactionResponse = await openai.chat.completions.create({
     messages: reactionMessages,
     model: 'gpt-4-1106-preview',
-    functions: [
+    tools: [
       {
-        name: 'generate_narrator_internal_monologue_reaction',
-        description:
-          'From the perspective of the narrator, create a one sentence reaction based on the last player action (and the corresponding dice roll) and its impact on the story beginning with the words "I feel" with a reasoning as well. Include the full sentence. Do not exactly copy prior information. Stick to new info. No newlines.',
-        parameters: {
-          type: 'object',
-          properties: {
-            reaction: {
-              type: 'string',
+        type: 'function',
+        function: {
+          name: 'generate_narrator_internal_monologue_reaction',
+          description:
+            'From the perspective of the narrator, create a one sentence reaction based on the last player action (and the corresponding dice roll) and its impact on the story beginning with the words "I feel" with a reasoning as well. Include the full sentence. Do not exactly copy prior information. Stick to new info. No newlines.',
+          parameters: {
+            type: 'object',
+            properties: {
+              reaction: {
+                type: 'string',
+              },
             },
           },
         },
       },
     ],
-    function_call: {
-      name: 'generate_narrator_internal_monologue_reaction',
+    tool_choice: {
+      type: 'function',
+      function: {
+        name: 'generate_narrator_internal_monologue_reaction',
+      },
     },
   });
   const reactionEndTime = Date.now();
 
-  if (!reactionResponse.choices[0].message.function_call) {
+  if (!reactionResponse.choices[0].message.tool_calls) {
     throw new Error('[generate_narrator_internal_monologue_reaction] No function call found');
   }
 
@@ -47,7 +53,7 @@ export async function narratorReaction(instance: Instance & { messages: Message[
     reactionEndTime - reactionStartTime,
   );
 
-  const reactionArgs = JSON.parse(reactionResponse.choices[0].message.function_call.arguments);
+  const reactionArgs = JSON.parse(reactionResponse.choices[0].message.tool_calls[0].function.arguments);
 
   let updatedInstance = await db.instance.update({
     where: {
