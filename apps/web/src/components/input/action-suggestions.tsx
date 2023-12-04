@@ -37,7 +37,7 @@ export function ActionSuggestions({ className }: ActionSuggestionsProps) {
   };
 
   return (
-    <div className={cn('flex flex-row flex-wrap gap-x-2 gap-y-2', className)}>
+    <div className={cn('flex flex-nowrap flex-row gap-x-2 gap-y-2 overflow-auto', className)}>
       {submittedMessage == null &&
         messages.length > 0 &&
         messages[messages.length - 1].role == MessageRole.function &&

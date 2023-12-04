@@ -66,7 +66,10 @@ export function subscribeUserToInstance(userId: string, instanceId: string) {
   if (!instanceSubscriptions[instanceId]) {
     instanceSubscriptions[instanceId] = [];
   }
-  instanceSubscriptions[instanceId].push(userId);
+
+  if (!instanceSubscriptions[instanceId].includes(userId)) {
+    instanceSubscriptions[instanceId].push(userId);
+  }
 }
 
 export function unsubscribeUserFromInstance(userId: string, instanceId: string) {

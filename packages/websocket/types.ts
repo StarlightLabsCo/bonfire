@@ -5,6 +5,7 @@ import { Message } from '../database';
 export type StarlightWebSocketRequest =
   | CreateAdventureSuggestionsRequest
   | CreateInstanceRequest
+  | SubscribeToInstanceRequest
   | AddPlayerMessageRequest
   | UndoMessageRequest
   | StopAudioRequest
@@ -21,6 +22,7 @@ export type GenericStarlightWebSocketRequest<T extends StarlightWebSocketRequest
 export enum StarlightWebSocketRequestType {
   createAdventureSuggestions,
   createInstance,
+  subscribeToInstance,
   addPlayerMessage,
   undoMessage,
   stopAudio,
@@ -46,6 +48,16 @@ export type CreateInstanceRequest = GenericStarlightWebSocketRequest<
 
 export type CreateInstanceData = {
   description: string;
+};
+
+// Subscribe To Instance
+export type SubscribeToInstanceRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.subscribeToInstance,
+  SubscribeToInstanceData
+>;
+
+export type SubscribeToInstanceData = {
+  instanceId: string;
 };
 
 // Add Player Message
@@ -229,7 +241,9 @@ export type AudioCreatedResponse = GenericStarlightWebSocketResponse<
 >;
 
 export type AudioCreatedData = {
-  audio: string; // base64 encoded audio
+  audio: string | null; // base64 encoded audio
+  start: boolean;
+  end: boolean;
 };
 
 // Audio Timings Created
@@ -238,14 +252,14 @@ export type AudioTimingsCreatedResponse = GenericStarlightWebSocketResponse<
   AudioTimingsCreatedData
 >;
 
-export type AudioTimings = {
+export type AudioWordTimings = {
   words: string[];
   wordStartTimesMs: number[];
   wordDurationsMs: number[];
 };
 
 export type AudioTimingsCreatedData = {
-  timings: AudioTimings;
+  timings: AudioWordTimings;
 };
 
 // Voice Transcription Processed

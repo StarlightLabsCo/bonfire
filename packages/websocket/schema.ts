@@ -39,6 +39,17 @@ export const CreateInstanceRequestZodSchema: z.ZodType<Types.CreateInstanceReque
   })
   .strict();
 
+export const SubscribeToInstanceRequestZodSchema: z.ZodType<Types.SubscribeToInstanceRequest> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketRequestType.subscribeToInstance),
+    data: z
+      .object({
+        instanceId: z.string(),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const AddPlayerMessageRequestZodSchema: z.ZodType<Types.AddPlayerMessageRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.addPlayerMessage),
@@ -187,13 +198,15 @@ export const AudioCreatedResponseZodSchema: z.ZodType<Types.AudioCreatedResponse
     type: z.literal(Types.StarlightWebSocketResponseType.audioCreated),
     data: z
       .object({
-        audio: z.string(), // base64 encoded audio
+        audio: z.string().nullable(), // base64 encoded audio or null (only on end)
+        start: z.boolean(),
+        end: z.boolean(),
       })
       .strict(),
   })
   .strict();
 
-export const AudioTimingsSchema: z.ZodType<Types.AudioTimings> = z
+export const AudioTimingsSchema: z.ZodType<Types.AudioWordTimings> = z
   .object({
     words: z.array(z.string()),
     wordStartTimesMs: z.array(z.number()),
@@ -277,6 +290,7 @@ export const requestTypeToSchema: {
 } = {
   [Types.StarlightWebSocketRequestType.createAdventureSuggestions]: CreateAdventureSuggestionsRequestZodSchema,
   [Types.StarlightWebSocketRequestType.createInstance]: CreateInstanceRequestZodSchema,
+  [Types.StarlightWebSocketRequestType.subscribeToInstance]: SubscribeToInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.stopAudio]: StopAudioRequestZodSchema,

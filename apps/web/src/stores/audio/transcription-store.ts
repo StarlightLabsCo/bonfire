@@ -34,8 +34,6 @@ export const useTranscriptionStore = create<State>((set, get) => ({
     const sendToServer = useWebsocketStore.getState().sendToServer;
     const audioContext = usePlaybackStore.getState().audioContext;
 
-    console.log('setupAudioRecorder', audioContext);
-
     if (!audioContext || get().audioRecorder != null) return;
 
     const audioRecorder = new AudioRecorder(audioContext);

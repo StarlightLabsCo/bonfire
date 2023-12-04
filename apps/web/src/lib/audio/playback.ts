@@ -39,6 +39,7 @@ export function setupBufferedPlayerProcessor() {
               this.writePointer = 0;
               this.readPointer = 0;
               this.availableData = 0;
+              this.buffer = new Float32Array(this.buffer.length);
             }
           }
 
@@ -48,7 +49,7 @@ export function setupBufferedPlayerProcessor() {
                   this.ringBuffer = new RingBuffer(44100 * 60); // 60 seconds buffer, adjust as needed
                   this.port.onmessage = event => {
                       if (event.data.push) {
-                          this.ringBuffer.push(event.data.push);
+                        this.ringBuffer.push(event.data.push);
                       } else if (event.data.clear) {
                         this.clearBuffer();
                       }
@@ -102,7 +103,7 @@ export function bufferBase64Audio(
     return;
   }
 
-  audioContext?.resume();
+  audioContext.resume();
 
   const audioBytes = base64ToUint8Array(audioBase64);
   const audioFloat32Array = uint8ArrayToFloat32Array(audioBytes);

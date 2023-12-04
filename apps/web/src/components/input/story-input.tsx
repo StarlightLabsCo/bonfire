@@ -37,9 +37,9 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
 
   return (
     <>
-      <div className={cn(`flex flex-col w-full mt-2`, className)}>
+      <div className={cn(`flex flex-col w-full px-8 mt-2`, className)}>
         <div className="flex items-center justify-between mb-2">
-          <ActionSuggestions className="text-xs " />
+          <ActionSuggestions className="text-xs" />
           <div className="flex gap-x-2 items-center h-full">
             {/* <UndoButton /> */}
             <ShareButton className="hidden md:block" onClick={() => setIsShareDialogOpen(true)} />

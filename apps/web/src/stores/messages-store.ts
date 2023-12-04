@@ -32,8 +32,6 @@ export const useMessagesStore = create<MessagesStore>((set, get) => ({
     } else {
       set((state) => ({
         messages: [...state.messages, message],
-        streamedMessageId: null,
-        streamedWords: null,
       }));
     }
   },
@@ -48,8 +46,6 @@ export const useMessagesStore = create<MessagesStore>((set, get) => ({
         }
         return m;
       }),
-      streamedMessageId: null,
-      streamedWords: null,
     }));
   },
   upsertMessage: (message: Message) => {

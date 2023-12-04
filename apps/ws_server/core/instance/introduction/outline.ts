@@ -43,6 +43,8 @@ export async function createOutline(instance: Instance & { messages: Message[] }
     throw new Error('No choices returned from GPT-4');
   }
 
+  console.log(response.choices[0].message.tool_calls[0].function.arguments);
+
   logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
   const args = JSON.parse(response.choices[0].message.tool_calls[0].function.arguments.replace('\\n', ''));

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Zoom from 'react-medium-image-zoom';
 import './image-zoom-styles.css';
@@ -14,6 +14,7 @@ import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import React from 'react';
+import { usePlaybackStore } from '@/stores/audio/playback-store';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -31,7 +32,7 @@ export function Story({
   instance: Instance;
   dbMessages: Message[];
 }) {
-  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
   const messages = useMessagesStore((state) => state.messages);
   const setMessages = useMessagesStore((state) => state.setMessages);
@@ -47,12 +48,13 @@ export function Story({
   useEffect(() => {
     if (instance.id && setInstanceId) {
       setInstanceId(instance.id);
+      // TODO: send subscribe to instance message to backend
     }
   }, [instance.id, setInstanceId]);
 
   useEffect(() => {
-    if (endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({
         behavior: 'smooth',
       });
     }
@@ -87,35 +89,68 @@ export function Story({
     };
   }, []);
 
+  // Word timings useEffect
+  const wordTimings = usePlaybackStore((state) => state.wordTimings);
+  const audioStartTime = usePlaybackStore((state) => state.audioStartTime);
+  const currentWordIndex = usePlaybackStore((state) => state.currentWordIndex);
+
+  const frameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const checkWordTimings = () => {
+      if (wordTimings && audioStartTime) {
+        const time = Date.now() - audioStartTime;
+        const wordIndex = wordTimings.wordStartTimesMs.findIndex((wordStartTime) => wordStartTime >= time);
+        usePlaybackStore.getState().setCurrentWordIndex(wordIndex);
+      }
+      frameRef.current = requestAnimationFrame(checkWordTimings);
+    };
+
+    checkWordTimings();
+
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, [wordTimings, audioStartTime]);
+
   return (
-    <div className="flex flex-col items-center w-full h-full px-8 pb-2 md:px-16">
+    <div className="flex flex-col items-center w-full mx-auto max-w-5xl h-full pb-2 md:px-16">
       {user && <OpenSidebar />}
       <div
         ref={messageContainerRef}
-        className={`${cormorantGaramond.className} h-full flex flex-col items-center w-full overflow-y-auto gap-y-8 font-[400] text-sm md:text-lg pt-8`}
+        className={`${cormorantGaramond.className} h-full flex flex-col items-center w-full px-8 overflow-y-auto gap-y-8 font-[400] text-sm md:text-lg md:pt-8 pt-16`}
       >
         {messages.map((message: Message) => {
           if (streamedMessageId === message.id && streamedWords) {
             return (
               <div key={message.id} className="w-full">
                 {streamedWords.map((word, index) => {
-                  const lines = word.split('\n');
-                  return lines.map((line, lineIndex) => {
-                    if (lineIndex < lines.length - 1) {
-                      return (
-                        <React.Fragment key={`${message.id}-${index}-${lineIndex}`}>
-                          {line}
-                          <br />
-                        </React.Fragment>
-                      );
-                    } else {
-                      return (
-                        <span key={`${message.id}-${index}-${lineIndex}`} className="fade-in-fast">
-                          {line}{' '}
-                        </span>
-                      );
-                    }
-                  });
+                  const words = word.split('\n');
+
+                  // No newlines
+                  if (words.length === 1) {
+                    return (
+                      <React.Fragment key={`${message.id}-${index}`}>
+                        <span className={`fade-in-fast ${index == currentWordIndex && 'underline'}`}>{word}</span>{' '}
+                      </React.Fragment>
+                    );
+                  } // Newlines in the middle
+                  else {
+                    return (
+                      <>
+                        {words.map((word, wordIndex) => (
+                          <React.Fragment key={`${message.id}-${index}-${wordIndex}`}>
+                            <span className={`fade-in-fast ${wordIndex == currentWordIndex && 'underline'}`}>
+                              {word}
+                            </span>{' '}
+                            {wordIndex !== words.length - 1 && <br />}
+                          </React.Fragment>
+                        ))}
+                      </>
+                    );
+                  }
                 })}
               </div>
             );
@@ -176,7 +211,7 @@ export function Story({
             </div>
           </>
         )}
-        <div ref={endOfMessagesRef} />
+        <div ref={scrollRef} />
       </div>
       {user && user.id === instance.userId && <StoryInput instanceId={instance.id} />}
     </div>
