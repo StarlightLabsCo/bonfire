@@ -28,11 +28,17 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     })
     .filter((message) => message.role != 'function');
 
+  console.log(modifiedMessages);
+
   modifiedMessages = [
     ...(modifiedMessages as any),
     {
-      role: 'system',
-      content: `Based on the story, pick the most interesting concept, or character from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Keep it consistent with the story, and the style of past images. Ensure that your prompt describes an image that is guranteed to be perceived as symbolic within the story, and avoid breaking the listener's immersion at all costs. Only output the prompt as it will be feed directly to the image generation AI.`,
+      role: 'user',
+      content: `Based on the story, pick the most interesting concept, or character from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Avoid breaking the listener's immersion at all costs. If the person is talking to a character, make it a closeup of that character (or the main character talking to that character). If entering an indoor location, make it a scene of that location, etc. If there are no prior images, pick an art style that would best accompany the story and the story's genre, and stick wth it throughout.
+
+      It is vital that you maintain world, character, and style consistency. Reference past images and expand the prompt as much as possible to ensure the images present a cohesive story. Do not create repetitive images.
+
+      Only output the prompt as it will be feed directly to the image generation AI.`,
     },
   ];
 

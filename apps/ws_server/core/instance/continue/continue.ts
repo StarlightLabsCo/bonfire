@@ -50,33 +50,16 @@ export async function continueStory(instance: Instance & { messages: Message[] }
     messages: [
       ...messages,
       {
-        role: 'system',
-        content: `Continue narrating the story based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward. Feel free to inject drama that will surprise the player, but keep these dramatic elements relevant to the story outline and consistent with the world. Your descriptions of the events of the story must not, under any circumstances, use vague language. \n\nMake sure to keep track of the narrative tempo of your story as well. If the action in the story are low-stakes and mundane, take on a more reflective and descriptive voice, with the goal of providing the listener with as much circumstantial information on which to act as possible. If the actions that are transpiring in the story are climactic and consequential, portray events exactly as they happen with a thorough "play-by-play" and assuming a tone that is more cinematic.`,
+        role: 'user',
+        content: `Continue narrating the story based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward. Feel free to inject drama that will surprise the player, but keep these dramatic elements relevant to the story outline and consistent with the world. Your descriptions of the events of the story must not, under any circumstances, use vague language. \n\nMake sure to keep track of the narrative tempo of your story as well. If the action in the story are low-stakes and mundane, take on a more reflective and descriptive voice, with the goal of providing the listener with as much circumstantial information on which to act as possible. If the actions that are transpiring in the story are climactic and consequential, portray events exactly as they happen with a thorough "play-by-play" and assuming a tone that is more cinematic. You're allowed to use multiple lines, but keep it concise. No one likes a long-winded storyteller!
+
+        Return this as a JSON object with a single key "story" which is of type string.`,
       },
     ],
     model: 'gpt-4-1106-preview',
     stream: true,
-    tools: [
-      {
-        type: 'function',
-        function: {
-          name: 'continue_story',
-          parameters: {
-            type: 'object',
-            properties: {
-              story: {
-                type: 'string',
-              },
-            },
-          },
-        },
-      },
-    ],
-    tool_choice: {
-      type: 'function',
-      function: {
-        name: 'continue_story',
-      },
+    response_format: {
+      type: 'json_object',
     },
   });
 
@@ -88,13 +71,8 @@ export async function continueStory(instance: Instance & { messages: Message[] }
   for await (const chunk of response) {
     chunks.push(chunk);
     let args;
-    if (
-      chunk.choices &&
-      chunk.choices[0].delta &&
-      chunk.choices[0].delta.tool_calls &&
-      chunk.choices[0].delta.tool_calls[0].function
-    ) {
-      args = chunk.choices[0].delta.tool_calls[0].function.arguments;
+    if (chunk.choices && chunk.choices[0].delta && chunk.choices[0].delta.content) {
+      args = chunk.choices[0].delta.content;
     } else {
       continue;
     }
@@ -168,6 +146,8 @@ export async function continueStory(instance: Instance & { messages: Message[] }
       content: buffer,
     },
   });
+
+  console.log('buffer', buffer);
 
   logStreamedOpenAIResponse(updatedInstance.userId, messages, chunks, endTime - startTime);
 

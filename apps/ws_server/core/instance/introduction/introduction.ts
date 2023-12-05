@@ -48,30 +48,19 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
 
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
-    messages: messages,
-    model: 'gpt-4-1106-preview',
-    stream: true,
-    tools: [
+    messages: [
+      ...messages,
       {
-        type: 'function',
-        function: {
-          name: 'introduce_story_and_characters',
-          description:
-            "Given the story outline you created above, paint a vibrant and irresistible hook of the very beginning of story, the exposition. Remember that the player has not seen any of the information above, so make sure to introduce anything you mention properly. Colorfully show the setting and characters ending with a clear decision point where the story begins for the player. Show don't tell. Do not skip any major events or decisions. It is most important that this introduction player the listener in the world. Do not exceed a paragraph. Be creative!",
-          parameters: {
-            type: 'object',
-            properties: {
-              introduction: {
-                type: 'string',
-              },
-            },
-          },
-        },
+        role: 'user',
+        content: `Given the story outline you created above, create a vibrant and irresistible hook of the very beginning of story (aka. the exposition). Remember that the player has not seen any of the information above, so make sure to introduce anything you mention properly. Colorfully show the setting and characters ending with a clear decision point where the story begins for the player. Avoid vagueness! You can use poetric pose, but be specific and concreate in it's use. Do not refer to fate, or destiny, or any foreshadowing of future events. Lean towards a play-by-play telling of events. Also vary the length of responses to keep pacing interesting! Don't ask any questions to the player e.g. \"Will you accept this quest?\". Make sure to expand enough that it immediately gives the player context of the world, and the situation, while also immeidately hooking them to play further, but not losing the attention of the player. Do not skip any major events or decisions. (I would rather you explain a major event and make a small action beat to keep the player engaged rather than a big wall of text). You're allowed to use multple lines, but don't make it too long (but don't make it more than 2-3 sections of text). Keep it concsise and punchy! Be creative!
+
+        Return this as a JSON object with a single key "story" which is of type string.`,
       },
     ],
-    tool_choice: {
-      type: 'function',
-      function: { name: 'introduce_story_and_characters' },
+    model: 'gpt-4-1106-preview',
+    stream: true,
+    response_format: {
+      type: 'json_object',
     },
   });
 
@@ -83,13 +72,8 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
   for await (const chunk of response) {
     chunks.push(chunk);
     let args;
-    if (
-      chunk.choices &&
-      chunk.choices[0].delta &&
-      chunk.choices[0].delta.tool_calls &&
-      chunk.choices[0].delta.tool_calls[0].function
-    ) {
-      args = chunk.choices[0].delta.tool_calls[0].function.arguments;
+    if (chunk.choices && chunk.choices[0].delta && chunk.choices[0].delta.content) {
+      args = chunk.choices[0].delta.content;
     } else {
       continue;
     }
@@ -102,14 +86,14 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
 
       // Remove the param key from the stream
       if (
-        `{\n"introduction":"`.includes(buffer) ||
-        `{\n"introduction": "`.includes(buffer) ||
-        `{\n "introduction": "`.includes(buffer) ||
-        `{\n  "introduction": "`.includes(buffer) ||
-        `{"introduction": "`.includes(buffer) ||
-        `{"introduction":"`.includes(buffer) ||
-        `{ "introduction": "`.includes(buffer) ||
-        `{ "introduction":"`.includes(buffer)
+        `{\n"story":"`.includes(buffer) ||
+        `{\n"story": "`.includes(buffer) ||
+        `{\n "story": "`.includes(buffer) ||
+        `{\n  "story": "`.includes(buffer) ||
+        `{"story": "`.includes(buffer) ||
+        `{"story":"`.includes(buffer) ||
+        `{ "story": "`.includes(buffer) ||
+        `{ "story":"`.includes(buffer)
       ) {
         continue;
       }
@@ -153,7 +137,7 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
   buffer = buffer.replace(/\\n/g, '\n');
   buffer = buffer.replace(/\\"/g, '"');
   buffer = buffer.replace(/\\'/g, "'");
-  buffer = buffer.replace(new RegExp(`{\\s*"introduction"\\s*:\\s*"`, 'g'), '');
+  buffer = buffer.replace(new RegExp(`{\\s*"story"\\s*:\\s*"`, 'g'), '');
   buffer = buffer.replace(/"\s*\}\s*$/, '');
 
   sendToInstanceSubscribers(updatedInstance.id, {
@@ -164,6 +148,8 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
       content: buffer,
     },
   });
+
+  console.log('buffer', buffer);
 
   logStreamedOpenAIResponse(updatedInstance.userId, messages, chunks, endTime - startTime);
 
