@@ -16,8 +16,15 @@ export async function createOutline(instance: Instance & { messages: Message[] }
       ...messages,
       {
         role: 'user',
-        content:
-          'Craft a detailed plan for the requested story. Describe, fully, the overarching story, the main characters, twists, and the main goal. This outline should also include smaller scale beats and memorable moments, but should never allow the story to get so cluttered that it is no longer followable. The consequences of each plot point should effect every other plot point. Be specific in your plan, naming characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead to make the story feel alive. This outline will only be referenced by yourself, the storyteller, and should not be shared with the listener. Keep it concise, but detailed! Return it as a JSON object with the key "plan".',
+        content: `Create a concisde but detailed outline for the requested story:
+
+        ${instance.description}
+
+        Describe the overarching story, the main characters, twists, and the primary objective. What quirks exist in this world? How do you make it unique and memorable? How do you make it feel real and grounded?
+
+        This outline should also include smaller scale story beats and memorable moments, but should never allow the story to get cluttered. The consequences of each plot point should effect every other plot point. Be concrete, and avoid vaguness. Name characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead. Make the story feel alive! This outline will only be referenced by yourself, the storyteller, and should not be shared with the listener.
+
+        Keep it concise, but detailed! This outline should not be longer than a few sentences. Return it as a JSON object with the key "plan" and the value being a string.`,
       },
     ],
     model: 'gpt-4-1106-preview',
@@ -31,11 +38,11 @@ export async function createOutline(instance: Instance & { messages: Message[] }
     throw new Error('No message returned from GPT-4');
   }
 
+  const plan = JSON.parse(response.choices[0].message.content).plan;
+
   // DEBUG
-  // console.log(response.choices[0].message);
-  // console.log(response.choices[0].message.content);
-  // const fs = require('fs');
-  // fs.writeFileSync('story_outline.json', response.choices[0].message.content);
+  const fs = require('fs');
+  fs.writeFileSync('story_outline.json', plan);
   // DEBUG END
 
   logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
@@ -48,7 +55,7 @@ export async function createOutline(instance: Instance & { messages: Message[] }
       messages: {
         create: {
           role: MessageRole.system,
-          content: response.choices[0].message.content,
+          content: plan,
           name: 'story_outline',
         },
       },

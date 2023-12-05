@@ -22,7 +22,7 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
         function: {
           name: 'generate_narrator_internal_monologue_plan',
           description:
-            'One sentence describing how you, the narrator, will adjust the story based on the player\'s last action and its corresponding dice roll. (The impact of an action that recieves an average dice roll should still have a meaningful impact on the immediate events in the story.) Your plan should be a single sentence that begins with "I will". Provide an indepth thought process. Do not repeat prior information. No newlines.',
+            'From the perspective of the narrator, create a one sentence plan on on how you will adjust the story going forward based on the player\'s last action and its corresponding dice roll. Your plan should be a single sentence that begins with "I will". Provide an indepth thought process. Do not repeat prior information. No newlines. An example of this would be "I will have the enemy attack the player with a sword, and if the player rolls a 15 or higher, the player will be able to dodge the attack."',
           parameters: {
             type: 'object',
             properties: {
@@ -63,7 +63,7 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
       messages: {
         create: {
           role: MessageRole.system,
-          content: `[Narrator Inner Monologue] To adjust the story going forward, I will ${planningArgs.plan}`,
+          content: `[Narrator Inner Monologue] To adjust the story going forward, ${planningArgs.plan}`,
           name: 'narrator_internal_monologue_plan',
         },
       },

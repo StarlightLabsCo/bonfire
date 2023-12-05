@@ -52,7 +52,15 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
       ...messages,
       {
         role: 'user',
-        content: `Given the story outline you created above, create a vibrant and irresistible hook of the very beginning of story (aka. the exposition). Remember that the player has not seen any of the information above, so make sure to introduce anything you mention properly. Colorfully show the setting and characters ending with a clear decision point where the story begins for the player. Avoid vagueness! You can use poetric pose, but be specific and concreate in it's use. Do not refer to fate, or destiny, or any foreshadowing of future events. Lean towards a play-by-play telling of events. Also vary the length of responses to keep pacing interesting! Don't ask any questions to the player e.g. \"Will you accept this quest?\". Make sure to expand enough that it immediately gives the player context of the world, and the situation, while also immeidately hooking them to play further, but not losing the attention of the player. Do not skip any major events or decisions. (I would rather you explain a major event and make a small action beat to keep the player engaged rather than a big wall of text). You're allowed to use multple lines, but don't make it too long (but don't make it more than 2-3 sections of text). Keep it concsise and punchy! Be creative!
+        content: `Given the story outline, create an epic, vibrant, irresistible & concise hook to the very beginning of this text-adventure game & tale. Remember that the player has no prior information whatsoever so make sure to introduce anything you mention. Colorfully show the setting and characters ending with a clear decision point/call to action where the story begins for the player.
+
+        You can use poetric pose if it aids the story, but overall be concrete and avoid vaguness. Do not refer to fate, or destiny, or any foreshadowing of future events under any circumstances. Avoid prescribing actions or thoughts to the player, as this removes their agency.
+
+        Lean towards a play-by-play telling of events. Vary the length of responses to keep pacing interesting!
+
+        Don not ask any questions to the player e.g. \"Will you accept this quest?\".
+
+        Please use multple lines to avoid walls of text, but don't make it too long either. Keep it concsise and punchy! Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!
 
         Return this as a JSON object with a single key "story" which is of type string.`,
       },
@@ -149,7 +157,7 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
     },
   });
 
-  console.log('buffer', buffer);
+  console.log('buffer', buffer, `${endTime - startTime}ms`);
 
   logStreamedOpenAIResponse(updatedInstance.userId, messages, chunks, endTime - startTime);
 
