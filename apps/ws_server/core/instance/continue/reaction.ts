@@ -21,7 +21,7 @@ export async function narratorReaction(instance: Instance & { messages: Message[
         function: {
           name: 'generate_narrator_internal_monologue_reaction',
           description:
-            'From the perspective of the narrator, create a one sentence reaction based on the last player action (and the corresponding dice roll) and its impact on the story beginning with the words "I feel" with a reasoning as well. Include the full sentence. Do not exactly copy prior information. Stick to new info. No newlines.',
+            'From the perspective of the narrator, create a one sentence reaction based on the last player action (and the corresponding dice roll) and its impact on the story beginning with the words "I feel" with a reasoning as well. Include the full sentence. Do not exactly copy prior information. Stick to new info. No newlines. An example of this would be "I feel suprised that the player was able to successfully roll a natural 20, and am excited to see the epic events that will unfold."',
           parameters: {
             type: 'object',
             properties: {
