@@ -11,6 +11,9 @@ type DialogState = {
 
   isAnotherOpenTabDialogOpen: boolean;
   setIsAnotherOpenTabDialogOpen: (open: boolean) => void;
+
+  isDeleteInstanceDialogOpen: boolean;
+  setIsDeleteInstanceDialogOpen: (open: boolean) => void;
 };
 
 export const useDialogStore = create<DialogState>((set) => ({
@@ -22,4 +25,7 @@ export const useDialogStore = create<DialogState>((set) => ({
 
   isAnotherOpenTabDialogOpen: false,
   setIsAnotherOpenTabDialogOpen: (open) => set(() => ({ isAnotherOpenTabDialogOpen: open })),
+
+  isDeleteInstanceDialogOpen: false,
+  setIsDeleteInstanceDialogOpen: (open) => set(() => ({ isDeleteInstanceDialogOpen: open })),
 }));

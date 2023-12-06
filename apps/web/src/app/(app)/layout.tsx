@@ -10,6 +10,7 @@ import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
 import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
 import { StoreInitializer } from '@/components/store-initializer';
 import { AnotherOpenTabDialog } from '@/components/dialog/another-open-tab-dialog';
+import { DeleteInstanceDialog } from '@/components/dialog/delete-instance-dialog';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -37,6 +38,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <OutOfCreditsDialog />
       <StripeCheckoutDialog />
       <AnotherOpenTabDialog />
+      <DeleteInstanceDialog />
       <Navigator />
       <StoreInitializer />
     </div>

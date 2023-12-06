@@ -6,12 +6,12 @@
   /* ===== Scrollbar CSS ===== */
   * {
     scrollbar-width: auto;
-    scrollbar-color: #525252;
+    scrollbar-color: #323232;
   }
 
   /* Chrome, Edge, and Safari */
   *::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   *::-webkit-scrollbar-track {
@@ -19,7 +19,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #525252;
+    background-color: #323232;
     border-radius: 100px;
     border: none;
   }

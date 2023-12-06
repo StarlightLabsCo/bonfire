@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { Icons } from '../icons';
 import { useSidebarStore } from '@/stores/sidebar-store';

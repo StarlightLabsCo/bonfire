@@ -85,3 +85,39 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     });
   }
 }
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  const session = await getSession();
+
+  if (!session || !session.user) {
+    return NextResponse.redirect('/login');
+  }
+
+  const instance = await db.instance.findUnique({
+    where: {
+      id: params.id,
+    },
+  });
+
+  if (!instance) {
+    return new Response(null, {
+      status: 404,
+    });
+  }
+
+  if (instance.userId !== session.user.id) {
+    return new Response(null, {
+      status: 403,
+    });
+  }
+
+  await db.instance.delete({
+    where: {
+      id: params.id,
+    },
+  });
+
+  return new Response(null, {
+    status: 200,
+  });
+}
