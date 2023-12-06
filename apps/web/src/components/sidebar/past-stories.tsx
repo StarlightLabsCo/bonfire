@@ -22,9 +22,12 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
   const setIsDeleteInstanceDialogOpen = useDialogStore((state) => state.setIsDeleteInstanceDialogOpen);
 
   const handleClick = (path: string) => {
-    if (window.innerWidth < 768 && path !== pathname) {
+    if (path === pathname) return;
+
+    router.push(path);
+
+    if (window.innerWidth < 768) {
       closeSidebar();
-      router.push(path);
     }
   };
 
