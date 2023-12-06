@@ -46,7 +46,7 @@ export function setupBufferedPlayerProcessor() {
           class BufferedPlayerProcessor extends AudioWorkletProcessor {
               constructor() {
                   super();
-                  this.ringBuffer = new RingBuffer(44100 * 60); // 60 seconds buffer, adjust as needed
+                  this.ringBuffer = new RingBuffer(44100 * 300); // 5 minutes of audio
                   this.port.onmessage = event => {
                       if (event.data.push) {
                         this.ringBuffer.push(event.data.push);

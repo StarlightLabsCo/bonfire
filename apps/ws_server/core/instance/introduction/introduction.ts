@@ -58,18 +58,13 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
 
         Lean towards a play-by-play telling of events. Vary the length of responses to keep pacing interesting!
 
-        Don not ask any questions to the player e.g. \"Will you accept this quest?\".
+        Do not ask any questions to the player e.g. \"Will you accept this quest?\", "Will you tempt fate?".
 
-        Please use multple lines to avoid walls of text, but don't make it too long either. Keep it concsise and punchy! Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!
-
-        Return this as a JSON object with a single key "story" which is of type string.`,
+        Keep it concsise and punchy! DO NOT under any circumstance exceed three sections of text and do not mention sections.  Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!`,
       },
     ],
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4-32k-0613',
     stream: true,
-    response_format: {
-      type: 'json_object',
-    },
   });
 
   // Handle streaming response

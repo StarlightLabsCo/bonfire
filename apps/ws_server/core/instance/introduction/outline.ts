@@ -16,7 +16,7 @@ export async function createOutline(instance: Instance & { messages: Message[] }
       ...messages,
       {
         role: 'user',
-        content: `Create a concisde but detailed outline for the requested story:
+        content: `Create a concise but detailed outline for the requested story:
 
         ${instance.description}
 
@@ -24,26 +24,20 @@ export async function createOutline(instance: Instance & { messages: Message[] }
 
         This outline should also include smaller scale story beats and memorable moments, but should never allow the story to get cluttered. The consequences of each plot point should effect every other plot point. Be concrete, and avoid vaguness. Name characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead. Make the story feel alive! This outline will only be referenced by yourself, the storyteller, and should not be shared with the listener.
 
-        Keep it concise, but detailed! This outline should not be longer than a few sentences. Return it as a JSON object with the key "plan" and the value being a string.`,
+        Do not just repeat the requested story, actually create an outline.
+
+        Keep it concise, but detailed! This outline should not be longer than a few sentences.`,
       },
     ],
-    model: 'gpt-4-1106-preview',
-    response_format: {
-      type: 'json_object',
-    },
+    model: 'gpt-4-32k-0613',
   });
   const endTime = Date.now();
 
-  if (!response.choices[0].message.content) {
+  if (!response.choices[0].message) {
     throw new Error('No message returned from GPT-4');
   }
 
-  const plan = JSON.parse(response.choices[0].message.content).plan;
-
-  // DEBUG
-  const fs = require('fs');
-  fs.writeFileSync('story_outline.json', plan);
-  // DEBUG END
+  const plan = response.choices[0].message.content as string;
 
   logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
