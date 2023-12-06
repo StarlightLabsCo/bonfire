@@ -91,6 +91,7 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
             </div>
           );
         })}
+        <div className="h-6 w-full" />
       </div>
     </div>
   );
