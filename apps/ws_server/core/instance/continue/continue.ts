@@ -51,16 +51,17 @@ export async function continueStory(instance: Instance & { messages: Message[] }
       ...messages,
       {
         role: 'user',
-        content: `Continue narrating the story based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward. Feel free to inject drama that will surprise the player, but keep these dramatic elements relevant to the story outline and consistent with the world. Your descriptions of the events of the story must not, under any circumstances, use vague language. \n\nMake sure to keep track of the narrative tempo of your story as well. If the action in the story are low-stakes and mundane, take on a more reflective and descriptive voice, with the goal of providing the listener with as much circumstantial information on which to act as possible. If the actions that are transpiring in the story are climactic and consequential, portray events exactly as they happen with a thorough "play-by-play" and assuming a tone that is more cinematic. You're allowed to use multiple lines, but keep it concise. No one likes a long-winded storyteller!
+        content: `Continue narrating the story based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward, but keep it concise and short! This is a text adventure game, not a novel.
 
-        Return this as a JSON object with a single key "story" which is of type string.`,
+        Feel free to inject drama that will surprise the player, but keep these dramatic elements relevant to the story outline and consistent with the world. Your descriptions of the events of the story must not, under any circumstances, use vague language.
+
+        Make sure to keep track of the narrative tempo of your story as well. If the action in the story are low-stakes and mundane, take on a more reflective and descriptive voice, with the goal of providing the listener with as much circumstantial information on which to act as possible. If the actions that are transpiring in the story are climactic and consequential, portray events exactly as they happen with a thorough "play-by-play" and assuming a tone that is more cinematic.
+
+        Do not mention the dice roll, or other systems occuring behind the scenes in the story. Do not refer to fate, or destiny, or any foreshadowing of future events under any circumstances. Do not prescribe actions or thoughts to the player, as this removes their agency. DO NOT under any circumstance exceed three sections of text and do not mention sections. Prefer to keep it shorter than that anyways. Keep it concise and punchy! No one likes a long-winded storyteller!`,
       },
     ],
     model: 'gpt-4-1106-preview',
     stream: true,
-    response_format: {
-      type: 'json_object',
-    },
   });
 
   // Handle streaming response

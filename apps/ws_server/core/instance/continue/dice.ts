@@ -22,7 +22,7 @@ export async function rollDice(instance: Instance & { messages: Message[] }) {
   }
 
   // if no modifier, generate one
-  if (!modifier) {
+  if (modifier === null) {
     const result = await generateModifier(instance);
     modifier = result.modifier;
     reason = result.reason;
@@ -95,8 +95,11 @@ export async function generateModifier(instance: Instance & { messages: Message[
         },
       },
     ],
-    function_call: {
-      name: 'generate_action_dice_modifier',
+    tool_choice: {
+      type: 'function',
+      function: {
+        name: 'generate_action_dice_modifier',
+      },
     },
   });
 
