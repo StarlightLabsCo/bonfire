@@ -47,6 +47,9 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
           content: message,
         },
       },
+      history: {
+        push: instance.stage,
+      },
       stage: InstanceStage.ADD_PLAYER_MESSAGE_FINISH,
     },
     include: {

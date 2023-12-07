@@ -38,6 +38,7 @@ export function Story({
   const setMessages = useMessagesStore((state) => state.setMessages);
 
   const submittedMessage = useMessagesStore((state) => state.submittedMessage);
+  const setSubmittedMessage = useMessagesStore((state) => state.setSubmittedMessage);
   const streamedMessageId = useMessagesStore((state) => state.streamedMessageId);
   const streamedWords = useMessagesStore((state) => state.streamedWords);
 
@@ -48,9 +49,9 @@ export function Story({
   useEffect(() => {
     if (instance.id && setInstanceId) {
       setInstanceId(instance.id);
-      // TODO: send subscribe to instance message to backend
+      setSubmittedMessage(null);
     }
-  }, [instance.id, setInstanceId]);
+  }, [instance.id, setInstanceId, setSubmittedMessage]);
 
   useEffect(() => {
     if (scrollRef.current) {

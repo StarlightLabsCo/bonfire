@@ -56,28 +56,27 @@ export function ShareLinkDialog() {
     }
   };
 
-  const getInstanceStatus = async () => {
-    const response = await fetch(`/api/instances/${instanceId}`);
-
-    if (response.status !== 200) {
-      return;
-    }
-
-    const { public: isInstancePublic } = await response.json();
-
-    setChecked(isInstancePublic);
-  };
-
   useEffect(() => {
     if (instanceId) {
+      const getInstanceStatus = async () => {
+        const response = await fetch(`/api/instances/${instanceId}`);
+
+        if (response.status !== 200) {
+          return;
+        }
+
+        const { public: isInstancePublic } = await response.json();
+
+        setChecked(isInstancePublic);
+      };
+
       getInstanceStatus();
     }
   }, [instanceId]);
 
-  const link = `https://bonfire.starlightlabs.co/instances/${instanceId}`;
-
   const copyLink = async () => {
     try {
+      const link = `${window.location.origin}/instances/${instanceId}`;
       await navigator.clipboard.writeText(link);
       toast({
         title: 'Success',
