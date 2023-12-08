@@ -10,6 +10,7 @@ import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
 import { MessageRole } from 'database';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 
 interface StoryInputProps {
   instanceId: string;
@@ -17,6 +18,9 @@ interface StoryInputProps {
 }
 
 export function StoryInput({ instanceId, className }: StoryInputProps) {
+  const isLocked = useCurrentInstanceStore((state) => state.locked);
+  const setLocked = useCurrentInstanceStore((state) => state.setLocked);
+
   const [input, setInput] = useState('');
 
   const messages = useMessagesStore((state) => state.messages);
@@ -47,6 +51,8 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
         message: action,
       },
     });
+
+    setLocked(true);
   };
 
   return (
@@ -70,7 +76,13 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
             <ShareButton className="hidden md:block" />
           </div>
         </div>
-        <Input placeholder="What do you do?" value={input} setValue={setInput} submit={() => submitAction(input)} />
+        <Input
+          placeholder="What do you do?"
+          value={input}
+          setValue={setInput}
+          submit={() => submitAction(input)}
+          disabled={isLocked}
+        />
       </div>
     </>
   );

@@ -8,8 +8,6 @@ import { StarlightWebSocketResponseType } from 'websocket/types';
 export async function createOutline(instance: Instance & { messages: Message[] }) {
   const messages = convertInstanceToChatCompletionMessageParams(instance);
 
-  console.log(messages);
-
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: [

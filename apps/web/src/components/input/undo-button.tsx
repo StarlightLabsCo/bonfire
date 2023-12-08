@@ -9,6 +9,7 @@ import { MessageRole } from 'database';
 export function UndoButton() {
   const sendToServer = useWebsocketStore((state) => state.sendToServer);
   const instanceId = useCurrentInstanceStore((state) => state.instanceId);
+  const isLocked = useCurrentInstanceStore((state) => state.locked);
   const messages = useMessagesStore((state) => state.messages);
 
   const [visible, setVisible] = useState<boolean>(false);
@@ -25,9 +26,9 @@ export function UndoButton() {
   }
 
   useEffect(() => {
-    const hasUserMessage = messages.some((message) => message.role === MessageRole.user);
+    const hasUserMessage = messages.some((message) => message.role === MessageRole.user) && !isLocked;
     setVisible(hasUserMessage);
-  }, [messages]);
+  }, [messages, isLocked]);
 
   if (visible) {
     return (

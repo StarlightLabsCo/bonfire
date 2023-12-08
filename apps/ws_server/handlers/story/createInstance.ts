@@ -1,10 +1,14 @@
 import { ServerWebSocket } from 'bun';
 import { InstanceStage, MessageRole } from 'database';
-import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
+import {
+  StarlightWebSocketRequest,
+  StarlightWebSocketRequestType,
+  StarlightWebSocketResponseType,
+} from 'websocket/types';
 import { WebSocketData } from '../../src';
 import { db } from '../../services/db';
 import { stepInstanceUntil } from '../../core/instance/stateMachine';
-import { subscribeUserToInstance } from '../../src/connection';
+import { sendToInstanceSubscribers, subscribeUserToInstance } from '../../src/connection';
 
 export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.createInstance) {
@@ -33,6 +37,8 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
         create: initMessage,
       },
       stage: InstanceStage.INIT_STORY_FINISH,
+      locked: true,
+      lockedAt: new Date(),
     },
     include: {
       messages: true,
@@ -42,4 +48,22 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
   subscribeUserToInstance(ws.data.webSocketToken?.userId!, instance.id);
 
   await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
+
+  await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      locked: false,
+      lockedAt: null,
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceLockStatusChanged,
+    data: {
+      instanceId: instance.id,
+      locked: false,
+    },
+  });
 }

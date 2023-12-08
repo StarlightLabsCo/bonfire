@@ -13,7 +13,6 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
   let modifiedMessages = messages
     .map((message) => {
       if (message.role == 'function' && message.name == 'generate_image') {
-        console.log(`Modifying message: ${message.content} to be an image_url in content`);
         return {
           role: 'assistant',
           content: [

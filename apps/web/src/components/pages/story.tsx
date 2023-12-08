@@ -34,6 +34,8 @@ export function Story({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
+  const setLocked = useCurrentInstanceStore((state) => state.setLocked);
+
   const messages = useMessagesStore((state) => state.messages);
   const setMessages = useMessagesStore((state) => state.setMessages);
 
@@ -49,6 +51,7 @@ export function Story({
   useEffect(() => {
     if (instance.id && setInstanceId) {
       setInstanceId(instance.id);
+      setLocked(instance.locked);
       setSubmittedMessage(null);
     }
   }, [instance.id, setInstanceId, setSubmittedMessage]);

@@ -37,8 +37,6 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
     throw new Error('No instance found');
   }
 
-  console.log('instance', instance);
-
   // Find the most recent ADD_PLAYER_MESSAGE_FINISH message
   const lastPlayerMessageIndex = instance.messages.findIndex((message) => message.role === 'user');
 
@@ -46,12 +44,8 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
     throw new Error('No player message found');
   }
 
-  console.log('lastPlayerMessageIndex', lastPlayerMessageIndex);
-
   // Delete this message and all messages that came after it
   const messageIdsToDelete = instance.messages.slice(0, lastPlayerMessageIndex + 1).map((message) => message.id);
-
-  console.log('messageIdsToDelete', messageIdsToDelete);
 
   for (const messageId of messageIdsToDelete) {
     await db.message.delete({
@@ -69,8 +63,6 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
     });
   }
 
-  console.log(`history before: ${instance.history}`);
-
   // Find the stage before ADD_PLAYER_MESSAGE_FINISH in the history
   const lastPlayerActionIndex = instance.history.lastIndexOf(InstanceStage.ADD_PLAYER_MESSAGE_FINISH);
 
@@ -79,10 +71,7 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
   }
 
   const stageBeforePlayerAction = instance.history[lastPlayerActionIndex - 1];
-  console.log('stageBeforePlayerAction', stageBeforePlayerAction);
-
   const updatedHistory = instance.history.slice(0, lastPlayerActionIndex);
-  console.log('updatedHistory', updatedHistory);
 
   await db.instance.update({
     where: {

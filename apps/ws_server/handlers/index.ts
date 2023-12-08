@@ -1,6 +1,7 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
 
+import { withInstanceLock } from './withInstanceLock';
 import { hasTokensMiddleware } from './hasTokensMiddleware';
 
 import { stopAudioHandler } from './audio/stopAudio';
@@ -17,14 +18,15 @@ import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websoc
 export const handlers: {
   [key: string]: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void;
 } = {
-  // Free requests
+  // *** Free requests ***
   [StarlightWebSocketRequestType.stopAudio]: stopAudioHandler,
 
-  // Paid requests
+  // *** Paid requests ***
   [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokensMiddleware(createAdventureSuggestionsHandler),
   [StarlightWebSocketRequestType.createInstance]: hasTokensMiddleware(createInstanceHandler),
-  [StarlightWebSocketRequestType.addPlayerMessage]: hasTokensMiddleware(addPlayerMessageHandler),
-  [StarlightWebSocketRequestType.undoMessage]: hasTokensMiddleware(undoMessageHandler),
   [StarlightWebSocketRequestType.processVoiceTranscription]: hasTokensMiddleware(processVoiceTranscriptionHandler),
   [StarlightWebSocketRequestType.finishVoiceTranscription]: hasTokensMiddleware(finishVoiceTranscriptionHandler),
+
+  [StarlightWebSocketRequestType.addPlayerMessage]: withInstanceLock(hasTokensMiddleware(addPlayerMessageHandler)),
+  [StarlightWebSocketRequestType.undoMessage]: withInstanceLock(hasTokensMiddleware(undoMessageHandler)),
 };

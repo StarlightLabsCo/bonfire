@@ -40,6 +40,8 @@ const server = Bun.serve<WebSocketData>({
 
     // TODO: Rather than the NextJS Serverless function pinging the postgresdb, we can have it ping the Bun server directly
     // TODO: which can then store it in redis. Should be faster?
+    // TODO: hmm, right now the funciton is going direclty to the db so its not hitting the bun server at all which is faster
+    // TODO: and there's no way for us to store in ram of the bun server because of 10 replicas
     const webSocketToken = await db.webSocketAuthenticationToken.findUnique({
       where: {
         token,
@@ -106,7 +108,7 @@ const server = Bun.serve<WebSocketData>({
       }
 
       try {
-        handler(ws, request);
+        await handler(ws, request);
       } catch (error) {
         console.error('Error handling request: ', error);
         sendToUser(ws.data.webSocketToken!.userId, {

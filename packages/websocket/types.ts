@@ -128,6 +128,7 @@ export type HeartbeatClientResponseData = {
 export type StarlightWebSocketResponse =
   | AdventureSuggestionsCreatedResponse
   | InstanceCreatedResponse
+  | InstanceLockStatusChangedResponse
   | MessageAddedResponse
   | MessageReplaceResponse
   | MessageUpsertResponse
@@ -149,6 +150,7 @@ export type GenericStarlightWebSocketResponse<T extends StarlightWebSocketRespon
 export enum StarlightWebSocketResponseType {
   adventureSuggestionsCreated,
   instanceCreated,
+  instanceLockStatusChanged,
   messageAdded,
   messageReplace,
   messageUpsert,
@@ -181,6 +183,17 @@ export type InstanceCreatedResponse = GenericStarlightWebSocketResponse<
 
 export type InstanceCreatedData = {
   instanceId: string;
+};
+
+// Instance Lock Status Changed
+export type InstanceLockStatusChangedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.instanceLockStatusChanged,
+  InstanceLockStatusChangedData
+>;
+
+export type InstanceLockStatusChangedData = {
+  instanceId: string;
+  locked: boolean;
 };
 
 // Message Added

@@ -148,8 +148,6 @@ export async function continueStory(instance: Instance & { messages: Message[] }
     },
   });
 
-  console.log('buffer', buffer);
-
   logStreamedOpenAIResponse(updatedInstance.userId, messages, chunks, endTime - startTime);
 
   updatedInstance = await db.instance.update({

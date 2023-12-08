@@ -127,6 +127,9 @@ model Instance {
   history InstanceStage[]
   error String?
 
+  locked Boolean @default(false)
+  lockedAt DateTime?
+
   description String
 
   messages Message[]

@@ -144,6 +144,18 @@ export const InstanceCreatedResponseZodSchema: z.ZodType<Types.InstanceCreatedRe
   })
   .strict();
 
+export const InstanceLockStatusChangedResponseZodSchema: z.ZodType<Types.InstanceLockStatusChangedResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.instanceLockStatusChanged),
+    data: z
+      .object({
+        instanceId: z.string(),
+        locked: z.boolean(),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const MessageAddedResponseZodSchema: z.ZodType<Types.MessageAddedResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.messageAdded),
@@ -305,6 +317,7 @@ export const responseTypeToSchema: {
 } = {
   [Types.StarlightWebSocketResponseType.adventureSuggestionsCreated]: AdventureSuggestionsCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceCreated]: InstanceCreatedResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.instanceLockStatusChanged]: InstanceLockStatusChangedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageAdded]: MessageAddedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageReplace]: MessageReplaceResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageUpsert]: MessageUpsertResponseZodSchema,

@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { Icons } from '../icons';
 import { FC, InputHTMLAttributes, useEffect, useState } from 'react';
 import { useWebsocketStore } from '@/stores/websocket-store';
@@ -14,7 +13,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   disabled?: boolean;
 }
 
-const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className, ...props }) => {
+const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className, disabled, ...props }) => {
   const socketState = useWebsocketStore((state) => state.socketState);
 
   const audioRecorder = useTranscriptionStore((state) => state.audioRecorder);
@@ -28,6 +27,13 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
       setValue(transcription);
     }
   }, [setValue, transcription]);
+
+  useEffect(() => {
+    if (disabled && recording && audioRecorder) {
+      setRecording(false);
+      audioRecorder.stopRecording();
+    }
+  }, [disabled, recording, audioRecorder]);
 
   function submitValue() {
     submit();
@@ -48,7 +54,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
       )}
     >
       <input
-        placeholder={placeholder}
+        placeholder={disabled ? 'Generating...' : placeholder}
         className="w-full py-2 text-sm placeholder:text-neutral-500 bg-neutral-900 focus:outline-none"
         value={value}
         onChange={(event) => setValue(event.target.value)}
@@ -57,34 +63,46 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
             submit();
           }
         }}
+        disabled={disabled}
         {...props}
       />
-      <Icons.microphone
-        className={cn('w-4 h-4 cursor-pointer text-neutral-500 mr-2', recording && 'animate-pulse text-red-500')}
-        onClick={() => {
-          if (!audioRecorder) {
-            console.error('Audio recorder not initialized');
-            return;
-          }
+      {disabled ? (
+        <Icons.microphoneSlash className="w-4 h-4 text-neutral-400 mr-2" />
+      ) : (
+        <Icons.microphone
+          className={cn('w-4 h-4 cursor-pointer text-neutral-500 mr-2', recording && 'animate-pulse text-red-500')}
+          onClick={() => {
+            if (disabled) return;
 
-          if (!recording) {
-            setTranscription('');
-            setValue('');
+            if (!audioRecorder) {
+              console.error('Audio recorder not initialized');
+              return;
+            }
 
-            setRecording(true);
-            audioRecorder.startRecording();
-          } else {
-            setRecording(false);
-            audioRecorder.stopRecording();
-          }
-        }}
-      />
-      <PaperPlaneIcon
-        className={cn('w-4 h-4 cursor-pointer text-neutral-500')}
-        onClick={() => {
-          submitValue();
-        }}
-      />
+            if (!recording) {
+              setTranscription('');
+              setValue('');
+
+              setRecording(true);
+              audioRecorder.startRecording();
+            } else {
+              setRecording(false);
+              audioRecorder.stopRecording();
+            }
+          }}
+        />
+      )}
+      {disabled ? (
+        <Icons.lockClosed className="w-4 h-4 text-neutral-400" />
+      ) : (
+        <Icons.paperPlane
+          className={cn('w-4 h-4 cursor-pointer text-neutral-500')}
+          onClick={() => {
+            if (disabled) return;
+            submitValue();
+          }}
+        />
+      )}
     </div>
   );
 };

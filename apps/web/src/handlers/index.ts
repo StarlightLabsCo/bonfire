@@ -6,6 +6,7 @@ import { handleAudioCreated } from './audio/audioCreated';
 import { handleAudioTimingsCreated } from './audio/audioTimingsCreated';
 import { handleVoiceTranscriptionProcessed } from './audio/voiceTranscriptionProcessed';
 import { handleInstanceCreated } from './instance/instanceCreated';
+import { handleInstanceLockStatusChanged } from './instance/instanceLockStatusChanged';
 import { handleMessageAdded } from './message/messageAdded';
 import { handleMessageUpsert } from './message/messageUpsert';
 import { handleMessageReplace } from './message/messageReplace';
@@ -20,6 +21,7 @@ export const handlers = {
 
   [StarlightWebSocketResponseType.adventureSuggestionsCreated]: handleAdventureSuggestionsCreated,
   [StarlightWebSocketResponseType.instanceCreated]: handleInstanceCreated,
+  [StarlightWebSocketResponseType.instanceLockStatusChanged]: handleInstanceLockStatusChanged,
   [StarlightWebSocketResponseType.messageAdded]: handleMessageAdded,
   [StarlightWebSocketResponseType.messageReplace]: handleMessageReplace,
   [StarlightWebSocketResponseType.messageUpsert]: handleMessageUpsert,
