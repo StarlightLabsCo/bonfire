@@ -49,7 +49,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
   return (
     <div
       className={cn(
-        'w-full flex items-center px-4 py-2 bg-neutral-900 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50',
+        'w-full flex items-center px-4 py-2 border-[0.5px] border-white/20 bg-neutral-900 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
     >

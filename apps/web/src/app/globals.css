@@ -14,6 +14,26 @@
     width: 6px;
   }
 
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    scrollbar-width: none;
+  }
+
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    .story-input-wrapper {
+      margin-right: 6px;
+    }
+  }
+
+  @-moz-document url-prefix() {
+    .story-input-wrapper {
+      margin-right: 0;
+    }
+  }
+
   *::-webkit-scrollbar-track {
     background: transparent;
   }
@@ -167,5 +187,10 @@
 
   .animate-background-transition {
     animation: background-image-transition 5s ease-in-out;
+  }
+
+  .blur-gradient {
+    mask: linear-gradient(transparent, rgba(0, 0, 0, 0.5), black);
+    backdrop-filter: blur(4px);
   }
 }

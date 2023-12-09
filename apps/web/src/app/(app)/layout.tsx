@@ -30,9 +30,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="h-[100dvh] bg-neutral-950 flex flex-col md:flex-row">
       {user && <Sidebar user={user} instances={instances} />}
-      <div className="flex flex-col w-full h-[100dvh] mx-auto">
-        <div className="h-full">{children}</div>
-      </div>
+      <div className="flex flex-col w-full h-[100dvh] mx-auto">{children}</div>
       <Toaster />
       <ShareLinkDialog />
       <OutOfCreditsDialog />

@@ -5,8 +5,9 @@ import { useMessagesStore } from '@/stores/messages-store';
 import { StarlightWebSocketRequestType } from 'websocket';
 import { useEffect, useState } from 'react';
 import { MessageRole } from 'database';
+import { cn } from '@/lib/utils';
 
-export function UndoButton() {
+export function UndoButton({ className }: { className?: string }) {
   const sendToServer = useWebsocketStore((state) => state.sendToServer);
   const instanceId = useCurrentInstanceStore((state) => state.instanceId);
   const isLocked = useCurrentInstanceStore((state) => state.locked);
@@ -33,7 +34,10 @@ export function UndoButton() {
   if (visible) {
     return (
       <button
-        className="flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 border rounded-full border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500 fade-in-2s"
+        className={cn(
+          'flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 rounded-full border-[0.5px] border-white/20 hover:border-white/30 bg-neutral-950 text-white/50 hover:text-white/80 fade-in-2s',
+          className,
+        )}
         onClick={undo}
       >
         <Icons.undo />
