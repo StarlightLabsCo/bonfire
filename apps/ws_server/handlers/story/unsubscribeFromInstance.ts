@@ -1,12 +1,12 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser, subscribeUserToInstance } from '../../src/connection';
+import { sendToUser, subscribeUserToInstance, unsubscribeUserFromInstance } from '../../src/connection';
 import { db } from '../../services/db';
 
-export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
-  if (request.type !== StarlightWebSocketRequestType.subscribeToInstance) {
-    throw new Error('Invalid request type for subscribeToInstanceHandler');
+export async function unsubscribeFromInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
+  if (request.type !== StarlightWebSocketRequestType.unsubscribeFromInstance) {
+    throw new Error('Invalid request type for unsubscribeFromInstanceHandler');
   }
 
   const instanceId = request.data.instanceId;
@@ -34,8 +34,8 @@ export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketDa
         message: `Instance ${instanceId} not found`, // Don't leak that the instance exists
       },
     });
-    throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to subscribe from this instance ${instanceId}`);
+    throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to unsubscribe from this instance ${instanceId}`);
   }
 
-  subscribeUserToInstance(ws.data.webSocketToken!.userId, request.data.instanceId);
+  unsubscribeUserFromInstance(ws.data.webSocketToken!.userId, request.data.instanceId);
 }

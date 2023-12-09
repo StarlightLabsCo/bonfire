@@ -3,10 +3,10 @@ import { WebSocketData } from '.';
 import { redis } from '../services/redis';
 import { StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateResponse } from 'websocket/utils';
+import { db } from '../services/db';
 
 // This map maintains the most updated websocket for each user. Stored as a map of userId-connectionId to websocket
 const userIdToWebSocket: Record<string, ServerWebSocket<WebSocketData>> = {};
-const instanceSubscriptions: Record<string, string[]> = {};
 
 export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData>) {
   const userId = ws.data.webSocketToken!.userId!;
@@ -62,25 +62,32 @@ export function sendToUser(userId: string, data: StarlightWebSocketResponse) {
 }
 
 // *** Instance Publish / Subscribe ***
-export function subscribeUserToInstance(userId: string, instanceId: string) {
-  if (!instanceSubscriptions[instanceId]) {
-    instanceSubscriptions[instanceId] = [];
-  }
+export async function subscribeUserToInstance(userId: string, instanceId: string) {
+  await redis.sadd(`instanceSubscriptions:${instanceId}`, userId);
 
-  if (!instanceSubscriptions[instanceId].includes(userId)) {
-    instanceSubscriptions[instanceId].push(userId);
-  }
+  sendToUser(userId, {
+    type: StarlightWebSocketResponseType.instanceSubscriptionStatus,
+    data: {
+      instanceId,
+      subscribed: true,
+    },
+  });
 }
 
-export function unsubscribeUserFromInstance(userId: string, instanceId: string) {
-  const subscribers = instanceSubscriptions[instanceId];
-  if (subscribers) {
-    instanceSubscriptions[instanceId] = subscribers.filter((subscriber) => subscriber !== userId);
-  }
+export async function unsubscribeUserFromInstance(userId: string, instanceId: string) {
+  await redis.srem(`instanceSubscriptions:${instanceId}`, userId);
+
+  sendToUser(userId, {
+    type: StarlightWebSocketResponseType.instanceSubscriptionStatus,
+    data: {
+      instanceId,
+      subscribed: false,
+    },
+  });
 }
 
-export function sendToInstanceSubscribers(instanceId: string, data: StarlightWebSocketResponse) {
-  const subscribers = instanceSubscriptions[instanceId];
+export async function sendToInstanceSubscribers(instanceId: string, data: StarlightWebSocketResponse) {
+  const subscribers = await redis.smembers(`instanceSubscriptions:${instanceId}`);
   if (subscribers) {
     subscribers.forEach((userId) => {
       sendToUser(userId, data);

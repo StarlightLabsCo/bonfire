@@ -6,6 +6,7 @@ export type StarlightWebSocketRequest =
   | CreateAdventureSuggestionsRequest
   | CreateInstanceRequest
   | SubscribeToInstanceRequest
+  | UnsuscribeFromInstanceRequest
   | AddPlayerMessageRequest
   | UndoMessageRequest
   | StopAudioRequest
@@ -23,6 +24,7 @@ export enum StarlightWebSocketRequestType {
   createAdventureSuggestions,
   createInstance,
   subscribeToInstance,
+  unsubscribeFromInstance,
   addPlayerMessage,
   undoMessage,
   stopAudio,
@@ -41,10 +43,7 @@ export type CreateAdventureSuggestionsRequest = GenericStarlightWebSocketRequest
 export type CreateAdventureSuggestionsData = {};
 
 // Create Instance
-export type CreateInstanceRequest = GenericStarlightWebSocketRequest<
-  StarlightWebSocketRequestType.createInstance,
-  CreateInstanceData
->;
+export type CreateInstanceRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.createInstance, CreateInstanceData>;
 
 export type CreateInstanceData = {
   description: string;
@@ -60,6 +59,16 @@ export type SubscribeToInstanceData = {
   instanceId: string;
 };
 
+// Unsubscribe From Instance
+export type UnsuscribeFromInstanceRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.unsubscribeFromInstance,
+  UnsuscribeFromInstanceData
+>;
+
+export type UnsuscribeFromInstanceData = {
+  instanceId: string;
+};
+
 // Add Player Message
 export type AddPlayerMessageRequest = GenericStarlightWebSocketRequest<
   StarlightWebSocketRequestType.addPlayerMessage,
@@ -72,10 +81,7 @@ export type AddPlayerMessageData = {
 };
 
 // Undo Message
-export type UndoMessageRequest = GenericStarlightWebSocketRequest<
-  StarlightWebSocketRequestType.undoMessage,
-  UndoMessageData
->;
+export type UndoMessageRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.undoMessage, UndoMessageData>;
 
 export type UndoMessageData = {
   instanceId: string;
@@ -129,6 +135,7 @@ export type StarlightWebSocketResponse =
   | AdventureSuggestionsCreatedResponse
   | InstanceCreatedResponse
   | InstanceLockStatusChangedResponse
+  | InstanceSubscriptionStatusResponse
   | MessageAddedResponse
   | MessageReplaceResponse
   | MessageUpsertResponse
@@ -151,6 +158,7 @@ export enum StarlightWebSocketResponseType {
   adventureSuggestionsCreated,
   instanceCreated,
   instanceLockStatusChanged,
+  instanceSubscriptionStatus,
   messageAdded,
   messageReplace,
   messageUpsert,
@@ -196,11 +204,19 @@ export type InstanceLockStatusChangedData = {
   locked: boolean;
 };
 
-// Message Added
-export type MessageAddedResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.messageAdded,
-  MessageAddedData
+// Instance Subscription Confirmation
+export type InstanceSubscriptionStatusResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.instanceSubscriptionStatus,
+  InstanceSubscriptionStatusData
 >;
+
+export type InstanceSubscriptionStatusData = {
+  instanceId: string;
+  subscribed: boolean;
+};
+
+// Message Added
+export type MessageAddedResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.messageAdded, MessageAddedData>;
 
 export type MessageAddedData = {
   instanceId: string;
@@ -214,10 +230,7 @@ export type ActionSuggestion = {
 };
 
 // Message Replace
-export type MessageReplaceResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.messageReplace,
-  MessageReplaceData
->;
+export type MessageReplaceResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.messageReplace, MessageReplaceData>;
 
 export type MessageReplaceData = {
   instanceId: string;
@@ -226,10 +239,7 @@ export type MessageReplaceData = {
 };
 
 // Message Upsert
-export type MessageUpsertResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.messageUpsert,
-  MessageUpsertData
->;
+export type MessageUpsertResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.messageUpsert, MessageUpsertData>;
 
 export type MessageUpsertData = {
   instanceId: string;
@@ -237,10 +247,7 @@ export type MessageUpsertData = {
 };
 
 // Message Deleted
-export type MessageDeletedResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.messageDeleted,
-  MessageDeletedData
->;
+export type MessageDeletedResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.messageDeleted, MessageDeletedData>;
 
 export type MessageDeletedData = {
   instanceId: string;
@@ -248,10 +255,7 @@ export type MessageDeletedData = {
 };
 
 // Audio Created
-export type AudioCreatedResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.audioCreated,
-  AudioCreatedData
->;
+export type AudioCreatedResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.audioCreated, AudioCreatedData>;
 
 export type AudioCreatedData = {
   audio: string | null; // base64 encoded audio
@@ -286,18 +290,12 @@ export type VoiceTranscriptionProcessedData = {
 };
 
 // Out Of Credits
-export type OutOfCreditsResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.outOfCredits,
-  OutOfCreditsData
->;
+export type OutOfCreditsResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.outOfCredits, OutOfCreditsData>;
 
 export type OutOfCreditsData = {};
 
 // Another Open Tab
-export type AnotherOpenTabResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.anotherOpenTab,
-  AnotherOpenTabData
->;
+export type AnotherOpenTabResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.anotherOpenTab, AnotherOpenTabData>;
 
 export type AnotherOpenTabData = {};
 

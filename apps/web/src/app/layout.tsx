@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { PHProvider, PostHogPageview } from '@/components/analytics/posthog';
 import { PosthogIdentify } from '@/components/analytics/posthog';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
 
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Analytics />
               <AxiomWebVitals />
               <PosthogIdentify />
+              <SpeedInsights />
             </ThemeProvider>
           </SessionProvider>
         </PHProvider>

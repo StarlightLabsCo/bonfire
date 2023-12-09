@@ -15,6 +15,7 @@ import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
+import { useWebsocketStore } from '@/stores/websocket-store';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -36,6 +37,10 @@ export function Story({
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
   const setLocked = useCurrentInstanceStore((state) => state.setLocked);
 
+  const socketState = useWebsocketStore((state) => state.socketState);
+  const subscribeToInstance = useCurrentInstanceStore((state) => state.subscribeToInstance);
+  const clearAudio = usePlaybackStore((state) => state.clearAudio);
+
   const messages = useMessagesStore((state) => state.messages);
   const setMessages = useMessagesStore((state) => state.setMessages);
 
@@ -49,12 +54,19 @@ export function Story({
   }, [dbMessages, instance.id, setMessages]);
 
   useEffect(() => {
-    if (instance.id && setInstanceId) {
+    clearAudio();
+    setSubmittedMessage(null);
+    if (instance) {
       setInstanceId(instance.id);
       setLocked(instance.locked);
-      setSubmittedMessage(null);
     }
-  }, [instance.id, setInstanceId, setSubmittedMessage]);
+  }, [instance.id]);
+
+  useEffect(() => {
+    if (socketState === 'open' && instance) {
+      subscribeToInstance(instance.id);
+    }
+  }, [socketState, instance, subscribeToInstance]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -147,9 +159,7 @@ export function Story({
                         <>
                           {words.map((word, wordIndex) => (
                             <React.Fragment key={`${message.id}-${index}-${wordIndex}`}>
-                              <span className={`fade-in-fast ${wordIndex == currentWordIndex && 'underline'}`}>
-                                {word}
-                              </span>{' '}
+                              <span className={`fade-in-fast ${wordIndex == currentWordIndex && 'underline'}`}>{word}</span>{' '}
                               {wordIndex !== words.length - 1 && <br />}
                             </React.Fragment>
                           ))}
@@ -185,13 +195,7 @@ export function Story({
                   return (
                     <div key={message.id} className="w-full fade-in-fast z-0">
                       <Zoom>
-                        <Image
-                          src={message.content}
-                          width={1792}
-                          height={1024}
-                          className="rounded-2xl fade-in-2s"
-                          alt="Generated image"
-                        />
+                        <Image src={message.content} width={1792} height={1024} className="rounded-2xl fade-in-2s" alt="Generated image" />
                       </Zoom>
                     </div>
                   );

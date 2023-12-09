@@ -59,12 +59,7 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
     <>
       <div className="absolute w-full h-32 bg-gradient-to-t from-neutral-950 to-transparent bottom-10 blur-gradient" />
       <div className="absolute w-full h-10 bg-neutral-950 bottom-0" />
-      <div
-        className={cn(
-          `story-input-wrapper absolute bottom-0 px-4 md:px-2 lg:px-0 pb-2 w-full max-w-3xl flex flex-col z-10`,
-          className,
-        )}
-      >
+      <div className={cn(`story-input-wrapper absolute bottom-0 px-4 md:px-2 lg:px-0 pb-2 w-full max-w-3xl flex flex-col z-10`, className)}>
         <div className="flex items-center justify-between mb-2">
           <div className={cn('flex flex-nowrap flex-row gap-x-2 gap-y-2 overflow-x-auto scrollbar-hide', className)}>
             {showSuggestions &&
@@ -83,13 +78,7 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
             <ShareButton className="hidden md:block" />
           </div>
         </div>
-        <Input
-          placeholder="What do you do?"
-          value={input}
-          setValue={setInput}
-          submit={() => submitAction(input)}
-          disabled={isLocked}
-        />
+        <Input placeholder="What do you do?" value={input} setValue={setInput} submit={() => submitAction(input)} disabled={isLocked} />
       </div>
     </>
   );

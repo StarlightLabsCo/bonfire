@@ -50,7 +50,6 @@ export function Lobby({
   const [imageURL, setImageURL] = useState(imageUrls[imageIndex]);
   const [animated, setAnimated] = useState(false);
 
-  const socketState = useWebsocketStore((state) => state.socketState);
   const setMessages = useMessagesStore((state) => state.setMessages);
   const clearAudio = usePlaybackStore((state) => state.clearAudio);
   const setTranscription = useTranscriptionStore((state) => state.setTranscription);
@@ -63,8 +62,8 @@ export function Lobby({
   useEffect(() => {
     setMessages([]);
     setTranscription('');
-    if (socketState == 'open') clearAudio();
-    if (setInstanceId) setInstanceId(null);
+    clearAudio();
+    setInstanceId(null);
   }, []);
 
   // cycle images

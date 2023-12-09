@@ -50,6 +50,17 @@ export const SubscribeToInstanceRequestZodSchema: z.ZodType<Types.SubscribeToIns
   })
   .strict();
 
+export const UnsuscribeFromInstanceRequestZodSchema: z.ZodType<Types.UnsuscribeFromInstanceRequest> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketRequestType.unsubscribeFromInstance),
+    data: z
+      .object({
+        instanceId: z.string(),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const AddPlayerMessageRequestZodSchema: z.ZodType<Types.AddPlayerMessageRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.addPlayerMessage),
@@ -151,6 +162,18 @@ export const InstanceLockStatusChangedResponseZodSchema: z.ZodType<Types.Instanc
       .object({
         instanceId: z.string(),
         locked: z.boolean(),
+      })
+      .strict(),
+  })
+  .strict();
+
+export const InstanceSubscriptionStatusResponseZodSchema: z.ZodType<Types.InstanceSubscriptionStatusResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.instanceSubscriptionStatus),
+    data: z
+      .object({
+        instanceId: z.string(),
+        subscribed: z.boolean(),
       })
       .strict(),
   })
@@ -303,6 +326,7 @@ export const requestTypeToSchema: {
   [Types.StarlightWebSocketRequestType.createAdventureSuggestions]: CreateAdventureSuggestionsRequestZodSchema,
   [Types.StarlightWebSocketRequestType.createInstance]: CreateInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.subscribeToInstance]: SubscribeToInstanceRequestZodSchema,
+  [Types.StarlightWebSocketRequestType.unsubscribeFromInstance]: UnsuscribeFromInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.stopAudio]: StopAudioRequestZodSchema,
@@ -318,6 +342,7 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.adventureSuggestionsCreated]: AdventureSuggestionsCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceCreated]: InstanceCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceLockStatusChanged]: InstanceLockStatusChangedResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.instanceSubscriptionStatus]: InstanceSubscriptionStatusResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageAdded]: MessageAddedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageReplace]: MessageReplaceResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageUpsert]: MessageUpsertResponseZodSchema,

@@ -55,11 +55,14 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => {
       set({ audioStartTime });
     },
     clearAudio: () => {
+      const socketState = useWebsocketStore.getState().socketState;
       const sendToServer = useWebsocketStore.getState().sendToServer;
-      sendToServer({
-        type: StarlightWebSocketRequestType.stopAudio,
-        data: {},
-      } as StopAudioRequest);
+      if (socketState == 'open') {
+        sendToServer({
+          type: StarlightWebSocketRequestType.stopAudio,
+          data: {},
+        } as StopAudioRequest);
+      }
 
       const { bufferedPlayerNode } = get();
       clearBufferedPlayerNodeBuffer(bufferedPlayerNode);

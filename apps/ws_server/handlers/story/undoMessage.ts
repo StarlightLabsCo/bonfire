@@ -1,10 +1,6 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
-import {
-  StarlightWebSocketRequest,
-  StarlightWebSocketRequestType,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
+import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../../services/db';
 import { InstanceStage } from 'database';
 import { sendToInstanceSubscribers } from '../../src/connection';
@@ -15,10 +11,6 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
   }
 
   const instanceId = request.data.instanceId;
-
-  if (!instanceId) {
-    throw new Error('No instanceId provided');
-  }
 
   const instance = await db.instance.findUnique({
     where: {
