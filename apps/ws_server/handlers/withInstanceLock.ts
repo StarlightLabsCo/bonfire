@@ -1,10 +1,10 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
-import { InstanceLockStatusChangedResponse, StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
+import { StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../services/db';
 import { sendToInstanceSubscribers, sendToUser } from '../src/connection';
 
-const LOCK_TIMEOUT = 60000; // 60 seconds
+const LOCK_TIMEOUT = 60 * 1000 * 5; // 5 minutes
 
 function isInstanceRequest(request: StarlightWebSocketRequest): request is StarlightWebSocketRequest & { data: { instanceId: string } } {
   return 'instanceId' in request.data;

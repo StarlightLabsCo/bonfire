@@ -9,7 +9,7 @@ import { StarlightWebSocketRequestType } from 'websocket';
 import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
-import { Instance, Message, MessageRole } from 'database';
+import { Instance, MessageRole } from 'database';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { ActionSuggestions } from './action-suggestions';
 import { RetryButton } from './retry-button';
@@ -20,6 +20,8 @@ interface StoryInputProps {
 }
 
 export function StoryInput({ instance, className }: StoryInputProps) {
+  const locked = useCurrentInstanceStore((state) => state.locked);
+  const lockedAt = useCurrentInstanceStore((state) => state.lockedAt);
   const isLocked = useCurrentInstanceStore((state) => state.locked);
   const setLocked = useCurrentInstanceStore((state) => state.setLocked);
 
@@ -58,7 +60,7 @@ export function StoryInput({ instance, className }: StoryInputProps) {
   };
 
   const suggestions = showSuggestions ? JSON.parse(messages[messages.length - 1].content) : [];
-  const error = instance.locked && instance.lockedAt && new Date().getTime() - new Date(instance.lockedAt).getTime() > 60000;
+  const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
 
   return (
     <>

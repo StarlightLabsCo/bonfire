@@ -41,9 +41,41 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
   }
 
   if (socketState === 'disconnected') {
-    return <div className="w-full flex items-center justify-center">Disconnected</div>;
+    return (
+      <div
+        className={cn(
+          'w-full flex items-center px-4 py-2 border-[0.5px] border-white/20 bg-neutral-900 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50',
+          className,
+        )}
+      >
+        <input
+          placeholder={'Disconnected'}
+          className="w-full py-2 text-sm placeholder:text-neutral-500 bg-neutral-900 focus:outline-none"
+          value={undefined}
+          disabled={true}
+        />
+        <Icons.microphoneSlash className="w-4 h-4 text-neutral-400 mr-2" />
+        <Icons.lockClosed className="w-4 h-4 text-neutral-400" />
+      </div>
+    );
   } else if (socketState !== 'open') {
-    return <div className="w-full flex items-center justify-center">Connecting...</div>;
+    return (
+      <div
+        className={cn(
+          'w-full flex items-center px-4 py-2 border-[0.5px] border-white/20 bg-neutral-900 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50',
+          className,
+        )}
+      >
+        <input
+          placeholder={'Connecting...'}
+          className="w-full py-2 text-sm placeholder:text-neutral-500 bg-neutral-900 focus:outline-none"
+          value={undefined}
+          disabled={true}
+        />
+        <Icons.microphoneSlash className="w-4 h-4 text-neutral-400 mr-2" />
+        <Icons.lockClosed className="w-4 h-4 text-neutral-400" />
+      </div>
+    );
   }
 
   return (

@@ -173,7 +173,7 @@ export const InstanceLockStatusChangedResponseZodSchema: z.ZodType<Types.Instanc
       .object({
         instanceId: z.string(),
         locked: z.boolean(),
-        lockedAt: z.date().nullable(),
+        lockedAt: z.coerce.date().nullable(),
       })
       .strict(),
   })

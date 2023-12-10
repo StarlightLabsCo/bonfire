@@ -137,6 +137,8 @@ export function Story({
     };
   }, [wordTimings, audioStartTime]);
 
+  const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
+
   return (
     <div className="flex flex-col items-center w-full mx-auto h-full relative">
       {user && <OpenSidebar />}
@@ -211,19 +213,19 @@ export function Story({
                 return null;
             }
           })}
-          {locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60000 && (
+          {error && (
             <div className="w-full py-2 pl-6 border-l-2 border-red-500 font-sans flex flex-row items-center gap-x-4">
               <Icons.exclamationTriangle className="w-6 h-6 text-red-500 font-light text-xs" />
               There&apos;s been an error.
             </div>
           )}
 
-          {messages[messages.length - 1]?.role === 'user' && (
+          {!error && messages[messages.length - 1]?.role === 'user' && (
             <div className="w-full">
               <div className="h-2 w-2 ml-2 bg-neutral-700 fade-in-5 animate-ping rounded-full" />
             </div>
           )}
-          {submittedMessage && messages[messages.length - 1]?.role != 'user' && (
+          {!error && submittedMessage && messages[messages.length - 1]?.role != 'user' && (
             <>
               <div className="w-full pl-6 border-l-2 border-neutral-700 fade-in-fast">
                 <p className="text-neutral-500">{submittedMessage}</p>
