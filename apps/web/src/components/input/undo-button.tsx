@@ -44,6 +44,16 @@ export function UndoButton({ className }: { className?: string }) {
       </button>
     );
   } else {
-    return null;
+    return (
+      <button
+        className={cn(
+          'md:hidden flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 rounded-full border-[0.5px] border-white/20 hover:border-white/30 bg-neutral-950 text-white/50 hover:text-white/80 fade-in-2s',
+          className,
+        )}
+        onClick={undo}
+      >
+        <Icons.lockClosed />
+      </button>
+    );
   }
 }
