@@ -35,7 +35,7 @@ export function UndoButton({ className }: { className?: string }) {
     return (
       <button
         className={cn(
-          'flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 rounded-full border-[0.5px] border-white/20 hover:border-white/30 bg-neutral-950 text-white/50 hover:text-white/80 fade-in-2s',
+          'flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 rounded-full border-[0.5px] border-white/20 hover:border-white/30 bg-neutral-950 text-white/50 hover:text-white/80',
           className,
         )}
         onClick={undo}
@@ -47,7 +47,7 @@ export function UndoButton({ className }: { className?: string }) {
     return (
       <button
         className={cn(
-          'md:hidden flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 rounded-full border-[0.5px] border-white/20 hover:border-white/30 bg-neutral-950 text-white/50 hover:text-white/80 fade-in-2s',
+          'md:hidden flex flex-row items-center gap-x-2 text-sm px-3 py-1 w-10 h-10 rounded-full border-[0.5px] border-white/20 hover:border-white/30 bg-neutral-950 text-white/50 hover:text-white/80',
           className,
         )}
         onClick={undo}

@@ -68,7 +68,7 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
             {showSuggestions && <ActionSuggestions suggestions={suggestions} submitAction={submitAction} />}
           </div>
           <div className="hidden md:flex gap-x-2 items-center h-full">
-            <UndoButton />
+            <UndoButton className="fade-in-2s" />
             <ShareButton />
           </div>
         </div>
