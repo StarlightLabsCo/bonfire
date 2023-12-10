@@ -10,6 +10,8 @@ import { useDialogStore } from '@/stores/dialog-store';
 
 export function ShareLinkDialog() {
   const { toast } = useToast();
+
+  const canShare = typeof navigator !== 'undefined' && navigator.share;
   const isShareDialogOpen = useDialogStore((state) => state.isShareDialogOpen);
   const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
   const instanceId = useCurrentInstanceStore((state) => state.instanceId);
@@ -102,14 +104,30 @@ export function ShareLinkDialog() {
                 <Switch checked={checked} onCheckedChange={setInstancePublic} />
                 {checked ? 'Public' : 'Private'}
               </div>
-              <Button
-                variant={'outline'}
-                className="bg-neutral-950 border-white/10 hover:bg-neutral-800"
-                disabled={!checked}
-                onClick={copyLink}
-              >
-                Copy Link
-              </Button>
+              {canShare ? (
+                <Button
+                  variant={'outline'}
+                  className="bg-neutral-950 border-white/10 hover:bg-neutral-800"
+                  disabled={!checked}
+                  onClick={() => {
+                    navigator.share({
+                      title: 'Bonfire',
+                      url: `${window.location.origin}/instances/${instanceId}`,
+                    });
+                  }}
+                >
+                  Share Link
+                </Button>
+              ) : (
+                <Button
+                  variant={'outline'}
+                  className="bg-neutral-950 border-white/10 hover:bg-neutral-800"
+                  disabled={!checked}
+                  onClick={copyLink}
+                >
+                  Copy Link
+                </Button>
+              )}
             </div>
           </DialogDescription>
           <DialogDescription className="text-xs pt-5 text-gray-600">
