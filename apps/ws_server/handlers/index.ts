@@ -10,11 +10,12 @@ import { processVoiceTranscriptionHandler } from './audio/processVoiceTranscript
 import { finishVoiceTranscriptionHandler } from './audio/finishVoiceTranscription';
 
 import { createAdventureSuggestionsHandler } from './lobby/createAdventureSuggestions';
-import { createInstanceHandler } from './story/createInstance';
-import { subscribeToInstanceHandler } from './story/subscribeToInstance';
-import { unsubscribeFromInstanceHandler } from './story/unsubscribeFromInstance';
-import { addPlayerMessageHandler } from './story/addPlayerMessage';
-import { undoMessageHandler } from './story/undoMessage';
+import { createInstanceHandler } from './instance/createInstance';
+import { subscribeToInstanceHandler } from './instance/subscribeToInstance';
+import { unsubscribeFromInstanceHandler } from './instance/unsubscribeFromInstance';
+import { addPlayerMessageHandler } from './instance/addPlayerMessage';
+import { undoMessageHandler } from './instance/undoMessage';
+import { resumeInstanceHandler } from './instance/resumeInstance';
 
 export const handlers: {
   [key: string]: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void;
@@ -32,4 +33,5 @@ export const handlers: {
 
   [StarlightWebSocketRequestType.addPlayerMessage]: withInstanceLock(hasTokensMiddleware(addPlayerMessageHandler)),
   [StarlightWebSocketRequestType.undoMessage]: withInstanceLock(hasTokensMiddleware(undoMessageHandler)),
+  [StarlightWebSocketRequestType.resumeInstance]: withInstanceLock(hasTokensMiddleware(resumeInstanceHandler)),
 };

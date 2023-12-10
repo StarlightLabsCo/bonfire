@@ -1,18 +1,12 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
-import {
-  InstanceLockStatusChangedResponse,
-  StarlightWebSocketRequest,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
+import { InstanceLockStatusChangedResponse, StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../services/db';
 import { sendToInstanceSubscribers, sendToUser } from '../src/connection';
 
 const LOCK_TIMEOUT = 60000; // 60 seconds
 
-function isInstanceRequest(
-  request: StarlightWebSocketRequest,
-): request is StarlightWebSocketRequest & { data: { instanceId: string } } {
+function isInstanceRequest(request: StarlightWebSocketRequest): request is StarlightWebSocketRequest & { data: { instanceId: string } } {
   return 'instanceId' in request.data;
 }
 
@@ -35,13 +29,16 @@ export function withInstanceLock(
       throw new Error('Instance is currently being processed');
     }
 
-    await db.instance.update({ where: { id: instanceId }, data: { locked: true, lockedAt: new Date() } });
+    const lockedAt = new Date();
+
+    await db.instance.update({ where: { id: instanceId }, data: { locked: true, lockedAt } });
 
     sendToInstanceSubscribers(instanceId, {
       type: StarlightWebSocketResponseType.instanceLockStatusChanged,
       data: {
         instanceId,
         locked: true,
+        lockedAt,
       },
     });
 
@@ -63,6 +60,7 @@ export function withInstanceLock(
         data: {
           instanceId,
           locked: false,
+          lockedAt: null,
         },
       });
     }

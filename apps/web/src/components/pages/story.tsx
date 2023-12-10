@@ -16,6 +16,7 @@ import { useMessagesStore } from '@/stores/messages-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
 import { useWebsocketStore } from '@/stores/websocket-store';
+import { Icons } from '../icons';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -34,8 +35,12 @@ export function Story({
   dbMessages: Message[];
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const locked = useCurrentInstanceStore((state) => state.locked);
+  const lockedAt = useCurrentInstanceStore((state) => state.lockedAt);
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
   const setLocked = useCurrentInstanceStore((state) => state.setLocked);
+  const setLockedAt = useCurrentInstanceStore((state) => state.setLockedAt);
 
   const socketState = useWebsocketStore((state) => state.socketState);
   const subscribeToInstance = useCurrentInstanceStore((state) => state.subscribeToInstance);
@@ -59,6 +64,7 @@ export function Story({
     if (instance) {
       setInstanceId(instance.id);
       setLocked(instance.locked);
+      setLockedAt(instance.lockedAt);
     }
   }, [instance.id]);
 
@@ -205,6 +211,13 @@ export function Story({
                 return null;
             }
           })}
+          {locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60000 && (
+            <div className="w-full py-2 pl-6 border-l-2 border-red-500 font-sans flex flex-row items-center gap-x-4">
+              <Icons.exclamationTriangle className="w-6 h-6 text-red-500 font-light text-xs" />
+              There&apos;s been an error.
+            </div>
+          )}
+
           {messages[messages.length - 1]?.role === 'user' && (
             <div className="w-full">
               <div className="h-2 w-2 ml-2 bg-neutral-700 fade-in-5 animate-ping rounded-full" />
@@ -223,7 +236,7 @@ export function Story({
           <div ref={scrollRef} />
         </div>
       </div>
-      {user && user.id === instance.userId && <StoryInput instanceId={instance.id} />}
+      {user && user.id === instance.userId && <StoryInput instance={instance} />}
     </div>
   );
 }

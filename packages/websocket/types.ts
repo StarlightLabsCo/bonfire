@@ -7,6 +7,7 @@ export type StarlightWebSocketRequest =
   | CreateInstanceRequest
   | SubscribeToInstanceRequest
   | UnsuscribeFromInstanceRequest
+  | ResumeInstanceRequest
   | AddPlayerMessageRequest
   | UndoMessageRequest
   | StopAudioRequest
@@ -25,6 +26,7 @@ export enum StarlightWebSocketRequestType {
   createInstance,
   subscribeToInstance,
   unsubscribeFromInstance,
+  resumeInstance,
   addPlayerMessage,
   undoMessage,
   stopAudio,
@@ -66,6 +68,13 @@ export type UnsuscribeFromInstanceRequest = GenericStarlightWebSocketRequest<
 >;
 
 export type UnsuscribeFromInstanceData = {
+  instanceId: string;
+};
+
+// Resume Instance
+export type ResumeInstanceRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.resumeInstance, ResumeInstanceData>;
+
+export type ResumeInstanceData = {
   instanceId: string;
 };
 
@@ -202,6 +211,7 @@ export type InstanceLockStatusChangedResponse = GenericStarlightWebSocketRespons
 export type InstanceLockStatusChangedData = {
   instanceId: string;
   locked: boolean;
+  lockedAt: Date | null;
 };
 
 // Instance Subscription Confirmation

@@ -54,7 +54,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
       )}
     >
       <input
-        placeholder={disabled ? 'Generating...' : placeholder}
+        placeholder={placeholder}
         className="w-full py-2 text-sm placeholder:text-neutral-500 bg-neutral-900 focus:outline-none"
         value={value}
         onChange={(event) => setValue(event.target.value)}

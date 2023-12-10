@@ -9,16 +9,17 @@ import { StarlightWebSocketRequestType } from 'websocket';
 import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
-import { MessageRole } from 'database';
+import { Instance, Message, MessageRole } from 'database';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { ActionSuggestions } from './action-suggestions';
+import { RetryButton } from './retry-button';
 
 interface StoryInputProps {
-  instanceId: string;
+  instance: Instance;
   className?: string;
 }
 
-export function StoryInput({ instanceId, className }: StoryInputProps) {
+export function StoryInput({ instance, className }: StoryInputProps) {
   const isLocked = useCurrentInstanceStore((state) => state.locked);
   const setLocked = useCurrentInstanceStore((state) => state.setLocked);
 
@@ -38,7 +39,7 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
     messages[messages.length - 1].name == 'action_suggestions';
 
   const submitAction = (action: string) => {
-    if (!instanceId) return;
+    if (!instance.id) return;
 
     setInput('');
     clearAudio();
@@ -48,7 +49,7 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
     sendToServer({
       type: StarlightWebSocketRequestType.addPlayerMessage,
       data: {
-        instanceId,
+        instanceId: instance.id,
         message: action,
       },
     });
@@ -57,6 +58,7 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
   };
 
   const suggestions = showSuggestions ? JSON.parse(messages[messages.length - 1].content) : [];
+  const error = instance.locked && instance.lockedAt && new Date().getTime() - new Date(instance.lockedAt).getTime() > 60000;
 
   return (
     <>
@@ -68,13 +70,23 @@ export function StoryInput({ instanceId, className }: StoryInputProps) {
             {showSuggestions && <ActionSuggestions suggestions={suggestions} submitAction={submitAction} />}
           </div>
           <div className="hidden md:flex gap-x-2 items-center h-full">
-            <UndoButton className="fade-in-2s" />
+            {error ? <RetryButton className="animate-pulse text-white border-white animate" /> : <UndoButton className="fade-in-2s" />}
             <ShareButton />
           </div>
         </div>
         <div className="flex gap-x-2 items-center md:block">
-          <UndoButton className="block md:hidden" />
-          <Input placeholder="What do you do?" value={input} setValue={setInput} submit={() => submitAction(input)} disabled={isLocked} />
+          {error ? (
+            <RetryButton className="block md:hidden animate-pulse text-white border-white animate" />
+          ) : (
+            <UndoButton className="block md:hidden" />
+          )}
+          <Input
+            placeholder={error ? 'Please try again' : isLocked ? 'Generating...' : 'What do you do?'}
+            value={input}
+            setValue={setInput}
+            submit={() => submitAction(input)}
+            disabled={isLocked}
+          />
         </div>
       </div>
     </>

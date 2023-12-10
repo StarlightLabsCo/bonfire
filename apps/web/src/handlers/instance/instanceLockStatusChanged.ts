@@ -6,6 +6,7 @@ export function handleInstanceLockStatusChanged(response: StarlightWebSocketResp
     const currentInstance = useCurrentInstanceStore.getState();
     if (currentInstance.instanceId === response.data.instanceId) {
       useCurrentInstanceStore.setState({ locked: response.data.locked });
+      useCurrentInstanceStore.setState({ lockedAt: response.data.lockedAt });
     }
   }
 }

@@ -61,6 +61,17 @@ export const UnsuscribeFromInstanceRequestZodSchema: z.ZodType<Types.UnsuscribeF
   })
   .strict();
 
+export const ResumeInstanceRequestZodSchema: z.ZodType<Types.ResumeInstanceRequest> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketRequestType.resumeInstance),
+    data: z
+      .object({
+        instanceId: z.string(),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const AddPlayerMessageRequestZodSchema: z.ZodType<Types.AddPlayerMessageRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.addPlayerMessage),
@@ -162,6 +173,7 @@ export const InstanceLockStatusChangedResponseZodSchema: z.ZodType<Types.Instanc
       .object({
         instanceId: z.string(),
         locked: z.boolean(),
+        lockedAt: z.date().nullable(),
       })
       .strict(),
   })
@@ -327,6 +339,7 @@ export const requestTypeToSchema: {
   [Types.StarlightWebSocketRequestType.createInstance]: CreateInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.subscribeToInstance]: SubscribeToInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.unsubscribeFromInstance]: UnsuscribeFromInstanceRequestZodSchema,
+  [Types.StarlightWebSocketRequestType.resumeInstance]: ResumeInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.stopAudio]: StopAudioRequestZodSchema,
