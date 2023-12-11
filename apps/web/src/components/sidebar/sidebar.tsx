@@ -9,8 +9,6 @@ import { UserInfo } from './user-info';
 import { AudioSidebar } from './audio-sidebar';
 import { useEffect, useState } from 'react';
 import { Icons } from '../icons';
-import { useSpring } from '@react-spring/web';
-import { useDrag } from '@use-gesture/react';
 
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
@@ -47,23 +45,6 @@ export function Sidebar({
     }
   };
 
-  const [{ x }, set] = useSpring(() => ({ x: 0 }));
-
-  const bind = useDrag(
-    ({ down, movement: [mx], cancel }) => {
-      // This checks if you're dragging to the left and the sidebar is open
-      if (!down && isSidebarOpen && mx < 0) {
-        const width = window.innerWidth * 0.3;
-        const shouldClose = -mx > width;
-
-        if (shouldClose) {
-          closeSidebar();
-        }
-      }
-    },
-    { preventScroll: true },
-  );
-
   useEffect(() => {
     async function updateDisplayedInstances() {
       const instances = await fetch('/api/instances').then((res) => res.json());
@@ -91,7 +72,6 @@ export function Sidebar({
 
       {/* Mobile Background Overlay */}
       <div
-        {...bind()}
         onClick={() => closeSidebar()}
         onTouchStart={() => closeSidebar()}
         className={`h-[100dvh] w-screen z-[15] bg-black/80 fixed top-0 left-0 md:hidden  ${
@@ -113,10 +93,7 @@ export function Sidebar({
           {/* TODO: title could go here -  make it so it reflects current instance */}
         </div>
         {instanceId && (
-          <button
-            className="h-10 flex-shrink-0  w-10 flex items-center justify-center"
-            onClick={() => setIsShareDialogOpen(true)}
-          >
+          <button className="h-10 flex-shrink-0  w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
             <Icons.share />
           </button>
         )}
@@ -130,11 +107,7 @@ export function Sidebar({
         )}
         onTransitionEnd={handleTransitionEnd}
       >
-        <div
-          className={cn(
-            'h-full w-[250px] flex flex-col justify-between items-center bg-black border-r border-white/10',
-          )}
-        >
+        <div className={cn('h-full w-[250px] flex flex-col justify-between items-center bg-black border-r border-white/10')}>
           <TopActions />
           <PastStories instances={displayedInstances} />
           <AudioSidebar />

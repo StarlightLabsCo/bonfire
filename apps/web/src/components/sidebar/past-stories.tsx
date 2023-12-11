@@ -1,20 +1,15 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Instance } from '@prisma/client';
 import { cn } from '@/lib/utils';
 import { useDialogStore } from '@/stores/dialog-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { Icons } from '@/components/icons';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import Link from 'next/link';
 
 export function PastStories({ instances, className }: { instances: Instance[]; className?: string }) {
-  const router = useRouter();
   const pathname = usePathname();
 
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
@@ -23,8 +18,6 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
 
   const handleClick = (path: string) => {
     if (path === pathname) return;
-
-    router.push(path);
 
     if (window.innerWidth < 768) {
       closeSidebar();
@@ -38,8 +31,9 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
         {instances.map((instance, index) => {
           const isActive = pathname === `/instances/${instance.id}`;
           return (
-            <div
+            <Link
               key={index}
+              href={`/instances/${instance.id}`}
               className={`group h-10 w-full p-2 flex items-center ${
                 isActive ? 'bg-white/10' : 'hover:bg-white/10'
               } rounded-md text-xs font-light hover:cursor-pointer`}
@@ -83,12 +77,10 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
                     </div>
                   </>
                 ) : (
-                  <div
-                    className={`absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-black group-hover:from-[#1A1A1A]`}
-                  />
+                  <div className={`absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-black group-hover:from-[#1A1A1A]`} />
                 )}
               </div>
-            </div>
+            </Link>
           );
         })}
         <div className="h-6 w-full" />
