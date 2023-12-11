@@ -21,6 +21,7 @@ interface StoryInputProps {
 }
 
 export function StoryInput({ instance, scrollRef, className }: StoryInputProps) {
+  const socketState = useWebsocketStore((state) => state.socketState);
   const locked = useCurrentInstanceStore((state) => state.locked);
   const lockedAt = useCurrentInstanceStore((state) => state.lockedAt);
   const isLocked = useCurrentInstanceStore((state) => state.locked);
@@ -79,7 +80,7 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
       <div className={cn(`story-input-wrapper absolute bottom-0 px-4 md:px-2 lg:px-0 pb-2 w-full max-w-3xl flex flex-col z-10`, className)}>
         <div className="flex items-center justify-between mb-2">
           <div className={cn('flex flex-nowrap flex-row gap-x-2 gap-y-2 overflow-x-auto scrollbar-hide', className)}>
-            {showSuggestions && <ActionSuggestions suggestions={suggestions} submitAction={submitAction} />}
+            {showSuggestions && socketState == 'open' && <ActionSuggestions suggestions={suggestions} submitAction={submitAction} />}
           </div>
           <div className="hidden md:flex gap-x-2 items-center h-full">
             {error ? <RetryButton className="animate-pulse text-white border-white animate" /> : <UndoButton className="fade-in-2s" />}
