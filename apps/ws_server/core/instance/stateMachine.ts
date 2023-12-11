@@ -10,7 +10,7 @@ import { narratorPlanning, resetNarratorPlanning } from './continue/planning';
 import { continueStory, resetContinueStory } from './continue/continue';
 
 import { createImage, resetCreateImage } from './images';
-import { generateActionSuggestions } from './actions';
+import { generateActionSuggestions, resetActionSuggestions } from './actions';
 import OpenAI from 'openai';
 
 export const InstanceStageTransitions = {
@@ -37,6 +37,7 @@ export const InstanceStageTransitions = {
   [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
   [InstanceStage.CONTINUE_STORY_ERROR]: resetContinueStory,
   [InstanceStage.CREATE_IMAGE_ERROR]: resetCreateImage,
+  [InstanceStage.GENERATE_ACTION_SUGGESTIONS_ERROR]: resetActionSuggestions,
 };
 
 export const InstanceStageToError = {
@@ -64,9 +65,7 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
       throw new Error(`No function found for: ${instance.stage}`);
     }
 
-    console.log(
-      `[${Date.now()}][State Machine][Instance: ${instance.id}] ${instance.stage} ---executing---> ${nextStep.name}`,
-    );
+    console.log(`[${Date.now()}][State Machine][Instance: ${instance.id}] ${instance.stage} ---executing---> ${nextStep.name}`);
 
     updatedInstance = await nextStep(instance);
   } catch (error) {
