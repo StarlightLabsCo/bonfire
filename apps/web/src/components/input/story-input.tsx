@@ -71,8 +71,11 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
 
   return (
     <>
-      <div className="absolute w-full h-32 bg-gradient-to-t from-neutral-950 to-transparent bottom-10 blur-gradient" />
-      <div className="absolute w-full h-10 bg-neutral-950 bottom-0" />
+      <div
+        className="absolute w-full h-32 bg-gradient-to-t from-neutral-950 to-transparent bottom-10 blur-gradient"
+        style={{ pointerEvents: 'none' }}
+      />
+      <div className="absolute w-full h-10 bg-neutral-950 bottom-0" style={{ pointerEvents: 'none' }} />
       <div className={cn(`story-input-wrapper absolute bottom-0 px-4 md:px-2 lg:px-0 pb-2 w-full max-w-3xl flex flex-col z-10`, className)}>
         <div className="flex items-center justify-between mb-2">
           <div className={cn('flex flex-nowrap flex-row gap-x-2 gap-y-2 overflow-x-auto scrollbar-hide', className)}>

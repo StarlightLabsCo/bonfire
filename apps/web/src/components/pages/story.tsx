@@ -59,6 +59,16 @@ export function Story({
   }, [dbMessages, instance.id, setMessages]);
 
   useEffect(() => {
+    setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
+    }, 500);
+  }, [scrollRef]);
+
+  useEffect(() => {
     clearAudio();
     setSubmittedMessage(null);
     if (instance) {
