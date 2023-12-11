@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useStripeStore } from '@/stores/stripe-store';
+import { useDialogStore } from '@/stores/dialog-store';
 
 export function UserInfo({
   user,
@@ -33,6 +34,7 @@ export function UserInfo({
   const stripeSubscriptionId = useStripeStore((state) => state.stripeSubscriptionId);
   const createCheckoutSession = useStripeStore((state) => state.createCheckoutSession);
   const createPortalSession = useStripeStore((state) => state.createPortalSession);
+  const setIsSettingsDialogOpen = useDialogStore((state) => state.setIsSettingsDialogOpen);
 
   useEffect(() => {
     async function getStripeSubscriptionStatus() {
@@ -87,23 +89,17 @@ export function UserInfo({
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuGroup>
             {stripeSubscriptionId ? (
-              <DropdownMenuItem
-                onClick={() => createPortalSession()}
-                className="font-light cursor-pointer focus:bg-neutral-800"
-              >
+              <DropdownMenuItem onClick={() => createPortalSession()} className="font-light cursor-pointer focus:bg-neutral-800">
                 <Icons.creditCard className="mr-2 h-3 w-3" />
                 Billing
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem
-                onClick={() => createCheckoutSession()}
-                className="font-light cursor-pointer focus:bg-neutral-800"
-              >
+              <DropdownMenuItem onClick={() => createCheckoutSession()} className="font-light cursor-pointer focus:bg-neutral-800">
                 <Icons.rocket className="mr-2 h-3 w-3" />
                 Upgrade
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem onClick={() => {}} className="font-light cursor-pointer focus:bg-neutral-800">
+            <DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
               <Icons.gear className="mr-2 h-3 w-3" />
               Settings
             </DropdownMenuItem>
