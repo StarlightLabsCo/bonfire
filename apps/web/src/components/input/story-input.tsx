@@ -16,10 +16,11 @@ import { RetryButton } from './retry-button';
 
 interface StoryInputProps {
   instance: Instance;
+  scrollRef: React.RefObject<HTMLDivElement>;
   className?: string;
 }
 
-export function StoryInput({ instance, className }: StoryInputProps) {
+export function StoryInput({ instance, scrollRef, className }: StoryInputProps) {
   const locked = useCurrentInstanceStore((state) => state.locked);
   const lockedAt = useCurrentInstanceStore((state) => state.lockedAt);
   const isLocked = useCurrentInstanceStore((state) => state.locked);
@@ -47,6 +48,12 @@ export function StoryInput({ instance, className }: StoryInputProps) {
     clearAudio();
 
     setSubmittedMessage(action);
+
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
 
     sendToServer({
       type: StarlightWebSocketRequestType.addPlayerMessage,

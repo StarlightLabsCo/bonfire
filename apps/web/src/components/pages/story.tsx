@@ -74,14 +74,6 @@ export function Story({
     }
   }, [socketState, instance, subscribeToInstance]);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({
-        behavior: 'smooth',
-      });
-    }
-  }, [messages, submittedMessage]);
-
   // Mobile Header useEffect
   const messageContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -238,7 +230,7 @@ export function Story({
           <div ref={scrollRef} />
         </div>
       </div>
-      {user && user.id === instance.userId && <StoryInput instance={instance} />}
+      {user && user.id === instance.userId && <StoryInput instance={instance} scrollRef={scrollRef} />}
     </div>
   );
 }
