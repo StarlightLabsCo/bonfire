@@ -161,9 +161,7 @@ export function Story({
                     if (words.length === 1) {
                       return (
                         <React.Fragment key={`${message.id}-${index}`}>
-                          <span className={`fade-in-fast ${index == currentWordIndex && volume != null && volume > 0 ? 'underline' : ''}`}>
-                            {word}
-                          </span>{' '}
+                          <span className={`fade-in-fast ${index == currentWordIndex ? 'underline' : ''}`}>{word}</span>{' '}
                         </React.Fragment>
                       );
                     } // Newlines in the middle
@@ -172,13 +170,7 @@ export function Story({
                         <>
                           {words.map((word, wordIndex) => (
                             <React.Fragment key={`${message.id}-${index}-${wordIndex}`}>
-                              <span
-                                className={`fade-in-fast ${
-                                  wordIndex == currentWordIndex && volume != null && volume > 0 ? 'underline' : ''
-                                }`}
-                              >
-                                {word}
-                              </span>{' '}
+                              <span className={`fade-in-fast ${wordIndex == currentWordIndex ? 'underline' : ''}`}>{word}</span>{' '}
                               {wordIndex !== words.length - 1 && <br />}
                             </React.Fragment>
                           ))}
