@@ -66,6 +66,12 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => {
 
       const { bufferedPlayerNode } = get();
       clearBufferedPlayerNodeBuffer(bufferedPlayerNode);
+
+      set({
+        currentWordIndex: null,
+        wordTimings: null,
+        audioStartTime: null,
+      });
     },
     setup: async () => {
       const { audioContext, bufferedPlayerNode, gainNode, volume } = await setupAudio();
