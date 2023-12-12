@@ -25,7 +25,6 @@ export const useCurrentInstanceStore = create<CurrentInstanceStore>((set, get) =
   setInstanceId: (instanceId: string | null) => {
     const { instanceId: currentInstanceId, unsubscribeFromInstance } = get();
     if (currentInstanceId) {
-      console.log('Unsubscribing from instance', currentInstanceId);
       unsubscribeFromInstance(currentInstanceId);
     }
     set({ instanceId, subscribed: false });
