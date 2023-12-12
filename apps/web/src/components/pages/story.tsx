@@ -161,11 +161,7 @@ export function Story({
                     if (words.length === 1) {
                       return (
                         <React.Fragment key={`${message.id}-${index}`}>
-                          <span
-                            className={`fade-in-fast ${
-                              index == currentWordIndex && volume != null && volume > 0 && volume != null && volume > 0 ? 'underline' : ''
-                            }`}
-                          >
+                          <span className={`fade-in-fast ${index == currentWordIndex && volume != null && volume > 0 ? 'underline' : ''}`}>
                             {word}
                           </span>{' '}
                         </React.Fragment>
@@ -178,9 +174,7 @@ export function Story({
                             <React.Fragment key={`${message.id}-${index}-${wordIndex}`}>
                               <span
                                 className={`fade-in-fast ${
-                                  wordIndex == currentWordIndex && volume != null && volume > 0 && volume != null && volume > 0
-                                    ? 'underline'
-                                    : ''
+                                  wordIndex == currentWordIndex && volume != null && volume > 0 ? 'underline' : ''
                                 }`}
                               >
                                 {word}
