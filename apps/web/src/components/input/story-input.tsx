@@ -3,16 +3,19 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
-import { UndoButton } from './undo-button';
-import { ShareButton } from './share-button';
+import { UndoButton } from './buttons/undo-button';
+import { ShareButton } from './buttons/share-button';
 import { StarlightWebSocketRequestType } from 'websocket';
 import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
-import { Instance, MessageRole } from 'database';
+import { Instance, InstanceStage, MessageRole } from 'database';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { ActionSuggestions } from './action-suggestions';
-import { RetryButton } from './retry-button';
+import { RetryButton } from './buttons/retry-button';
+import { Button } from './buttons/button';
+import { Icons } from '../icons';
+import { AnimatedStageButton } from './buttons/animated-stage-button';
 
 interface StoryInputProps {
   instance: Instance;
@@ -24,8 +27,8 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
   const socketState = useWebsocketStore((state) => state.socketState);
   const locked = useCurrentInstanceStore((state) => state.locked);
   const lockedAt = useCurrentInstanceStore((state) => state.lockedAt);
-  const isLocked = useCurrentInstanceStore((state) => state.locked);
   const setLocked = useCurrentInstanceStore((state) => state.setLocked);
+  const stage = useCurrentInstanceStore((state) => state.stage);
 
   const [input, setInput] = useState('');
 
@@ -70,6 +73,31 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
   const suggestions = showSuggestions ? JSON.parse(messages[messages.length - 1].content) : [];
   const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
 
+  const stageToPlaceholder = {
+    [InstanceStage.INTRODUCE_STORY_START]: 'Introducing story...',
+    [InstanceStage.CONTINUE_STORY_START]: 'Continuing story...',
+    [InstanceStage.CONTINUE_STORY_FINISH]: 'Story continued!',
+    [InstanceStage.CREATE_IMAGE_START]: 'Creating image...',
+    [InstanceStage.CREATE_IMAGE_FINISH]: 'Image created!',
+    [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: 'Generating actions...',
+    [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: 'What do you do?',
+    [InstanceStage.ADD_PLAYER_MESSAGE_FINISH]: 'Generating...',
+  };
+
+  const matchedStage = stage ? stageToPlaceholder[stage as keyof typeof stageToPlaceholder] : null;
+
+  console.log(`[StoryInput] stage: ${stage}, matchedStage: ${matchedStage}`);
+
+  const inputPlaceholder = error
+    ? 'Please try again'
+    : submittedMessage != null
+      ? 'Generating...'
+      : matchedStage != null
+        ? matchedStage
+        : locked
+          ? 'Generating...'
+          : 'What do you do?';
+
   return (
     <>
       <div
@@ -85,23 +113,16 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
             )}
           </div>
           <div className="hidden md:flex gap-x-2 items-center h-full">
-            {error ? <RetryButton className="animate-pulse text-white border-white animate" /> : <UndoButton className="fade-in-2s" />}
+            {error && <RetryButton />}
+            {messages.some((message) => message.role === MessageRole.user) && !locked && !error && <UndoButton className="fade-in-2s" />}
             <ShareButton />
           </div>
         </div>
         <div className="flex gap-x-2 items-center md:block">
-          {error ? (
-            <RetryButton className="block md:hidden animate-pulse text-white border-white animate" />
-          ) : (
-            <UndoButton className="block md:hidden" />
-          )}
-          <Input
-            placeholder={error ? 'Please try again' : isLocked ? 'Generating...' : 'What do you do?'}
-            value={input}
-            setValue={setInput}
-            submit={() => submitAction(input)}
-            disabled={isLocked}
-          />
+          {error && <RetryButton className="block md:hidden" />}
+          {!error && locked && <AnimatedStageButton className="md:hidden" />}
+          {!error && !locked && <UndoButton className="md:hidden" />}
+          <Input placeholder={inputPlaceholder} value={input} setValue={setInput} submit={() => submitAction(input)} disabled={locked} />
         </div>
       </div>
     </>

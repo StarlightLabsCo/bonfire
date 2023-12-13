@@ -3,8 +3,13 @@ import { convertInstanceToChatCompletionMessageParams } from '../../../src/utils
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { logNonStreamedOpenAIResponse, openai } from '../../../services/openai';
 import { db } from '../../../services/db';
+import { updateInstanceStage } from '../utils';
+import { sendToInstanceSubscribers } from '../../../src/connection';
+import { StarlightWebSocketResponseType } from 'websocket/types';
 
 export async function narratorPlanning(instance: Instance & { messages: Message[] }) {
+  let updatedInstance = await updateInstanceStage(instance, InstanceStage.NARRATOR_PLANNING_START);
+
   const messages = convertInstanceToChatCompletionMessageParams(instance);
 
   const planningMessages = [
@@ -46,16 +51,11 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
   if (!planningResponse.choices[0].message.tool_calls) {
     throw new Error('[generate_narrator_internal_monologue_plan] No function call found');
   }
-  logNonStreamedOpenAIResponse(
-    instance.userId,
-    planningMessages,
-    planningResponse,
-    planningEndTime - planningStartTime,
-  );
+  logNonStreamedOpenAIResponse(instance.userId, planningMessages, planningResponse, planningEndTime - planningStartTime);
 
   const planningArgs = JSON.parse(planningResponse.choices[0].message.tool_calls[0].function.arguments);
 
-  let updatedInstance = await db.instance.update({
+  updatedInstance = await db.instance.update({
     where: {
       id: instance.id,
     },
@@ -68,7 +68,7 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
         },
       },
       history: {
-        push: instance.stage,
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.NARRATOR_PLANNING_FINISH,
     },
@@ -78,6 +78,14 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 

@@ -1,4 +1,4 @@
-import { Message } from '../database';
+import { InstanceStage, Message } from '../database';
 
 // ** --------------------------------- Websocket Request Types --------------------------------- **
 // ** Request **
@@ -145,6 +145,7 @@ export type StarlightWebSocketResponse =
   | InstanceCreatedResponse
   | InstanceLockStatusChangedResponse
   | InstanceSubscriptionStatusResponse
+  | InstanceStageChangedResponse
   | MessageAddedResponse
   | MessageReplaceResponse
   | MessageUpsertResponse
@@ -168,6 +169,7 @@ export enum StarlightWebSocketResponseType {
   instanceCreated,
   instanceLockStatusChanged,
   instanceSubscriptionStatus,
+  instanceStageChanged,
   messageAdded,
   messageReplace,
   messageUpsert,
@@ -223,6 +225,17 @@ export type InstanceSubscriptionStatusResponse = GenericStarlightWebSocketRespon
 export type InstanceSubscriptionStatusData = {
   instanceId: string;
   subscribed: boolean;
+};
+
+// Instance Stage Changed
+export type InstanceStageChangedResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.instanceStageChanged,
+  InstanceStageChangedData
+>;
+
+export type InstanceStageChangedData = {
+  instanceId: string;
+  stage: InstanceStage;
 };
 
 // Message Added

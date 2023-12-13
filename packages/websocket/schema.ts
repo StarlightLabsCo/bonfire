@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import * as Types from './types';
-import { Message, MessageRole } from '../database';
+import { InstanceStage, Message, MessageRole } from '../database';
 
 // ** --------------------------------- Message Schema --------------------------------- **
 export const MessageRoleZodSchema: z.ZodType<MessageRole> = z.enum(['system', 'assistant', 'function', 'user']);
@@ -191,6 +191,18 @@ export const InstanceSubscriptionStatusResponseZodSchema: z.ZodType<Types.Instan
   })
   .strict();
 
+export const InstanceStageChangedResponseZodSchema: z.ZodType<Types.InstanceStageChangedResponse> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketResponseType.instanceStageChanged),
+    data: z
+      .object({
+        instanceId: z.string(),
+        stage: z.nativeEnum(InstanceStage),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const MessageAddedResponseZodSchema: z.ZodType<Types.MessageAddedResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.messageAdded),
@@ -356,6 +368,7 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.instanceCreated]: InstanceCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceLockStatusChanged]: InstanceLockStatusChangedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.instanceSubscriptionStatus]: InstanceSubscriptionStatusResponseZodSchema,
+  [Types.StarlightWebSocketResponseType.instanceStageChanged]: InstanceStageChangedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageAdded]: MessageAddedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageReplace]: MessageReplaceResponseZodSchema,
   [Types.StarlightWebSocketResponseType.messageUpsert]: MessageUpsertResponseZodSchema,

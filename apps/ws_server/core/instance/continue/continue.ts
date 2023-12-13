@@ -35,6 +35,14 @@ export async function continueStory(instance: Instance & { messages: Message[] }
     },
   });
 
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
+    },
+  });
+
   sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
@@ -176,6 +184,14 @@ export async function continueStory(instance: Instance & { messages: Message[] }
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 

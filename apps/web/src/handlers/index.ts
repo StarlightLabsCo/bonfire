@@ -8,6 +8,7 @@ import { handleVoiceTranscriptionProcessed } from './audio/voiceTranscriptionPro
 import { handleInstanceCreated } from './instance/instanceCreated';
 import { handleInstanceLockStatusChanged } from './instance/instanceLockStatusChanged';
 import { handleInstanceSubscriptionStatus } from './instance/instanceSubscriptionStatus';
+import { handleInstanceStageChanged } from './instance/instanceStageChanged';
 import { handleMessageAdded } from './message/messageAdded';
 import { handleMessageUpsert } from './message/messageUpsert';
 import { handleMessageReplace } from './message/messageReplace';
@@ -24,6 +25,7 @@ export const handlers = {
   [StarlightWebSocketResponseType.instanceCreated]: handleInstanceCreated,
   [StarlightWebSocketResponseType.instanceLockStatusChanged]: handleInstanceLockStatusChanged,
   [StarlightWebSocketResponseType.instanceSubscriptionStatus]: handleInstanceSubscriptionStatus,
+  [StarlightWebSocketResponseType.instanceStageChanged]: handleInstanceStageChanged,
   [StarlightWebSocketResponseType.messageAdded]: handleMessageAdded,
   [StarlightWebSocketResponseType.messageReplace]: handleMessageReplace,
   [StarlightWebSocketResponseType.messageUpsert]: handleMessageUpsert,

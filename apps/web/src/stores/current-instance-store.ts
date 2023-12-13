@@ -3,12 +3,14 @@
 import { create } from 'zustand';
 import { useWebsocketStore } from './websocket-store';
 import { StarlightWebSocketRequestType } from 'websocket';
+import { InstanceStage } from 'database';
 
 type CurrentInstanceStore = {
   instanceId: string | null;
   locked: boolean;
   lockedAt: Date | null;
   subscribed: boolean;
+  stage: InstanceStage | null;
   setInstanceId: (instanceId: string | null) => void;
   setLocked: (locked: boolean) => void;
   setLockedAt: (lockedAt: Date | null) => void;
@@ -22,6 +24,7 @@ export const useCurrentInstanceStore = create<CurrentInstanceStore>((set, get) =
   locked: false,
   lockedAt: null,
   subscribed: false,
+  stage: null,
   setInstanceId: (instanceId: string | null) => {
     const { instanceId: currentInstanceId, unsubscribeFromInstance } = get();
     if (currentInstanceId) {

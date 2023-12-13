@@ -4,8 +4,11 @@ import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
+import { updateInstanceStage } from './utils';
 
 export async function generateActionSuggestions(instance: Instance & { messages: Message[] }) {
+  let updatedInstance = await updateInstanceStage(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_START);
+
   const messages = convertInstanceToChatCompletionMessageParams(instance);
 
   const startTime = Date.now();
@@ -72,7 +75,7 @@ export async function generateActionSuggestions(instance: Instance & { messages:
 
   const argsJSON = JSON.parse(args);
 
-  let updatedInstance = await db.instance.update({
+  updatedInstance = await db.instance.update({
     where: {
       id: instance.id,
     },
@@ -85,7 +88,7 @@ export async function generateActionSuggestions(instance: Instance & { messages:
         },
       },
       history: {
-        push: instance.stage,
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
     },
@@ -95,6 +98,14 @@ export async function generateActionSuggestions(instance: Instance & { messages:
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 

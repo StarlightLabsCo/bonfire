@@ -12,7 +12,7 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
   let updatedInstance = await db.instance.update({
     where: {
       id: instance.id,
-      stage: InstanceStage.CREATE_OUTLINE_FINISH, // TODO: is there a more unified way to do this, maybe just an if statement at the top of the function?
+      stage: InstanceStage.CREATE_OUTLINE_FINISH,
     },
     data: {
       messages: {
@@ -33,6 +33,14 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 
@@ -180,6 +188,14 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 

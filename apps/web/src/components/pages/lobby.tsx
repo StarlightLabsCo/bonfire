@@ -60,6 +60,7 @@ export function Lobby({
 
   // clear messages and transcription on each lobby load
   useEffect(() => {
+    console.log(`[Lobby] Clearing messages and transcription`);
     setMessages([]);
     setTranscription('');
     clearAudio();

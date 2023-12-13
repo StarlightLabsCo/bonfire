@@ -43,6 +43,14 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
 
   subscribeUserToInstance(ws.data.webSocketToken?.userId!, instance.id);
 
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: instance.stage,
+    },
+  });
+
   await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 
   await db.instance.update({

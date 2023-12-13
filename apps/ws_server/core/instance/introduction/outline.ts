@@ -4,8 +4,11 @@ import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { convertInstanceToChatCompletionMessageParams } from '../../../src/utils';
 import { sendToInstanceSubscribers } from '../../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
+import { updateInstanceStage } from '../utils';
 
 export async function createOutline(instance: Instance & { messages: Message[] }) {
+  let updatedInstance = await updateInstanceStage(instance, InstanceStage.CREATE_OUTLINE_START);
+
   const messages = convertInstanceToChatCompletionMessageParams(instance);
 
   const startTime = Date.now();
@@ -39,9 +42,9 @@ export async function createOutline(instance: Instance & { messages: Message[] }
 
   logNonStreamedOpenAIResponse(instance.userId, messages, response, endTime - startTime);
 
-  const updatedInstance = await db.instance.update({
+  updatedInstance = await db.instance.update({
     where: {
-      id: instance.id,
+      id: updatedInstance.id,
     },
     data: {
       messages: {
@@ -52,7 +55,7 @@ export async function createOutline(instance: Instance & { messages: Message[] }
         },
       },
       history: {
-        push: instance.stage,
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.CREATE_OUTLINE_FINISH,
     },
@@ -65,10 +68,18 @@ export async function createOutline(instance: Instance & { messages: Message[] }
     },
   });
 
-  sendToInstanceSubscribers(instance.id, {
+  sendToInstanceSubscribers(updatedInstance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: updatedInstance.id,
+      stage: updatedInstance.stage,
+    },
+  });
+
+  sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.instanceCreated,
     data: {
-      instanceId: instance.id,
+      instanceId: updatedInstance.id,
     },
   });
 

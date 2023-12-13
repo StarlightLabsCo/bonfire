@@ -40,7 +40,9 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
     setTranscription('');
   }
 
-  if (socketState === 'disconnected') {
+  if (socketState !== 'open') {
+    const placeholder = socketState === 'disconnected' ? 'Disconnected' : 'Connecting...';
+
     return (
       <div
         className={cn(
@@ -49,25 +51,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
         )}
       >
         <input
-          placeholder={'Disconnected'}
-          className="w-full py-2 text-sm placeholder:text-neutral-500 bg-neutral-900 focus:outline-none"
-          value={undefined}
-          disabled={true}
-        />
-        <Icons.microphoneSlash className="w-4 h-4 text-neutral-400 mr-2" />
-        <Icons.lockClosed className="w-4 h-4 text-neutral-400" />
-      </div>
-    );
-  } else if (socketState !== 'open') {
-    return (
-      <div
-        className={cn(
-          'w-full flex items-center px-4 py-2 border-[0.5px] border-white/20 bg-neutral-900 rounded-2xl disabled:cursor-not-allowed disabled:opacity-50',
-          className,
-        )}
-      >
-        <input
-          placeholder={'Connecting...'}
+          placeholder={placeholder}
           className="w-full py-2 text-sm placeholder:text-neutral-500 bg-neutral-900 focus:outline-none"
           value={undefined}
           disabled={true}

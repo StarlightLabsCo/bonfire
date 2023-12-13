@@ -75,6 +75,7 @@ export async function subscribeUserToInstance(userId: string, instanceId: string
 }
 
 export async function unsubscribeUserFromInstance(userId: string, instanceId: string) {
+  console.log('Unsubscribing user from instance', userId, instanceId);
   await redis.srem(`instanceSubscriptions:${instanceId}`, userId);
 
   sendToUser(userId, {

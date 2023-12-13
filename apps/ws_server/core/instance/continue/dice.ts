@@ -1,10 +1,14 @@
-import { ActionSuggestion } from 'websocket/types';
+import { ActionSuggestion, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../../../services/db';
 import { Instance, InstanceStage, Message, MessageRole } from 'database';
 import { convertInstanceToChatCompletionMessageParams } from '../../../src/utils';
 import { logNonStreamedOpenAIResponse, openai } from '../../../services/openai';
+import { updateInstanceStage } from '../utils';
+import { sendToInstanceSubscribers } from '../../../src/connection';
 
 export async function rollDice(instance: Instance & { messages: Message[] }) {
+  let updatedInstance = await updateInstanceStage(instance, InstanceStage.ROLL_DICE_START);
+
   let userAction = instance.messages[instance.messages.length - 1].content; // TODO: add validation here
 
   let modifier = null;
@@ -35,7 +39,7 @@ export async function rollDice(instance: Instance & { messages: Message[] }) {
   modifiedRoll = Math.max(0, modifiedRoll);
   modifiedRoll = Math.min(20, modifiedRoll);
 
-  let updatedInstance = await db.instance.update({
+  updatedInstance = await db.instance.update({
     where: {
       id: instance.id,
     },
@@ -48,7 +52,7 @@ export async function rollDice(instance: Instance & { messages: Message[] }) {
         },
       },
       history: {
-        push: instance.stage,
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.ROLL_DICE_FINISH,
     },
@@ -58,6 +62,14 @@ export async function rollDice(instance: Instance & { messages: Message[] }) {
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 

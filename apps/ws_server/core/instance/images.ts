@@ -6,8 +6,11 @@ import { uploadImageToR2 } from '../../services/cloudflare';
 import { sendToInstanceSubscribers } from '../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
+import { updateInstanceStage } from './utils';
 
 export async function createImage(instance: Instance & { messages: Message[] }) {
+  let updatedInstance = await updateInstanceStage(instance, InstanceStage.CREATE_IMAGE_START);
+
   // Step 1 - Use Vision API to create a prompt for the image
   let messages = convertInstanceToChatCompletionMessageParams(instance);
   let modifiedMessages = messages
@@ -55,12 +58,7 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     throw new Error('No content in response');
   }
 
-  logNonStreamedOpenAIResponse(
-    instance.userId,
-    modifiedMessages as ChatCompletionMessageParam[],
-    response,
-    endTime - startTime,
-  );
+  logNonStreamedOpenAIResponse(instance.userId, modifiedMessages as ChatCompletionMessageParam[], response, endTime - startTime);
 
   // Step 2 - Use DALL-E to generate an image that matches the art style of the story for a new concept
   const imageResponse = await openai.images.generate({
@@ -73,7 +71,7 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
 
   const imageURL = imageResponse.data[0].url!;
 
-  const updatedInstance = await db.instance.update({
+  updatedInstance = await db.instance.update({
     where: {
       id: instance.id,
     },
@@ -86,7 +84,7 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
         },
       },
       history: {
-        push: instance.stage,
+        push: updatedInstance.stage,
       },
       stage: InstanceStage.CREATE_IMAGE_FINISH,
     },
@@ -96,6 +94,14 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
           createdAt: 'asc',
         },
       },
+    },
+  });
+
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: updatedInstance.stage,
     },
   });
 
