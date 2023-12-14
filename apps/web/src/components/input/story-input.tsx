@@ -155,9 +155,6 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
               {error && <RetryButton className="block md:hidden" />}
               {!error && locked && <ProgressButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
               {!error && !locked && messages.some((message) => message.role === MessageRole.user) && <UndoButton className="md:hidden" />}
-              {/* {!error && !locked && !messages.some((message) => message.role === MessageRole.user) && (
-                <Button icon={<Icons.refresh />} className="md:hidden" />
-              )} */}
             </>
           )}
           <Input
