@@ -1,41 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { useCurrentInstanceStore } from '@/stores/current-instance-store';
-import { InstanceStage } from 'database';
 import { Button } from './button';
-import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 
-const StageIcons = {
-  [InstanceStage.INTRODUCE_STORY_START]: <Icons.magicWand />,
-  [InstanceStage.CONTINUE_STORY_START]: <Icons.magicWand />,
-  [InstanceStage.CREATE_IMAGE_START]: <Icons.image />,
-  [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: <Icons.lightning />,
-};
-
-const StageProgress = {
-  [InstanceStage.INTRODUCE_STORY_START]: 0,
-  [InstanceStage.CONTINUE_STORY_START]: 0,
-  [InstanceStage.CREATE_IMAGE_START]: 0.5,
-  [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: 0.75,
-};
-
 type AnimatedStageButtonProps = {
+  progress: number;
+  icon: React.ReactNode;
   className?: string;
 };
 
-export function AnimatedStageButton({ className }: AnimatedStageButtonProps) {
-  const stage = useCurrentInstanceStore((state) => state.stage);
-
-  const [progress, setProgress] = useState(0);
+export function AnimatedStageButton({ progress, icon, className }: AnimatedStageButtonProps) {
+  const [currentProgress, setCurrentProgress] = useState(progress);
+  const strokeWidth = 2;
+  const radius = 20 - strokeWidth / 2 - 0.5; // Adjust the radius here
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - currentProgress * circumference;
 
   useEffect(() => {
-    const stageProgress = StageProgress[stage as keyof typeof StageProgress];
-    if (stageProgress == null) return;
+    const animateProgress = (startValue: number, endValue: number, duration: number) => {
+      const start = performance.now();
+      requestAnimationFrame(function animate(time) {
+        let timeFraction = (time - start) / duration;
+        if (timeFraction > 1) timeFraction = 1;
 
-    setProgress(stageProgress);
-  }, [stage]);
+        const currentProgress = startValue + (endValue - startValue) * timeFraction;
+        setCurrentProgress(currentProgress);
 
-  const icon = stage ? StageIcons[InstanceStage[stage] as keyof typeof StageIcons] : null;
+        if (timeFraction < 1) {
+          requestAnimationFrame(animate);
+        }
+      });
+    };
 
-  return <Button icon={icon ? icon : <Icons.magicWand />} disabled className={cn('hover:text-white/50', className)} />;
+    animateProgress(currentProgress, progress, 500); // 500ms transition duration
+  }, [progress]);
+
+  return (
+    <div className={cn('relative', className)}>
+      <Button icon={icon} disabled className={cn('hover:text-white/50')} />
+      <svg className="absolute top-0 left-0 w-full h-full" viewBox="0 0 40 40">
+        <circle
+          stroke="#CCCCCC"
+          fill="transparent"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          r={radius}
+          cx="20"
+          cy="20"
+          transform="rotate(-90 20 20)"
+        />
+      </svg>
+    </div>
+  );
 }

@@ -14,6 +14,7 @@ type CurrentInstanceStore = {
   setInstanceId: (instanceId: string | null) => void;
   setLocked: (locked: boolean) => void;
   setLockedAt: (lockedAt: Date | null) => void;
+  setStage: (stage: InstanceStage | null) => void;
 
   subscribeToInstance: (instanceId: string) => void;
   unsubscribeFromInstance: (instanceId: string) => void;
@@ -34,6 +35,7 @@ export const useCurrentInstanceStore = create<CurrentInstanceStore>((set, get) =
   },
   setLocked: (locked: boolean) => set({ locked }),
   setLockedAt: (lockedAt: Date | null) => set({ lockedAt }),
+  setStage: (stage: InstanceStage | null) => set({ stage }),
 
   subscribeToInstance: (instanceId: string) => {
     const sendToServer = useWebsocketStore.getState().sendToServer;

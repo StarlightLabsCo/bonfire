@@ -41,6 +41,7 @@ export function Story({
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
   const setLocked = useCurrentInstanceStore((state) => state.setLocked);
   const setLockedAt = useCurrentInstanceStore((state) => state.setLockedAt);
+  const setStage = useCurrentInstanceStore((state) => state.setStage);
 
   const socketState = useWebsocketStore((state) => state.socketState);
   const subscribeToInstance = useCurrentInstanceStore((state) => state.subscribeToInstance);
@@ -73,6 +74,7 @@ export function Story({
     setSubmittedMessage(null);
     if (instance) {
       setInstanceId(instance.id);
+      setStage(instance.stage);
       setLocked(instance.locked);
       setLockedAt(instance.lockedAt);
     }
