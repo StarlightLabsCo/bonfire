@@ -30,32 +30,82 @@ export const InstanceStageTransitions = {
   [InstanceStage.CREATE_IMAGE_FINISH]: generateActionSuggestions,
 
   // Errors
-  [InstanceStage.CREATE_OUTLINE_ERROR]: resetCreateOutline,
+  [InstanceStage.CREATE_OUTLINE_START]: transitionToErrorState, // Server closed unexpectedly,
+  [InstanceStage.CREATE_OUTLINE_ERROR]: resetCreateOutline, // If in error state, reset and try again
+
+  [InstanceStage.INTRODUCE_STORY_START]: transitionToErrorState,
   [InstanceStage.INTRODUCE_STORY_ERROR]: resetIntroduceStory,
+
+  [InstanceStage.ROLL_DICE_START]: transitionToErrorState,
   [InstanceStage.ROLL_DICE_ERROR]: resetRollDice,
+
+  [InstanceStage.NARRATOR_REACTION_START]: transitionToErrorState,
   [InstanceStage.NARRATOR_REACTION_ERROR]: resetNarratorReaction,
+
+  [InstanceStage.NARRATOR_PLANNING_START]: transitionToErrorState,
   [InstanceStage.NARRATOR_PLANNING_ERROR]: resetNarratorPlanning,
+
+  [InstanceStage.CONTINUE_STORY_START]: transitionToErrorState,
   [InstanceStage.CONTINUE_STORY_ERROR]: resetContinueStory,
+
+  [InstanceStage.CREATE_IMAGE_START]: transitionToErrorState,
   [InstanceStage.CREATE_IMAGE_ERROR]: resetCreateImage,
+
+  [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: transitionToErrorState,
   [InstanceStage.GENERATE_ACTION_SUGGESTIONS_ERROR]: resetActionSuggestions,
 };
 
 export const InstanceStageToError = {
   // Introduction sequence
-  [InstanceStage.INIT_STORY_FINISH]: InstanceStage.CREATE_OUTLINE_ERROR,
-  [InstanceStage.CREATE_OUTLINE_FINISH]: InstanceStage.INTRODUCE_STORY_ERROR,
-  [InstanceStage.INTRODUCE_STORY_FINISH]: InstanceStage.CREATE_IMAGE_ERROR,
+  [InstanceStage.CREATE_OUTLINE_START]: InstanceStage.CREATE_OUTLINE_ERROR,
+  [InstanceStage.INTRODUCE_STORY_START]: InstanceStage.INTRODUCE_STORY_ERROR,
+  [InstanceStage.CREATE_IMAGE_START]: InstanceStage.CREATE_IMAGE_ERROR,
 
   // Action sequence
-  [InstanceStage.ADD_PLAYER_MESSAGE_FINISH]: InstanceStage.ROLL_DICE_ERROR,
-  [InstanceStage.ROLL_DICE_FINISH]: InstanceStage.NARRATOR_REACTION_ERROR,
-  [InstanceStage.NARRATOR_REACTION_FINISH]: InstanceStage.NARRATOR_PLANNING_ERROR,
-  [InstanceStage.NARRATOR_PLANNING_FINISH]: InstanceStage.CONTINUE_STORY_ERROR,
-  [InstanceStage.CONTINUE_STORY_FINISH]: InstanceStage.CREATE_IMAGE_ERROR,
+  [InstanceStage.ROLL_DICE_START]: InstanceStage.ROLL_DICE_ERROR,
+  [InstanceStage.NARRATOR_REACTION_START]: InstanceStage.NARRATOR_REACTION_ERROR,
+  [InstanceStage.NARRATOR_PLANNING_START]: InstanceStage.NARRATOR_PLANNING_ERROR,
+  [InstanceStage.CONTINUE_STORY_START]: InstanceStage.CONTINUE_STORY_ERROR,
+  [InstanceStage.CREATE_IMAGE_START]: InstanceStage.CREATE_IMAGE_ERROR,
 
   // Shared
-  [InstanceStage.CREATE_IMAGE_FINISH]: InstanceStage.GENERATE_ACTION_SUGGESTIONS_ERROR,
+  [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: InstanceStage.GENERATE_ACTION_SUGGESTIONS_ERROR,
+
+  // Database couldn't transition to start state (try again)
+  [InstanceStage.CREATE_OUTLINE_FINISH]: InstanceStage.CREATE_OUTLINE_FINISH,
+  [InstanceStage.INTRODUCE_STORY_FINISH]: InstanceStage.INTRODUCE_STORY_FINISH,
+  [InstanceStage.CREATE_IMAGE_FINISH]: InstanceStage.CREATE_IMAGE_FINISH,
+  [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
+
+  [InstanceStage.ADD_PLAYER_MESSAGE_FINISH]: InstanceStage.ADD_PLAYER_MESSAGE_FINISH,
+  [InstanceStage.ROLL_DICE_FINISH]: InstanceStage.ROLL_DICE_FINISH,
+  [InstanceStage.NARRATOR_REACTION_FINISH]: InstanceStage.NARRATOR_REACTION_FINISH,
+  [InstanceStage.NARRATOR_PLANNING_FINISH]: InstanceStage.NARRATOR_PLANNING_FINISH,
+  [InstanceStage.CONTINUE_STORY_FINISH]: InstanceStage.CONTINUE_STORY_FINISH,
 };
+
+async function transitionToErrorState(instance: Instance & { messages: Message[] }) {
+  let updatedInstance = await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      history: {
+        push: instance.stage,
+      },
+      stage: InstanceStageToError[instance.stage as keyof typeof InstanceStageToError],
+    },
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  return updatedInstance;
+}
 
 export async function stepInstance(instance: Instance & { messages: Message[] }) {
   let updatedInstance: Instance & { messages: Message[] };
@@ -92,25 +142,16 @@ export async function stepInstance(instance: Instance & { messages: Message[] })
       errorMessage = 'Unhandled error';
     }
 
-    updatedInstance = await db.instance.update({
+    await db.instance.update({
       where: {
         id: instance.id,
       },
       data: {
-        history: {
-          push: instance.stage,
-        },
-        stage: InstanceStageToError[instance.stage as keyof typeof InstanceStageToError],
         error: errorMessage,
       },
-      include: {
-        messages: {
-          orderBy: {
-            createdAt: 'asc',
-          },
-        },
-      },
     });
+
+    updatedInstance = await transitionToErrorState(instance);
   }
 
   return updatedInstance;

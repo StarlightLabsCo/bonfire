@@ -110,7 +110,7 @@ export async function resetNarratorPlanning(instance: Instance & { messages: Mes
       history: {
         push: instance.stage,
       },
-      stage: instance.history[instance.history.length - 1],
+      stage: instance.history[instance.history.length - 2],
     },
     include: {
       messages: {

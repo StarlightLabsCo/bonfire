@@ -136,7 +136,7 @@ export async function resetCreateImage(instance: Instance & { messages: Message[
       history: {
         push: instance.stage,
       },
-      stage: instance.history[instance.history.length - 1], // Go back to the previous stage (could be CONTINUE_STORY_FINISH or INTRODUCE_STORY_FINISH)
+      stage: instance.history[instance.history.length - 2], // Go back to the previous stage (could be CONTINUE_STORY_FINISH or INTRODUCE_STORY_FINISH)
     },
     include: {
       messages: {

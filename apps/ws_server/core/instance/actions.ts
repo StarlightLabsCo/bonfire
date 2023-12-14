@@ -146,7 +146,7 @@ export async function resetActionSuggestions(instance: Instance & { messages: Me
       history: {
         push: instance.stage,
       },
-      stage: instance.history[instance.history.length - 1],
+      stage: instance.history[instance.history.length - 2],
     },
     include: {
       messages: {
