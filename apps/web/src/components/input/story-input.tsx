@@ -77,7 +77,7 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
   const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
   const errorText = 'Please try again';
 
-  const StageText: Record<InstanceStage, string> = {
+  const StageText = {
     [InstanceStage.INTRODUCE_STORY_START]: 'Introducing story...',
     [InstanceStage.ROLL_DICE_START]: 'Continuing story...',
     [InstanceStage.CREATE_IMAGE_START]: 'Creating image...',
@@ -85,14 +85,14 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
     [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: 'What do you do?',
   };
 
-  const StageIcons: Record<InstanceStage, JSX.Element> = {
+  const StageIcons = {
     [InstanceStage.INTRODUCE_STORY_START]: <Icons.magicWand />,
     [InstanceStage.ROLL_DICE_START]: <Icons.magicWand />,
     [InstanceStage.CREATE_IMAGE_START]: <Icons.image />,
     [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: <Icons.lightning />,
   };
 
-  const StageProgress: Record<InstanceStage, number> = {
+  const StageProgress = {
     [InstanceStage.INTRODUCE_STORY_START]: 0,
     [InstanceStage.CONTINUE_STORY_START]: 0,
     [InstanceStage.CREATE_IMAGE_START]: 0.5,
@@ -105,16 +105,16 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
   const [currentStageProgress, setCurrentStageProgress] = useState<number>(0);
 
   useEffect(() => {
-    if (stage && StageIcons[stage]) {
-      setCurrentStageIcon(StageIcons[stage]);
+    if (stage && StageIcons[stage as keyof typeof StageIcons]) {
+      setCurrentStageIcon(StageIcons[stage as keyof typeof StageIcons]);
     }
 
-    if (stage && StageText[stage]) {
-      setCurrentStageText(StageText[stage]);
+    if (stage && StageText[stage as keyof typeof StageText]) {
+      setCurrentStageText(StageText[stage as keyof typeof StageText]);
     }
 
-    if (stage && StageProgress[stage]) {
-      setCurrentStageProgress(StageProgress[stage]);
+    if (stage && StageProgress[stage as keyof typeof StageProgress]) {
+      setCurrentStageProgress(StageProgress[stage as keyof typeof StageProgress]);
     }
   }, [stage]);
 
