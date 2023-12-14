@@ -15,6 +15,7 @@ import { ActionSuggestions } from './action-suggestions';
 import { RetryButton } from './buttons/retry-button';
 import { Icons } from '../icons';
 import { AnimatedStageButton } from './buttons/animated-stage-button';
+import { Button } from './buttons/button';
 
 interface StoryInputProps {
   instance: Instance;
@@ -100,9 +101,21 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
     [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: 1,
   };
 
-  const [currentStageIcon, setCurrentStageIcon] = useState<JSX.Element>(<Icons.magicWand />);
-  const [currentStageText, setCurrentStageText] = useState<string>('Default text');
-  const [currentStageProgress, setCurrentStageProgress] = useState<number>(0);
+  const [currentStageIcon, setCurrentStageIcon] = useState<JSX.Element>(
+    StageIcons[instance.stage as keyof typeof StageIcons] || <Icons.magicWand />,
+  );
+  const [currentStageText, setCurrentStageText] = useState<string>(StageText[instance.stage as keyof typeof StageText] || 'Generating...');
+  const [currentStageProgress, setCurrentStageProgress] = useState<number>(
+    StageProgress[instance.stage as keyof typeof StageProgress] || 0,
+  );
+
+  useEffect(() => {
+    if (instance) {
+      setCurrentStageIcon(StageIcons[instance.stage as keyof typeof StageIcons] || <Icons.magicWand />);
+      setCurrentStageText(StageText[instance.stage as keyof typeof StageText] || 'Generating...');
+      setCurrentStageProgress(StageProgress[instance.stage as keyof typeof StageProgress] || 0);
+    }
+  }, [instance.id]);
 
   useEffect(() => {
     if (stage && StageIcons[stage as keyof typeof StageIcons]) {
@@ -139,9 +152,21 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
           </div>
         </div>
         <div className="flex gap-x-2 items-center md:block">
-          {error && <RetryButton className="block md:hidden" />}
-          {!error && locked && <AnimatedStageButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
-          {!error && !locked && messages.some((message) => message.role === MessageRole.user) && <UndoButton className="md:hidden" />}
+          {socketState != 'open' ? (
+            <Button disabled icon={<Icons.link />} />
+          ) : (
+            <>
+              {error && <RetryButton className="block md:hidden" />}
+              {!error && locked && <AnimatedStageButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
+              {!error && !locked && messages.some((message) => message.role === MessageRole.user) && (
+                <UndoButton className="md:hidden" />
+              )}{' '}
+              {/* TODO: make it so undo button undoes state broadcasting or atleast sets progress back to zero or shows right icon */}
+              {!error && !locked && messages.every((message) => message.role !== MessageRole.user) && (
+                <Button className="md:hidden" icon={<Icons.refresh />} />
+              )}
+            </>
+          )}
           <Input
             placeholder={error ? errorText : currentStageText}
             value={input}
