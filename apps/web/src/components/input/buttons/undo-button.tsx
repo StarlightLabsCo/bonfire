@@ -3,7 +3,6 @@ import { useWebsocketStore } from '@/stores/websocket-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { StarlightWebSocketRequestType } from 'websocket';
 import { Button } from './button';
-import { cn } from '@/lib/utils';
 
 export function UndoButton({ className }: { className?: string }) {
   const sendToServer = useWebsocketStore((state) => state.sendToServer);

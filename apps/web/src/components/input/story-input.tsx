@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
-import { UndoButton } from './buttons/undo-button';
-import { ShareButton } from './buttons/share-button';
 import { StarlightWebSocketRequestType } from 'websocket';
 import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
@@ -12,10 +10,12 @@ import { usePlaybackStore } from '@/stores/audio/playback-store';
 import { Instance, InstanceStage, MessageRole } from 'database';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { ActionSuggestions } from './action-suggestions';
-import { RetryButton } from './buttons/retry-button';
 import { Icons } from '../icons';
-import { AnimatedStageButton } from './buttons/animated-stage-button';
 import { Button } from './buttons/button';
+import { UndoButton } from './buttons/undo-button';
+import { ShareButton } from './buttons/share-button';
+import { RetryButton } from './buttons/retry-button';
+import { ProgressButton } from './buttons/progress-button';
 
 interface StoryInputProps {
   instance: Instance;
@@ -157,14 +157,8 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
           ) : (
             <>
               {error && <RetryButton className="block md:hidden" />}
-              {!error && locked && <AnimatedStageButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
-              {!error && !locked && messages.some((message) => message.role === MessageRole.user) && (
-                <UndoButton className="md:hidden" />
-              )}{' '}
-              {/* TODO: make it so undo button undoes state broadcasting or atleast sets progress back to zero or shows right icon */}
-              {!error && !locked && messages.every((message) => message.role !== MessageRole.user) && (
-                <Button className="md:hidden" icon={<Icons.refresh />} />
-              )}
+              {!error && locked && <ProgressButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
+              {!error && !locked && messages.some((message) => message.role === MessageRole.user) && <UndoButton className="md:hidden" />}
             </>
           )}
           <Input

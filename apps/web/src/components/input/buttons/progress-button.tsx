@@ -8,7 +8,7 @@ type AnimatedStageButtonProps = {
   className?: string;
 };
 
-export function AnimatedStageButton({ progress, icon, className }: AnimatedStageButtonProps) {
+export function ProgressButton({ progress, icon, className }: AnimatedStageButtonProps) {
   const [currentProgress, setCurrentProgress] = useState(progress);
   const strokeWidth = 2;
   const radius = 20 - strokeWidth / 2 - 0.5; // Adjust the radius here
