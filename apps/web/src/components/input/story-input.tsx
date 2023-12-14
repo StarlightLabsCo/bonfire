@@ -11,11 +11,7 @@ import { Instance, InstanceStage, MessageRole } from 'database';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { ActionSuggestions } from './action-suggestions';
 import { Icons } from '../icons';
-import { Button } from './buttons/button';
-import { UndoButton } from './buttons/undo-button';
-import { ShareButton } from './buttons/share-button';
-import { RetryButton } from './buttons/retry-button';
-import { ProgressButton } from './buttons/progress-button';
+import { Button, UndoButton, ShareButton, RetryButton, ProgressButton } from './buttons';
 
 interface StoryInputProps {
   instance: Instance;
@@ -159,6 +155,9 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
               {error && <RetryButton className="block md:hidden" />}
               {!error && locked && <ProgressButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
               {!error && !locked && messages.some((message) => message.role === MessageRole.user) && <UndoButton className="md:hidden" />}
+              {!error && !locked && !messages.some((message) => message.role === MessageRole.user) && (
+                <Button icon={<Icons.refresh />} className="md:hidden" />
+              )}
             </>
           )}
           <Input
