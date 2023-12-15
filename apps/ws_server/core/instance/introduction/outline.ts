@@ -21,9 +21,9 @@ export async function createOutline(instance: Instance & { messages: Message[] }
 
         ${instance.description}
 
-        Describe the overarching story, the main characters, twists, and the primary objective. What quirks exist in this world? How do you make it unique and memorable? How do you make it feel real and grounded?
+        Describe the overarching story, the main characters, twists, and the primary objective. What genre will this story be? What quirks exist in this world? How do you make it unique and memorable? How do you make it feel real and grounded?
 
-        This outline should also include smaller scale story beats and memorable moments, but should never allow the story to get cluttered. The consequences of each plot point should effect every other plot point. Be concrete, and avoid vaguness. Name characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead. Make the story feel alive! This outline will only be referenced by yourself, the storyteller, and should not be shared with the listener.
+        This outline should also include smaller scale story beats and memorable moments, but should never allow the story to get cluttered. The consequences of each plot point should effect every other plot point. Be concrete, and avoid vaguness. Name characters, locations, events in depth while making sure to include the listener in the story. Always think a few steps ahead. Make the story feel alive! This outline will only be referenced by yourself, the narrator, and should not be shared with the listener.
 
         Do not just repeat the requested story, actually create an outline.
 

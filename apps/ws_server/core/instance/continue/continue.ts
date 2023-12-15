@@ -59,13 +59,13 @@ export async function continueStory(instance: Instance & { messages: Message[] }
       ...messages,
       {
         role: 'user',
-        content: `Continue narrating the story based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward, but keep it concise and short! This is a text adventure game, not a novel.
+        content: `Continue narrating the text-advenutre game based on the previous messages, integrating what the listener said, but also not letting them take over the story. Keep it grounded in the world you created, and make sure to keep the story moving forward, but it must be concise and punchy!
 
         Feel free to inject drama that will surprise the player, but keep these dramatic elements relevant to the story outline and consistent with the world. Your descriptions of the events of the story must not, under any circumstances, use vague language.
 
         Make sure to keep track of the narrative tempo of your story as well. If the action in the story are low-stakes and mundane, take on a more reflective and descriptive voice, with the goal of providing the listener with as much circumstantial information on which to act as possible. If the actions that are transpiring in the story are climactic and consequential, portray events exactly as they happen with a thorough "play-by-play" and assuming a tone that is more cinematic.
 
-        Do not mention the dice roll, or other systems occuring behind the scenes in the story. Do not refer to fate, or destiny, or any foreshadowing of future events under any circumstances. Do not prescribe actions or thoughts to the player, as this removes their agency. DO NOT under any circumstance exceed three sections of text and do not mention sections. Prefer to keep it shorter than that anyways. Keep it concise and punchy! No one likes a long-winded storyteller!`,
+        Do not mention the dice roll, or other systems occuring behind the scenes in the story. Do not refer to fate, or destiny, or any foreshadowing of future events under any circumstances. Do not prescribe actions or thoughts to the player, as this removes their agency. DO NOT under any circumstance exceed 5 sentences of text. Do not give the player any options to select from as these will be created in a future step. Keep it concise and punchy!`,
       },
     ],
     model: 'gpt-4-1106-preview',
@@ -75,7 +75,6 @@ export async function continueStory(instance: Instance & { messages: Message[] }
   // Handle streaming response
   let chunks = [];
   let buffer = '';
-  let content = '';
 
   for await (const chunk of response) {
     chunks.push(chunk);
@@ -91,29 +90,8 @@ export async function continueStory(instance: Instance & { messages: Message[] }
 
       buffer += args;
       buffer = buffer.replace(/\\n/g, '\n');
-
-      // Remove the param key from the stream
-      if (
-        `{\n"story":"`.includes(buffer) ||
-        `{\n"story": "`.includes(buffer) ||
-        `{\n "story": "`.includes(buffer) ||
-        `{\n  "story": "`.includes(buffer) ||
-        `{"story": "`.includes(buffer) ||
-        `{"story":"`.includes(buffer) ||
-        `{ "story": "`.includes(buffer) ||
-        `{ "story":"`.includes(buffer)
-      ) {
-        continue;
-      }
-
-      if (args.includes('}')) {
-        continue;
-      }
-
-      content += args;
-      content = content.replace(/\\n/g, '\n');
-      content = content.replace(/\\"/g, '"');
-      content = content.replace(/\\'/g, "'");
+      buffer = buffer.replace(/\\"/g, '"');
+      buffer = buffer.replace(/\\'/g, "'");
 
       sendToInstanceSubscribers(updatedInstance.id, {
         type: StarlightWebSocketResponseType.messageUpsert,
@@ -121,7 +99,7 @@ export async function continueStory(instance: Instance & { messages: Message[] }
           instanceId: updatedInstance.id,
           message: {
             ...updatedInstance.messages[updatedInstance.messages.length - 1],
-            content,
+            content: buffer,
             updatedAt: new Date(),
           },
         },
@@ -144,8 +122,6 @@ export async function continueStory(instance: Instance & { messages: Message[] }
   buffer = buffer.replace(/\\n/g, '\n');
   buffer = buffer.replace(/\\"/g, '"');
   buffer = buffer.replace(/\\'/g, "'");
-  buffer = buffer.replace(new RegExp(`{\\s*"story"\\s*:\\s*"`, 'g'), '');
-  buffer = buffer.replace(/"\s*\}\s*$/, '');
 
   sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.messageReplace,

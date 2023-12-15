@@ -60,15 +60,15 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
       ...messages,
       {
         role: 'user',
-        content: `Given the story outline, create an epic, vibrant, irresistible & concise hook to the very beginning of this text-adventure game & tale. Remember that the player has no prior information whatsoever so make sure to introduce anything you mention. Colorfully show the setting and characters ending with a clear decision point/call to action where the story begins for the player.
+        content: `Given the story outline, create a hook to the beginning of this text-adventure game. Remember that the player has no prior information so make sure to introduce anything you mention. Vibrantly show the setting & characters. If the player hasn't met a character yet, they won't know who they are. End with a clear decision point for the player, which should not be explicitly described. Do not break the 4th wall, or ask the player to make a choice.
 
-        You can use poetric pose if it aids the story, but overall be concrete and avoid vaguness. Do not refer to fate, or destiny, or any foreshadowing of future events under any circumstances. Avoid prescribing actions or thoughts to the player, as this removes their agency.
+        Be concrete and avoid vaguness. Do not refer to fate, or destiny. Do not foreshadow any future events under any circumstances. Do not prescribe actions or thoughts to the player, as this removes their agency.
 
-        Lean towards a play-by-play telling of events. Vary the length of responses to keep pacing interesting!
+        Lean towards a hyper-detailed play-by-play telling of events.
 
-        Do not ask any questions to the player e.g. \"Will you accept this quest?\", "Will you tempt fate?".
+        Do not under any circumstances ask any questions to the player e.g. \"Will you accept this quest?\", "Will you tempt fate?". Only output the story.
 
-        Keep it concsise and punchy! DO NOT under any circumstance exceed three sections of text and do not mention sections.  Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!`,
+        Keep it concsise and punchy! DO NOT under any circumstance exceed 5 sentences (although you may use newlines). Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!`,
       },
     ],
     model: 'gpt-4-32k-0613',
