@@ -7,16 +7,39 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
+import type { Metadata, ResolvingMetadata } from 'next';
 
 import SessionProvider from '@/components/session-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-  title: 'Bonfire',
-  description: 'Created by Starlight Labs',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_METADATA_BASE || ''),
+type MetadataProps = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
+
+export async function generateMetadata({ params }: MetadataProps) {
+  const { id } = params;
+
+  let metadata: Metadata;
+
+  metadata = {
+    title: 'Bonfire - Storytelling Reimagined',
+    description: 'Created by Starlight Labs',
+  };
+
+  if (!id) {
+    metadata.openGraph = {
+      images: ['https://www.trybonfire.ai/api/og'],
+    };
+  } else {
+    metadata.openGraph = {
+      images: [`https://www.trybonfire.ai/api/og?instanceId=${id}`],
+    };
+  }
+
+  return metadata;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
