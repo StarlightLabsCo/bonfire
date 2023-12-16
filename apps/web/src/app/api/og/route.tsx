@@ -21,6 +21,8 @@ export async function GET(request: Request, ctx: any) {
 
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+  await pool.connect();
+
   console.log(`Connected to database.`);
 
   const query = `
