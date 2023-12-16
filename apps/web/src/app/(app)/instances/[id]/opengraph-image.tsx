@@ -10,11 +10,11 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-const client = createClient({
-  connectionString: process.env.DATABASE_URL,
-});
-
 export default async function Image({ params }: { params: { id: string } }) {
+  const client = createClient({
+    connectionString: process.env.DATABASE_URL,
+  });
+
   await client.connect();
 
   const { rows } = await client.query(
