@@ -10,9 +10,6 @@ type MetadataProps = {
 };
 
 export async function generateMetadata({ params }: MetadataProps) {
-  console.log(`Generating metadata.`);
-  console.log(params);
-
   const { id } = params;
 
   let metadata: Metadata;
