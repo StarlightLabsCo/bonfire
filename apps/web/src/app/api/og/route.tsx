@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { createClient } from '@vercel/postgres';
+import { Pool } from '@neondatabase/serverless';
 
 export const runtime = 'edge';
 
@@ -7,10 +7,10 @@ const alt = 'Bonfire - Storytelling Reimagined';
 const width = 1200;
 const height = 630;
 
-export async function GET(request: Request) {
+export async function GET(request: Request, ctx: any) {
   const { searchParams } = new URL(request.url);
   const instanceId = searchParams.get('instanceId');
-  if (!instanceId) {
+  if (!instanceId || process.env.DATABASE_URL === undefined) {
     return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
@@ -18,13 +18,12 @@ export async function GET(request: Request) {
   }
 
   console.log(`Generating image for instance ${instanceId}`);
-  const client = createClient({
-    connectionString: process.env.DATABASE_URL,
-  });
+
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
   console.log(`Connected to database.`);
-  const { rows } = await client.query(
-    `
+
+  const query = `
     SELECT m.content
     FROM "Message" m
     INNER JOIN "Instance" i ON m."instanceId" = i.id
@@ -35,9 +34,10 @@ export async function GET(request: Request) {
     AND m.content LIKE 'https://%'
     ORDER BY m."createdAt" ASC
     LIMIT 1
-  `,
-    [instanceId],
-  );
+  `;
+  const params = [instanceId];
+
+  const { rows } = await pool.query(query, params);
 
   const result = rows[0];
 
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     });
   }
 
-  await client.end();
+  ctx.waitUntil(pool.end());
 
   console.log(`Found image: ${result.content}`);
   return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
