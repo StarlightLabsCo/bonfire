@@ -149,7 +149,7 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
         </div>
         <div className="flex gap-x-2 items-center md:block">
           {socketState != 'open' ? (
-            <Button disabled icon={<Icons.link />} />
+            <Button disabled icon={<Icons.link />} className="md:hidden" />
           ) : (
             <>
               {error && <RetryButton className="block md:hidden" />}
