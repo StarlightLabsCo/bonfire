@@ -60,7 +60,7 @@ export function UserInfo({
   }, []);
 
   return (
-    <div className="w-full h-14 px-2 flex flex-col items-center justify-center">
+    <div className="w-full h-14 px-2 flex flex-col items-center justify-center cursor-pointer">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger />
         <DropdownMenuContent className="w-56 bg-neutral-950 border-white/10">
