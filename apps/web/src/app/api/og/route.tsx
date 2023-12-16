@@ -51,6 +51,7 @@ export async function GET(request: Request) {
 
   await client.end();
 
+  console.log(`Found image: ${result.content}`);
   return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
     width,
     height,
