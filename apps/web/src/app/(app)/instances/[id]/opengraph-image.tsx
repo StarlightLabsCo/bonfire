@@ -38,8 +38,11 @@ export default async function Image({ params }: { params: { id: string } }) {
   const result = rows[0];
 
   if (!result) {
+    console.log(`No image found for instance ${params.id}`);
     throw new Error('Image not found');
   }
+
+  console.log(`Found image: ${result.content}`);
 
   await client.end();
 
