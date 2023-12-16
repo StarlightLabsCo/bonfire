@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { createPool } from '@vercel/postgres';
+import { createClient } from '@vercel/postgres';
 
 export const runtime = 'edge';
 
@@ -18,12 +18,12 @@ export async function GET(request: Request) {
   }
 
   console.log(`Generating image for instance ${instanceId}`);
-  const pool = createPool({
-    connectionString: process.env.DATABASE_URL + '?foo=-pooled',
+  const client = createClient({
+    connectionString: process.env.DATABASE_URL,
   });
 
   console.log(`Connected to database.`);
-  const { rows } = await pool.query(
+  const { rows } = await client.query(
     `
     SELECT m.content
     FROM "Message" m
@@ -49,9 +49,7 @@ export async function GET(request: Request) {
     });
   }
 
-  console.log(`Found image: ${result.content}`);
-
-  await pool.end();
+  await client.end();
 
   return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
     width,

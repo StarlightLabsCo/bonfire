@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: 'Bonfire - Storytelling Reimagined',
   description: 'Created by Starlight Labs',
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'https://www.trybonfire.ai'),
+  openGraph: {
+    images: ['/bonfire.png'],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
