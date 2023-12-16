@@ -1,8 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { Pool } from 'pg';
 
-export const runtime = 'edge';
-
 const alt = 'Bonfire - Storytelling Reimagined';
 const width = 1200;
 const height = 630;
