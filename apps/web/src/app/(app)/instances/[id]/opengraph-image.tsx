@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import { createClient } from '@vercel/postgres';
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
@@ -10,7 +10,7 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-const client = new Client({
+const client = createClient({
   connectionString: process.env.DATABASE_URL,
 });
 
