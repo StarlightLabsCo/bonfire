@@ -1,5 +1,7 @@
 import { ImageResponse } from 'next/og';
-import { Pool } from 'pg';
+import { createPool } from '@vercel/postgres';
+
+export const runtime = 'edge';
 
 const alt = 'Bonfire - Storytelling Reimagined';
 const width = 1200;
@@ -16,8 +18,8 @@ export async function GET(request: Request) {
   }
 
   console.log(`Generating image for instance ${instanceId}`);
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+  const pool = createPool({
+    connectionString: process.env.DATABASE_URL + '?foo=-pooled',
   });
 
   console.log(`Connected to database.`);
