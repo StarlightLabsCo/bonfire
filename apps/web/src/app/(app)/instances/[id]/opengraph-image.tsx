@@ -1,5 +1,5 @@
+import { Client } from 'pg';
 import { ImageResponse } from 'next/og';
-import { createPool } from '@vercel/postgres';
 
 export const runtime = 'edge';
 
@@ -10,12 +10,14 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-const pool = createPool({
-  connectionString: process.env.DIRECT_URL,
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
 });
 
 export default async function Image({ params }: { params: { id: string } }) {
-  const { rows } = await pool.query(
+  await client.connect();
+
+  const { rows } = await client.query(
     `
     SELECT m.content
     FROM "Message" m
@@ -36,6 +38,8 @@ export default async function Image({ params }: { params: { id: string } }) {
   if (!image) {
     throw new Error('Image not found');
   }
+
+  await client.end();
 
   return new ImageResponse(<img src={image.content} alt={alt} width={size.width} height={size.height} />, {
     ...size,
