@@ -1,7 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { Pool } from '@neondatabase/serverless';
-
-export const runtime = 'edge';
+import { Pool } from 'pg';
 
 const alt = 'Bonfire - Storytelling Reimagined';
 const width = 1200;
@@ -10,22 +8,19 @@ const height = 630;
 export async function GET(request: Request, ctx: any) {
   const { searchParams } = new URL(request.url);
   const instanceId = searchParams.get('instanceId');
-  if (!instanceId || process.env.DATABASE_URL === undefined) {
+  if (!instanceId) {
     return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });
   }
 
-  console.log(`Generating image for instance ${instanceId}`);
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
 
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-  await pool.connect();
-
-  console.log(`Connected to database.`);
-
-  const query = `
+  const { rows } = await pool.query(
+    `
     SELECT m.content
     FROM "Message" m
     INNER JOIN "Instance" i ON m."instanceId" = i.id
@@ -36,15 +31,13 @@ export async function GET(request: Request, ctx: any) {
     AND m.content LIKE 'https://%'
     ORDER BY m."createdAt" ASC
     LIMIT 1
-  `;
-  const params = [instanceId];
-
-  const { rows } = await pool.query(query, params);
+  `,
+    [instanceId],
+  );
 
   const result = rows[0];
 
   if (!result) {
-    console.log(`No image found for instance ${instanceId}`);
     return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
@@ -53,7 +46,6 @@ export async function GET(request: Request, ctx: any) {
 
   ctx.waitUntil(pool.end());
 
-  console.log(`Found image: ${result.content}`);
   return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
     width,
     height,
