@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { createPool } from '@vercel/postgres';
+import { Pool } from 'pg';
 
 export const runtime = 'edge';
 
@@ -18,11 +18,9 @@ export async function GET(request: Request) {
   }
 
   console.log(`Generating image for instance ${instanceId}`);
-  const pool = createPool({
+  const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });
-
-  await pool.connect();
 
   console.log(`Connected to database.`);
   const { rows } = await pool.query(
