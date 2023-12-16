@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import { AxiomWebVitals } from 'next-axiom';
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from 'next';
 
 import SessionProvider from '@/components/session-provider';
 
@@ -26,15 +26,16 @@ export async function generateMetadata({ params }: MetadataProps) {
   metadata = {
     title: 'Bonfire - Storytelling Reimagined',
     description: 'Created by Starlight Labs',
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.trybonfire.ai'),
   };
 
   if (!id) {
     metadata.openGraph = {
-      images: ['https://www.trybonfire.ai/api/og'],
+      images: ['/api/og'],
     };
   } else {
     metadata.openGraph = {
-      images: [`https://www.trybonfire.ai/api/og?instanceId=${id}`],
+      images: [`/api/og?instanceId=${id}`],
     };
   }
 

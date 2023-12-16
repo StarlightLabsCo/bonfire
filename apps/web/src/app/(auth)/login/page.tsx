@@ -3,7 +3,7 @@ import { Icons } from '@/components/icons';
 import { UserAuthForm } from '@/components/auth/user-auth-form';
 
 export const metadata: Metadata = {
-  title: 'Login',
+  title: 'Login - Bonfire',
   description: 'Login to your account',
 };
 
