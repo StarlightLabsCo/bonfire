@@ -13,37 +13,11 @@ import SessionProvider from '@/components/session-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
-type MetadataProps = {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+export const metadata: Metadata = {
+  title: 'Bonfire - Storytelling Reimagined',
+  description: 'Created by Starlight Labs',
+  metadataBase: new URL(process.env.NEXTAUTH_URL || 'https://www.trybonfire.ai'),
 };
-
-export async function generateMetadata({ params }: MetadataProps) {
-  console.log(`Generating metadata.`);
-  console.log(params);
-
-  const { id } = params;
-
-  let metadata: Metadata;
-
-  metadata = {
-    title: 'Bonfire - Storytelling Reimagined',
-    description: 'Created by Starlight Labs',
-    metadataBase: new URL(process.env.NEXTAUTH_URL || 'https://www.trybonfire.ai'),
-  };
-
-  if (!id) {
-    metadata.openGraph = {
-      images: ['/bonfire.png'],
-    };
-  } else {
-    metadata.openGraph = {
-      images: [`/api/og?instanceId=${id}`],
-    };
-  }
-
-  return metadata;
-}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
