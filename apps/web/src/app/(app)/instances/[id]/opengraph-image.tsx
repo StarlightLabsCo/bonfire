@@ -11,7 +11,7 @@ export const size = {
 export const contentType = 'image/png';
 
 const pool = createPool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DIRECT_URL,
 });
 
 export default async function Image({ params }: { params: { id: string } }) {
