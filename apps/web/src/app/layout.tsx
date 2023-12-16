@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: MetadataProps) {
   metadata = {
     title: 'Bonfire - Storytelling Reimagined',
     description: 'Created by Starlight Labs',
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.trybonfire.ai'),
+    metadataBase: new URL(process.env.NEXTAUTH_URL || 'https://www.trybonfire.ai'),
   };
 
   if (!id) {
