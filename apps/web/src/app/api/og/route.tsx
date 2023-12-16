@@ -11,11 +11,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const instanceId = searchParams.get('instance');
   if (!instanceId) {
-    const arrayBuffer = await fetch(new URL('./bonfire.png', import.meta.url)).then((res) => res.arrayBuffer());
-    const blob = new Blob([arrayBuffer]);
-    const image = URL.createObjectURL(blob);
-
-    return new ImageResponse(<img src={image} alt={alt} width={width} height={height} />, {
+    return new ImageResponse(<img src="https://www.trybonfire.ai/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });
@@ -49,12 +45,7 @@ export async function GET(request: Request) {
 
   if (!result) {
     console.log(`No image found for instance ${instanceId}`);
-
-    const arrayBuffer = await fetch(new URL('./bonfire.png', import.meta.url)).then((res) => res.arrayBuffer());
-    const blob = new Blob([arrayBuffer]);
-    const image = URL.createObjectURL(blob);
-
-    return new ImageResponse(<img src={image} alt={alt} width={width} height={height} />, {
+    return new ImageResponse(<img src="https://www.trybonfire.ai/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });
