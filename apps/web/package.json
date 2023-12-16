@@ -48,6 +48,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/pg": "^8.10.9",
     "autoprefixer": "^10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
