@@ -9,9 +9,9 @@ const height = 630;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const instanceId = searchParams.get('instance');
+  const instanceId = searchParams.get('instanceId');
   if (!instanceId) {
-    return new ImageResponse(<img src="https://www.trybonfire.ai/bonfire.png" alt={alt} width={width} height={height} />, {
+    return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 
   if (!result) {
     console.log(`No image found for instance ${instanceId}`);
-    return new ImageResponse(<img src="https://www.trybonfire.ai/bonfire.png" alt={alt} width={width} height={height} />, {
+    return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });

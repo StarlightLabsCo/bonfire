@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: MetadataProps) {
 
   if (!id) {
     metadata.openGraph = {
-      images: ['/api/og'],
+      images: ['/bonfire.png'],
     };
   } else {
     metadata.openGraph = {
