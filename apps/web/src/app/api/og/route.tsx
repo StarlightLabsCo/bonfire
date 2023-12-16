@@ -5,7 +5,7 @@ const alt = 'Bonfire - Storytelling Reimagined';
 const width = 1200;
 const height = 630;
 
-export async function GET(request: Request, ctx: any) {
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const instanceId = searchParams.get('instanceId');
   if (!instanceId) {
@@ -44,7 +44,7 @@ export async function GET(request: Request, ctx: any) {
     });
   }
 
-  ctx.waitUntil(pool.end());
+  pool.end(); // TODO: put this in a ctx.WaitUntil for better performance
 
   return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
     width,
