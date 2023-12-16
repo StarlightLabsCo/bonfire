@@ -44,7 +44,7 @@ export async function GET(request: Request) {
     });
   }
 
-  pool.end(); // TODO: put this in a ctx.WaitUntil for better performance
+  pool.end(); // TODO: put this in a ctx.WaitUntil for better performance - https://github.com/vercel/next.js/issues/50522
 
   return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
     width,
