@@ -12,6 +12,7 @@ import { StoreInitializer } from '@/components/store-initializer';
 import { AnotherOpenTabDialog } from '@/components/dialog/another-open-tab-dialog';
 import { DeleteInstanceDialog } from '@/components/dialog/delete-instance-dialog';
 import { SettingsDialog } from '@/components/dialog/settings-dialog';
+import { InstanceInfoDialog } from '@/components/dialog/instance-info-dialog';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -37,6 +38,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <OutOfCreditsDialog />
       <StripeCheckoutDialog />
       <AnotherOpenTabDialog />
+      <InstanceInfoDialog />
       <DeleteInstanceDialog />
       <SettingsDialog />
       <Navigator />

@@ -14,6 +14,7 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
 
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
   const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
+  const setIsInstanceInfoDialog = useDialogStore((state) => state.setIsInstanceInfoDialogOpen);
   const setIsDeleteInstanceDialogOpen = useDialogStore((state) => state.setIsDeleteInstanceDialogOpen);
 
   const handleClick = (path: string) => {
@@ -58,13 +59,13 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
                             <Icons.share className="mr-2 h-4 w-4" />
                             Share
                           </DropdownMenuItem>
-                          {/* <DropdownMenuItem
+                          <DropdownMenuItem
                             className="text-xs font-light cursor-pointer focus:bg-neutral-800 p-2 my-2"
-                            onSelect={() => console.log('Rename instance')}
+                            onSelect={() => setIsInstanceInfoDialog(true)}
                           >
-                            <Icons.pencil className="mr-2 h-4 w-4" />
-                            Rename
-                          </DropdownMenuItem> */}
+                            <Icons.infoCircle className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-xs font-light cursor-pointer focus:bg-neutral-800 text-red-500 p-2"
                             onSelect={() => setIsDeleteInstanceDialogOpen(true)}

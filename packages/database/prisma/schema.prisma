@@ -136,7 +136,7 @@ model Instance {
   locked Boolean @default(false)
   lockedAt DateTime?
 
-  description String
+  description String 
 
   messages Message[]
 
