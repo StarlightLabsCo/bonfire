@@ -10,12 +10,7 @@ import { validateRequest } from 'websocket/utils';
 
 import { handleWebsocketConnected, sendToUser } from './connection';
 import { handlers } from '../handlers';
-import {
-  clearHeartbeat,
-  heartbeatClientRequestHandler,
-  heartbeatClientResponseHandler,
-  setupHeartbeat,
-} from './heartbeat';
+import { clearHeartbeat, heartbeatClientRequestHandler, heartbeatClientResponseHandler, setupHeartbeat } from './heartbeat';
 
 export type WebSocketData = {
   // Heartbeat
@@ -87,11 +82,11 @@ const server = Bun.serve<WebSocketData>({
 
       // Heartbeat
       if (request.type === StarlightWebSocketRequestType.heartbeatClientRequest) {
-        return heartbeatClientRequestHandler(ws, request); // Client sent us a ping, we need to respond
+        return await heartbeatClientRequestHandler(ws, request); // Client sent us a ping, we need to respond
       }
 
       if (request.type === StarlightWebSocketRequestType.heartbeatClientResponse) {
-        return heartbeatClientResponseHandler(ws, request); // Client responded to our ping
+        return await heartbeatClientResponseHandler(ws, request); // Client responded to our ping
       }
 
       // Handle request

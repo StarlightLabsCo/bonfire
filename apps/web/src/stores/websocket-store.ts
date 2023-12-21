@@ -79,9 +79,7 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
     set({ connectionId });
 
     // Intialize websocket connection
-    let ws = new WebSocket(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}?token=${response.token}&connectionId=${connectionId}`,
-    );
+    let ws = new WebSocket(`${process.env.NEXT_PUBLIC_BACKEND_URL}?token=${response.token}&connectionId=${connectionId}`);
 
     set({ socket: ws, socketState: 'connecting' });
 
@@ -141,6 +139,11 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
     });
 
     ws.addEventListener('close', (event) => {
+      const { heartbeat } = get();
+      if (heartbeat !== null) {
+        clearInterval(heartbeat);
+      }
+
       set({ socket: null, socketState: 'closed', isAlive: false, heartbeat: null });
 
       console.log(`WebSocket connection closed. Code: ${event.code} Reason: ${event.reason}`);

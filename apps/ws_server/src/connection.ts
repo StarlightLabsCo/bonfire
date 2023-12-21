@@ -3,7 +3,6 @@ import { WebSocketData } from '.';
 import { redis } from '../services/redis';
 import { StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateResponse } from 'websocket/utils';
-import { db } from '../services/db';
 
 // This map maintains the most updated websocket for each user. Stored as a map of userId-connectionId to websocket
 const userIdToWebSocket: Record<string, ServerWebSocket<WebSocketData>> = {};
@@ -13,11 +12,7 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 
   const existingWebsocket = userIdToWebSocket[userId];
   if (existingWebsocket) {
-    console.log('Existing websocket found, closing it');
-    sendToUser(userId, {
-      type: StarlightWebSocketResponseType.anotherOpenTab,
-      data: {},
-    });
+    existingWebsocket.send(JSON.stringify({ type: StarlightWebSocketResponseType.anotherOpenTab, data: {} }));
     existingWebsocket.close();
   }
 
@@ -75,7 +70,6 @@ export async function subscribeUserToInstance(userId: string, instanceId: string
 }
 
 export async function unsubscribeUserFromInstance(userId: string, instanceId: string) {
-  console.log('Unsubscribing user from instance', userId, instanceId);
   await redis.srem(`instanceSubscriptions:${instanceId}`, userId);
 
   sendToUser(userId, {

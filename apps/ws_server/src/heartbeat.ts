@@ -1,16 +1,11 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '.';
-import {
-  HeartbeatClientRequest,
-  HeartbeatClientResponse,
-  HeartbeatServerRequest,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
+import { HeartbeatClientRequest, HeartbeatClientResponse, HeartbeatServerRequest, StarlightWebSocketResponseType } from 'websocket/types';
 
 export function setupHeartbeat(ws: ServerWebSocket<WebSocketData>) {
-  const heartbeat = setInterval(() => {
+  ws.data.heartbeatInterval = setInterval(() => {
     if (!ws.data.isAlive) {
-      ws.close();
+      ws.close(1000, 'Server heartbeat request failed to receive response.');
 
       clearHeartbeat(ws);
 
@@ -28,8 +23,6 @@ export function setupHeartbeat(ws: ServerWebSocket<WebSocketData>) {
       } as HeartbeatServerRequest),
     );
   }, 30000);
-
-  ws.data.heartbeatInterval = heartbeat;
 }
 
 // Client requested heartbeat, send response
