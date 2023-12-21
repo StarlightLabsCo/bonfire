@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogContentUnclosable,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogContentUnclosable, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useDialogStore } from '@/stores/dialog-store';
 import { useWebsocketStore } from '@/stores/websocket-store';
@@ -19,7 +12,7 @@ export function AnotherOpenTabDialog() {
 
   return (
     <Dialog open={isAnotherOpenTabDialogOpen}>
-      <DialogContentUnclosable className="bg-neutral-950 border-white/10">
+      <DialogContentUnclosable>
         <DialogHeader>
           <DialogTitle>Only One Tab Allowed</DialogTitle>
           <DialogDescription>
@@ -34,9 +27,7 @@ export function AnotherOpenTabDialog() {
               Reconnect
             </Button>
           </DialogDescription>
-          <DialogDescription className="text-xs pt-5 text-gray-600">
-            (This will disconnect the other tab.)
-          </DialogDescription>
+          <DialogDescription className="text-xs pt-5 text-gray-600">(This will disconnect the other tab.)</DialogDescription>
         </DialogHeader>
       </DialogContentUnclosable>
     </Dialog>

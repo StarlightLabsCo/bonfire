@@ -10,7 +10,7 @@ export function SettingsDialog() {
 
   return (
     <Dialog open={isSettingsDialogOpen} onOpenChange={setIsSettingsDialogOpen}>
-      <DialogContent className="bg-neutral-950 border-white/10">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>

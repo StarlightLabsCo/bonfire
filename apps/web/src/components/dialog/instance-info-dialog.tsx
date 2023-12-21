@@ -28,7 +28,7 @@ export function InstanceInfoDialog() {
 
   return (
     <Dialog open={isInstanceInfoDialogOpen} onOpenChange={setIsInstanceInfoDialogOpen}>
-      <DialogContent className="bg-neutral-950 border-white/10">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Instance Info</DialogTitle>
           <DialogDescription>

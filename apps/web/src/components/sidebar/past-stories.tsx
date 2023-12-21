@@ -51,7 +51,7 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
                         <DropdownMenuTrigger>
                           <Icons.moreHorizontal className="w-4 h-4 text-white/50 hover:text-white" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-40 bg-neutral-950 border-white/10">
+                        <DropdownMenuContent className="w-40">
                           <DropdownMenuItem
                             className="text-xs font-light cursor-pointer focus:bg-neutral-800 p-2"
                             onSelect={() => setIsShareDialogOpen(true)}

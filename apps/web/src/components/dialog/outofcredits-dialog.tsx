@@ -12,7 +12,7 @@ export function OutOfCreditsDialog() {
 
   return (
     <Dialog open={isCreditsDialogOpen} onOpenChange={setIsCreditsDialogOpen}>
-      <DialogContent className="bg-neutral-950 border-white/10">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Want to continue the adventure?</DialogTitle>
           <DialogDescription>

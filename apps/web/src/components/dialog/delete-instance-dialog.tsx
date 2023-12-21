@@ -29,7 +29,7 @@ export function DeleteInstanceDialog() {
 
   return (
     <Dialog open={isDeleteInstanceDialogOpen} onOpenChange={setIsDeleteInstanceDialogOpen}>
-      <DialogContent className="bg-neutral-950 border-white/10">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Story?</DialogTitle>
           <DialogDescription>

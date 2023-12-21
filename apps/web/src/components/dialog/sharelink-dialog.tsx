@@ -94,7 +94,7 @@ export function ShareLinkDialog() {
 
   return (
     <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-      <DialogContent className="bg-neutral-950 border-white/10">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Spread the tales of your journey</DialogTitle>
           <DialogDescription>

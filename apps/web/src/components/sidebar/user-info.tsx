@@ -63,7 +63,7 @@ export function UserInfo({
     <div className="w-full h-14 px-2 flex flex-col items-center justify-center cursor-pointer">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger />
-        <DropdownMenuContent className="w-56 bg-neutral-950 border-white/10">
+        <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Community</DropdownMenuLabel>
           <DropdownMenuGroup>
             <DropdownMenuItem
