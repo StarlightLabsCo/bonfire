@@ -99,10 +99,10 @@ export function UserInfo({
                 Upgrade
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
+            {/* <DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
               <Icons.gear className="mr-2 h-3 w-3" />
               Settings
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer focus:bg-neutral-800">
