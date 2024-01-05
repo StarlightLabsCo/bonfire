@@ -33,7 +33,8 @@ export const CreateInstanceRequestZodSchema: z.ZodType<Types.CreateInstanceReque
     type: z.literal(Types.StarlightWebSocketRequestType.createInstance),
     data: z
       .object({
-        description: z.string(),
+        description: z.string().nullable(),
+        instanceTemplateId: z.string().nullable(),
       })
       .strict(),
   })

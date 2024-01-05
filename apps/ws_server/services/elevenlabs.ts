@@ -136,8 +136,7 @@ function processNormalizedAlignment(
       wordDurationsMs: wordDurationsMs,
     };
   } else {
-    let previousLastWordStartTimeMs =
-      previousWordTimings.wordStartTimesMs[previousWordTimings.wordStartTimesMs.length - 1];
+    let previousLastWordStartTimeMs = previousWordTimings.wordStartTimesMs[previousWordTimings.wordStartTimesMs.length - 1];
     let previousWordDurationMs = previousWordTimings.wordDurationsMs[previousWordTimings.wordDurationsMs.length - 1];
 
     let offset = previousLastWordStartTimeMs + previousWordDurationMs;

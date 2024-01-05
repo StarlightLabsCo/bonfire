@@ -36,6 +36,9 @@ export function UserInfo({
   const createPortalSession = useStripeStore((state) => state.createPortalSession);
   const setIsSettingsDialogOpen = useDialogStore((state) => state.setIsSettingsDialogOpen);
 
+  // TODO: Remove this.
+  const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
+
   useEffect(() => {
     async function getStripeSubscriptionStatus() {
       const response = await fetch('/api/user', {
@@ -64,6 +67,12 @@ export function UserInfo({
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger />
         <DropdownMenuContent className="w-56">
+          {/* DEBUG. TODO: Remove. */}
+          <DropdownMenuLabel>Debug</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => setIsCreateScenarioDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
+            <Icons.gear className="mr-2 h-3 w-3" />
+            Create Scenario
+          </DropdownMenuItem>
           <DropdownMenuLabel>Community</DropdownMenuLabel>
           <DropdownMenuGroup>
             <DropdownMenuItem
@@ -99,10 +108,10 @@ export function UserInfo({
                 Upgrade
               </DropdownMenuItem>
             )}
-            {/* <DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
+            <DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
               <Icons.gear className="mr-2 h-3 w-3" />
               Settings
-            </DropdownMenuItem> */}
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer focus:bg-neutral-800">

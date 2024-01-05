@@ -48,7 +48,8 @@ export type CreateAdventureSuggestionsData = {};
 export type CreateInstanceRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.createInstance, CreateInstanceData>;
 
 export type CreateInstanceData = {
-  description: string;
+  description: string | null;
+  instanceTemplateId: string | null;
 };
 
 // Subscribe To Instance

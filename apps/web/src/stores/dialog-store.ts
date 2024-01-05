@@ -20,6 +20,9 @@ type DialogState = {
 
   isInstanceInfoDialogOpen: boolean;
   setIsInstanceInfoDialogOpen: (open: boolean) => void;
+
+  isCreateScenarioDialogOpen: boolean;
+  setIsCreateScenarioDialogOpen: (open: boolean) => void;
 };
 
 export const useDialogStore = create<DialogState>((set) => ({
@@ -40,4 +43,7 @@ export const useDialogStore = create<DialogState>((set) => ({
 
   isInstanceInfoDialogOpen: false,
   setIsInstanceInfoDialogOpen: (open) => set(() => ({ isInstanceInfoDialogOpen: open })),
+
+  isCreateScenarioDialogOpen: false,
+  setIsCreateScenarioDialogOpen: (open) => set(() => ({ isCreateScenarioDialogOpen: open })),
 }));

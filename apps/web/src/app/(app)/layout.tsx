@@ -13,6 +13,7 @@ import { AnotherOpenTabDialog } from '@/components/dialog/another-open-tab-dialo
 import { DeleteInstanceDialog } from '@/components/dialog/delete-instance-dialog';
 import { SettingsDialog } from '@/components/dialog/settings-dialog';
 import { InstanceInfoDialog } from '@/components/dialog/instance-info-dialog';
+import { CreateScenarioDialog } from '@/components/dialog/create-scenario-dialog';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -34,6 +35,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {user && <Sidebar user={user} instances={instances} />}
       <div className="flex flex-col w-full h-[100dvh] mx-auto">{children}</div>
       <Toaster />
+      <CreateScenarioDialog />
       <ShareLinkDialog />
       <OutOfCreditsDialog />
       <StripeCheckoutDialog />

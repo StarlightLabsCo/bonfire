@@ -24,6 +24,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
       type: StarlightWebSocketRequestType.createInstance,
       data: {
         description,
+        instanceTemplateId: null,
       },
     });
   };

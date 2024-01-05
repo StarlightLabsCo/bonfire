@@ -52,7 +52,11 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
     },
   });
 
-  await initSpeechStreamConnection(updatedInstance.id);
+  if (updatedInstance.narratorVoiceId) {
+    await initSpeechStreamConnection(updatedInstance.id, updatedInstance.narratorVoiceId);
+  } else {
+    await initSpeechStreamConnection(updatedInstance.id);
+  }
 
   const startTime = Date.now();
   const response = await openai.chat.completions.create({

@@ -1,3 +1,4 @@
+import OpenAI from 'openai';
 import { Instance, InstanceStage, Message, Prisma } from 'database';
 import { db } from '../../services/db';
 
@@ -11,7 +12,6 @@ import { continueStory, resetContinueStory } from './continue/continue';
 
 import { createImage, resetCreateImage } from './images';
 import { generateActionSuggestions, resetActionSuggestions } from './actions';
-import OpenAI from 'openai';
 
 export const InstanceStageTransitions = {
   // Introduction sequence
