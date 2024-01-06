@@ -6,6 +6,9 @@ import { db } from '../../services/db';
 import { stepInstanceUntil } from '../../core/instance/stateMachine';
 import { sendToInstanceSubscribers, subscribeUserToInstance } from '../../src/connection';
 
+const defaultNarrator =
+  "You are a master storyteller in charge of a text-adventure game. Your goal is to create a thrilling, vibrant, and detailed story with deep multi-faceted characters, and clean followable structure that features the player (whom you talk about in the 2nd person) as the main character. The quality we're going for is feeling like the listener is in a book or film, and should match pacing accordingly. Expand on important sections, but keep the story progressing at all times. When it's appropriate you can imitate characters in the story for dialogue sections. Make sure to allow the player to make all the decisions, and do not condense the story. The player should feel like they are driving the story, and you are just the narrator. Favor bite-sized chunks of story that let the player make many small decisions rather than long monologues.";
+
 export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.createInstance) {
     throw new Error('Invalid request type for createInstanceHandler');
@@ -25,7 +28,7 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     }
 
     // Narrator Personality Prompt
-    let initPrompt = instanceTemplate.narratorPersonality;
+    let initPrompt = instanceTemplate.narratorPersonality || defaultNarrator;
 
     let initMessage = {
       content: initPrompt,
@@ -72,39 +75,48 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     });
 
     // Story Outline Prompt
-    let outlinePrompt = instanceTemplate.storyOutline;
+    if (instanceTemplate.storyOutline) {
+      let outlinePrompt = instanceTemplate.storyOutline;
 
-    let outlineMessage = {
-      content: outlinePrompt,
-      role: MessageRole.system,
-      name: 'story_outline',
-    };
+      let outlineMessage = {
+        content: outlinePrompt,
+        role: MessageRole.system,
+        name: 'story_outline',
+      };
 
-    instance = await db.instance.update({
-      where: {
-        id: instance.id,
-      },
-      data: {
-        messages: {
-          create: outlineMessage,
+      instance = await db.instance.update({
+        where: {
+          id: instance.id,
         },
-        history: {
-          push: [instance.stage, InstanceStage.CREATE_OUTLINE_START],
+        data: {
+          messages: {
+            create: outlineMessage,
+          },
+          history: {
+            push: [instance.stage, InstanceStage.CREATE_OUTLINE_START],
+          },
+          stage: InstanceStage.CREATE_OUTLINE_FINISH,
         },
-        stage: InstanceStage.CREATE_OUTLINE_FINISH,
-      },
-      include: {
-        messages: true,
-      },
-    });
+        include: {
+          messages: true,
+        },
+      });
 
-    sendToInstanceSubscribers(instance.id, {
-      type: StarlightWebSocketResponseType.instanceStageChanged,
-      data: {
-        instanceId: instance.id,
-        stage: instance.stage,
-      },
-    });
+      sendToInstanceSubscribers(instance.id, {
+        type: StarlightWebSocketResponseType.instanceStageChanged,
+        data: {
+          instanceId: instance.id,
+          stage: instance.stage,
+        },
+      });
+
+      sendToInstanceSubscribers(instance.id, {
+        type: StarlightWebSocketResponseType.instanceCreated,
+        data: {
+          instanceId: instance.id,
+        },
+      });
+    }
 
     console.log(`[Debug] Stepping instance ${instance.id} to ${InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH}`);
 
@@ -132,8 +144,7 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     console.log('[Debug] Creating instance from description', request.data.description);
 
     // Default Prompt
-    let initPrompt =
-      "You are a master storyteller in charge of a text-adventure game. Your goal is to create a thrilling, vibrant, and detailed story with deep multi-faceted characters, and clean followable structure that features the player (whom you talk about in the 2nd person) as the main character. The quality we're going for is feeling like the listener is in a book or film, and should match pacing accordingly. Expand on important sections, but keep the story progressing at all times. When it's appropriate you can imitate characters in the story for dialogue sections. Make sure to allow the player to make all the decisions, and do not condense the story. The player should feel like they are driving the story, and you are just the narrator. Favor bite-sized chunks of story that let the player make many small decisions rather than long monologues.";
+    let initPrompt = defaultNarrator;
 
     let initMessage = {
       content: initPrompt,

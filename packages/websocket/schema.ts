@@ -28,6 +28,26 @@ export const CreateAdventureSuggestionsRequestZodSchema: z.ZodType<Types.CreateA
   })
   .strict();
 
+export const CreateInstanceTemplateRequestZodSchema: z.ZodType<Types.CreateInstanceTemplateRequest> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketRequestType.createInstanceTemplate),
+    data: z
+      .object({
+        name: z.string(),
+        description: z.string().nullable(),
+        imageURL: z.string().nullable(),
+
+        narratorPersonality: z.string().nullable(),
+        narratorVoiceId: z.string().nullable(),
+
+        storyOutline: z.string().nullable(),
+
+        imageStyle: z.string().nullable(),
+      })
+      .strict(),
+  })
+  .strict();
+
 export const CreateInstanceRequestZodSchema: z.ZodType<Types.CreateInstanceRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.createInstance),
@@ -349,6 +369,7 @@ export const requestTypeToSchema: {
   [key in Types.StarlightWebSocketRequestType]: z.ZodSchema<Types.GenericStarlightWebSocketRequest<key, any>>;
 } = {
   [Types.StarlightWebSocketRequestType.createAdventureSuggestions]: CreateAdventureSuggestionsRequestZodSchema,
+  [Types.StarlightWebSocketRequestType.createInstanceTemplate]: CreateInstanceTemplateRequestZodSchema,
   [Types.StarlightWebSocketRequestType.createInstance]: CreateInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.subscribeToInstance]: SubscribeToInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.unsubscribeFromInstance]: UnsuscribeFromInstanceRequestZodSchema,

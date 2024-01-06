@@ -8,6 +8,26 @@ import { StarlightWebSocketResponseType } from 'websocket/types';
 import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 import { updateInstanceStage } from './utils';
 
+function generateUserMessageContent(imageStyle: string | null | undefined) {
+  const baseMessage = `Based on the story, pick the most interesting concept, or character from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Avoid breaking the listener's immersion at all costs. If the person is talking to a character, make it a closeup of that character (or the main character talking to that character), but don't repeat a character more than once. If entering an indoor location, make it a scene of that location, etc.`;
+
+  const styleMessage = imageStyle
+    ? `All images should be in this style:\n\n${imageStyle}`
+    : `If there are no prior images, pick an art style that would best accompany the story and the story's genre, and stick with it throughout.`;
+
+  const endMessage = `Make it epic! We want to create jaw-dropping images to bring the story to life.
+
+  It is vital that you maintain world, character, and style consistency. Reference past images and expand the prompt as much as possible to ensure the images present a cohesive story. Do not create repetitive images.
+
+  Only output the prompt as it will be feed directly to the image generation AI.`;
+
+  const message = `${baseMessage}\n\n${styleMessage}\n\n${endMessage}`;
+
+  console.log(`[Debug] Generated user message content: ${message}`);
+
+  return message;
+}
+
 export async function createImage(instance: Instance & { messages: Message[] }) {
   let updatedInstance = await updateInstanceStage(instance, InstanceStage.CREATE_IMAGE_START);
 
@@ -34,15 +54,21 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     })
     .filter((message) => message.role != 'function');
 
+  let imageStyle: string | null | undefined;
+  if (updatedInstance.templateId) {
+    const template = await db.instanceTemplate.findUnique({
+      where: {
+        id: updatedInstance.templateId,
+      },
+    });
+    imageStyle = template?.imageStyle;
+  }
+
   modifiedMessages = [
     ...(modifiedMessages as any),
     {
       role: 'user',
-      content: `Based on the story, pick the most interesting concept, or character from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Avoid breaking the listener's immersion at all costs. If the person is talking to a character, make it a closeup of that character (or the main character talking to that character). If entering an indoor location, make it a scene of that location, etc. If there are no prior images, pick an art style that would best accompany the story and the story's genre, and stick wth it throughout. Make it epic! We want to create jaw-dropping images to bring the story to life.
-
-      It is vital that you maintain world, character, and style consistency. Reference past images and expand the prompt as much as possible to ensure the images present a cohesive story. Do not create repetitive images.
-
-      Only output the prompt as it will be feed directly to the image generation AI.`,
+      content: generateUserMessageContent(imageStyle),
     },
   ];
 

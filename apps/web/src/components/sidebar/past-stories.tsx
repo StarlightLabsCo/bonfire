@@ -42,7 +42,7 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
             >
               <Icons.logo className="w-4 h-4 mr-2 flex-shrink-0 z-10" />
               <div className="overflow-hidden w-full whitespace-nowrap relative">
-                <div>{instance.description}</div>
+                <div>{instance.name}</div>
                 {isActive ? (
                   <>
                     <div className={`absolute inset-y-0 right-6 w-16 z-10 bg-gradient-to-l from-[#1A1A1A]`} />

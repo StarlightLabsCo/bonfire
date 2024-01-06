@@ -137,9 +137,12 @@ model InstanceTemplate {
   description String?
   imageURL String?
 
-  narratorVoiceId String? // used throughout the story
   narratorPersonality String? // first message - system prompt - the personality of the narrator
+  narratorVoiceId String? // used throughout the story
+
   storyOutline String? // second message - system prompt - the outline of the story
+  
+  imageStyle String? // third message - system prompt - the style of the image used in dalle3 generations
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

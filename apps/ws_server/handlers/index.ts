@@ -8,6 +8,7 @@ import { hasTokensMiddleware } from './hasTokensMiddleware';
 import { stopAudioHandler } from './audio/stopAudio';
 import { processVoiceTranscriptionHandler } from './audio/processVoiceTranscription';
 import { finishVoiceTranscriptionHandler } from './audio/finishVoiceTranscription';
+import { createInstanceTemplateHandler } from './instanceTemplate/createInstanceTemplate';
 
 import { createAdventureSuggestionsHandler } from './lobby/createAdventureSuggestions';
 import { createInstanceHandler } from './instance/createInstance';
@@ -24,6 +25,7 @@ export const handlers: {
   [StarlightWebSocketRequestType.stopAudio]: stopAudioHandler,
   [StarlightWebSocketRequestType.subscribeToInstance]: subscribeToInstanceHandler,
   [StarlightWebSocketRequestType.unsubscribeFromInstance]: unsubscribeFromInstanceHandler,
+  [StarlightWebSocketRequestType.createInstanceTemplate]: createInstanceTemplateHandler,
 
   // *** Paid requests ***
   [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokensMiddleware(createAdventureSuggestionsHandler),

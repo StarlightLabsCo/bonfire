@@ -4,6 +4,7 @@ import { InstanceStage, Message } from '../database';
 // ** Request **
 export type StarlightWebSocketRequest =
   | CreateAdventureSuggestionsRequest
+  | CreateInstanceTemplateRequest
   | CreateInstanceRequest
   | SubscribeToInstanceRequest
   | UnsuscribeFromInstanceRequest
@@ -23,6 +24,7 @@ export type GenericStarlightWebSocketRequest<T extends StarlightWebSocketRequest
 
 export enum StarlightWebSocketRequestType {
   createAdventureSuggestions,
+  createInstanceTemplate,
   createInstance,
   subscribeToInstance,
   unsubscribeFromInstance,
@@ -43,6 +45,25 @@ export type CreateAdventureSuggestionsRequest = GenericStarlightWebSocketRequest
 >;
 
 export type CreateAdventureSuggestionsData = {};
+
+// Create Instance Template
+export type CreateInstanceTemplateRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.createInstanceTemplate,
+  CreateInstanceTemplateData
+>;
+
+export type CreateInstanceTemplateData = {
+  name: string;
+  description: string | null;
+  imageURL: string | null;
+
+  narratorVoiceId: string | null;
+  narratorPersonality: string | null;
+
+  storyOutline: string | null;
+
+  imageStyle: string | null;
+};
 
 // Create Instance
 export type CreateInstanceRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.createInstance, CreateInstanceData>;

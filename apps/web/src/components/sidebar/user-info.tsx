@@ -13,6 +13,8 @@ import { useEffect, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useStripeStore } from '@/stores/stripe-store';
 import { useDialogStore } from '@/stores/dialog-store';
+import { useWebsocketStore } from '@/stores/websocket-store';
+import { StarlightWebSocketRequestType } from 'websocket';
 
 export function UserInfo({
   user,
@@ -36,8 +38,20 @@ export function UserInfo({
   const createPortalSession = useStripeStore((state) => state.createPortalSession);
   const setIsSettingsDialogOpen = useDialogStore((state) => state.setIsSettingsDialogOpen);
 
-  // TODO: Remove this.
+  // TODO: Remove these.
   const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
+  const sendToServer = useWebsocketStore((state) => state.sendToServer);
+
+  const createInstanceFromTemplate = () => {
+    sendToServer({
+      type: StarlightWebSocketRequestType.createInstance,
+      data: {
+        instanceTemplateId: 'clr1hughd0018xzagunam4s3f',
+        description: null,
+      },
+    });
+  };
+  // TODO END
 
   useEffect(() => {
     async function getStripeSubscriptionStatus() {
@@ -72,6 +86,10 @@ export function UserInfo({
           <DropdownMenuItem onClick={() => setIsCreateScenarioDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
             <Icons.gear className="mr-2 h-3 w-3" />
             Create Scenario
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={createInstanceFromTemplate} className="font-light cursor-pointer focus:bg-neutral-800">
+            <Icons.gear className="mr-2 h-3 w-3" />
+            Create Story from Scenario
           </DropdownMenuItem>
           <DropdownMenuLabel>Community</DropdownMenuLabel>
           <DropdownMenuGroup>
