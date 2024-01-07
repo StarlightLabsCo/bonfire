@@ -102,7 +102,7 @@ export function Sidebar({
       {/* Desktop */}
       <div
         className={cn(
-          'h-full overflow-x-hidden transition-[width] duration-200 flex-shrink-0 hidden md:block',
+          'h-[100dvh] overflow-x-hidden transition-[width] duration-200 flex-shrink-0 hidden md:block',
           isSidebarOpen ? 'w-[250px]' : 'w-0',
         )}
         onTransitionEnd={handleTransitionEnd}

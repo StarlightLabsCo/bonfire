@@ -14,6 +14,7 @@ import { DeleteInstanceDialog } from '@/components/dialog/delete-instance-dialog
 import { SettingsDialog } from '@/components/dialog/settings-dialog';
 import { InstanceInfoDialog } from '@/components/dialog/instance-info-dialog';
 import { CreateScenarioDialog } from '@/components/dialog/create-scenario-dialog';
+import { OpenSidebar } from '@/components/open-sidebar';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -31,9 +32,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="h-[100dvh] bg-neutral-950 flex flex-col md:flex-row">
+    <div className="bg-neutral-950 flex flex-col md:flex-row">
       {user && <Sidebar user={user} instances={instances} />}
-      <div className="flex flex-col w-full h-[100dvh] mx-auto">{children}</div>
+      {user && <OpenSidebar />}
+      {children}
       <Toaster />
       <CreateScenarioDialog />
       <ShareLinkDialog />

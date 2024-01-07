@@ -1,40 +1,11 @@
-import { getCurrentUser } from '@/lib/session';
+import { FeaturedStoryTemplates } from '@/components/featured-story-templates';
+import { Hero } from '@/components/hero';
 
-import { Lobby } from '@/components/pages/lobby';
-import prisma from '@/lib/db';
-import { redirect } from 'next/navigation';
-
-export default async function Home() {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    redirect('/login');
-  }
-
-  // TODO: add suspend barrier for this data
-  const messages = await prisma.message.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-    where: {
-      role: 'function',
-      name: 'generate_image',
-    },
-    take: 30,
-  });
-
-  // only give images that are generate_image
-  const images = messages.map((message) => {
-    return message.content;
-  });
-
-  // shuffle images
-  for (let i = images.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * i);
-    const temp = images[i];
-    images[i] = images[j];
-    images[j] = temp;
-  }
-
-  return <Lobby user={user} imageUrls={images} />;
+export default function Home() {
+  return (
+    <div className="flex flex-col items-center gap-y-5 overflow-auto">
+      <Hero />
+      <FeaturedStoryTemplates featuredStoryTemplates={[1, 1, 1]} />
+    </div>
+  );
 }

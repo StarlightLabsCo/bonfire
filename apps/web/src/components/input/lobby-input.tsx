@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
@@ -7,7 +9,7 @@ import { useWebsocketStore } from '@/stores/websocket-store';
 
 interface LobbyInputProps {
   submitted: boolean;
-  setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+  setSubmitted?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
@@ -30,7 +32,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
   };
 
   const submit = (description: string) => {
-    setSubmitted(true);
+    setSubmitted && setSubmitted(true);
     createInstance(description);
   };
 
@@ -60,7 +62,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
           adventureSuggestions.map((suggestion, index) => (
             <button
               key={index}
-              className="px-3 py-1 border rounded-full border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500 fade-in-2s"
+              className="px-3 py-1 border rounded-full border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500 fade-in-2s bg-neutral-950"
               onClick={() => submit(suggestion)}
             >
               <span className="text-xs md:text-sm font-light">{suggestion}</span>

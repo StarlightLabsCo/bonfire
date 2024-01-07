@@ -143,10 +143,8 @@ export function Story({
   }, [wordTimings, audioStartTime]);
 
   const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
-
   return (
-    <div className="flex flex-col items-center w-full mx-auto h-full relative">
-      {user && <OpenSidebar />}
+    <div className="flex flex-col items-center w-full mx-auto h-[100dvh] relative">
       <div
         ref={messageContainerRef}
         className={`${cormorantGaramond.className} w-full flex flex-col items-center h-full px-8 overflow-y-auto overscroll-none font-[400] text-sm md:text-lg pt-16 md:pt-8`}
