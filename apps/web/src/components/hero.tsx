@@ -8,7 +8,7 @@ type HeroProps = {
 
 export function Hero({ className }: HeroProps) {
   return (
-    <div className={cn('w-full h-[75vh] flex flex-col items-center justify-center relative', className)}>
+    <div className={cn('shrink-0 w-full h-[75dvh] flex flex-col items-center justify-center relative', className)}>
       <div className="w-full h-full absolute top-0 left-0 z-0">
         <Image src="https://r2.trybonfire.ai/clr0muo2i004zaql2ufpgvqs3.png" layout="fill" objectFit="cover" alt="Hero image" />
       </div>
