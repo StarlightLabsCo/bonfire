@@ -193,4 +193,39 @@
     mask: linear-gradient(transparent, rgba(0, 0, 0, 0.5), black);
     backdrop-filter: blur(4px);
   }
+
+  @keyframes fadeInBottom {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-bottom-0,
+  .animate-fade-in-bottom-1,
+  .animate-fade-in-bottom-2,
+  .animate-fade-in-bottom-3 {
+    opacity: 0;
+  }
+
+  .animate-fade-in-bottom-0 {
+    animation: fadeInBottom 0.5s ease-in-out forwards;
+  }
+
+  .animate-fade-in-bottom-1 {
+    animation: fadeInBottom 0.5s ease-in-out 0.1s forwards;
+  }
+
+  .animate-fade-in-bottom-2 {
+    animation: fadeInBottom 0.5s ease-in-out 0.15s forwards;
+  }
+
+  .animate-fade-in-bottom-3 {
+    animation: fadeInBottom 0.5s ease-in-out 0.2s forwards;
+  }
+
 }

@@ -132,6 +132,7 @@ model InstanceTemplate {
   authorId String
   author User @relation(fields: [authorId], references: [id])
   instances Instance[]
+  visibility String @default("private") // private, public, unlisted
 
   name String
   description String?
