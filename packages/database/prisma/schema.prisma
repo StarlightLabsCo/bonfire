@@ -129,10 +129,11 @@ enum InstanceStage {
 model InstanceTemplate {
   id String @id @default(cuid())
 
-  authorId String
-  author User @relation(fields: [authorId], references: [id])
+  userId String
+  user User @relation(fields: [userId], references: [id])
   instances Instance[]
   visibility String @default("private") // private, public, unlisted
+  plays Int @default(0)
 
   name String
   description String?

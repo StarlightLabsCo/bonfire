@@ -5,9 +5,15 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from 'embla-carousel-autoplay';
 import { FeaturedStoryTemplateCard } from '@/components/featured-story-template-card';
 import { cn } from '@/lib/utils';
+import { InstanceTemplate } from 'database';
 
 type FeaturedStoryTemplatesProps = {
-  featuredStoryTemplates: any[]; // TODO: Replace with InstanceTemplate or better type when available,
+  featuredStoryTemplates: (InstanceTemplate & {
+    user: {
+      name: string;
+      image: string;
+    };
+  })[];
   className?: string;
 };
 
@@ -57,7 +63,7 @@ export function FeaturedStoryTemplates({ featuredStoryTemplates, className }: Fe
       <CarouselContent>
         {featuredStoryTemplates.map((featuredStoryTemplate, index) => (
           <CarouselItem key={featuredStoryTemplate.id}>
-            <FeaturedStoryTemplateCard isActive={current === index} />
+            <FeaturedStoryTemplateCard template={featuredStoryTemplate} isActive={current === index} />
           </CarouselItem>
         ))}
       </CarouselContent>

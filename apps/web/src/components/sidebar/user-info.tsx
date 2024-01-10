@@ -40,17 +40,6 @@ export function UserInfo({
 
   // TODO: Remove these.
   const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
-  const sendToServer = useWebsocketStore((state) => state.sendToServer);
-
-  const createInstanceFromTemplate = () => {
-    sendToServer({
-      type: StarlightWebSocketRequestType.createInstance,
-      data: {
-        instanceTemplateId: 'clr1hughd0018xzagunam4s3f',
-        description: null,
-      },
-    });
-  };
   // TODO END
 
   useEffect(() => {
@@ -86,10 +75,6 @@ export function UserInfo({
           <DropdownMenuItem onClick={() => setIsCreateScenarioDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
             <Icons.gear className="mr-2 h-3 w-3" />
             Create Scenario
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={createInstanceFromTemplate} className="font-light cursor-pointer focus:bg-neutral-800">
-            <Icons.gear className="mr-2 h-3 w-3" />
-            Create Story from Scenario
           </DropdownMenuItem>
           <DropdownMenuLabel>Community</DropdownMenuLabel>
           <DropdownMenuGroup>

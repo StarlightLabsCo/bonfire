@@ -18,6 +18,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "embla-carousel-autoplay": "^8.0.0-rc18"
+    "embla-carousel-autoplay": "^8.0.0-rc18",
+    "javascript-time-ago": "^2.5.9"
   }
 }

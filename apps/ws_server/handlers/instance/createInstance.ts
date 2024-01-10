@@ -27,6 +27,15 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
       throw new Error('Invalid instance template id');
     }
 
+    await db.instanceTemplate.update({
+      where: {
+        id: instanceTemplate.id,
+      },
+      data: {
+        plays: instanceTemplate.plays + 1,
+      },
+    });
+
     // Narrator Personality Prompt
     let initPrompt = instanceTemplate.narratorPersonality || defaultNarrator;
 

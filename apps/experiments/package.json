@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "openai": "latest",
+    "openai": "4.24.2",
     "@aws-sdk/client-s3": "latest"
   }
 }

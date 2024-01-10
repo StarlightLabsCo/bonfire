@@ -19,7 +19,7 @@ export async function createInstanceTemplateHandler(ws: ServerWebSocket<WebSocke
       narratorPersonality,
       storyOutline,
       imageStyle,
-      author: {
+      user: {
         connect: {
           id: ws.data.webSocketToken?.userId!,
         },
