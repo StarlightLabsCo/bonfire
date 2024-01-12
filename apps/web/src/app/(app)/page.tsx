@@ -1,42 +1,39 @@
-import { Hero } from '@/components/hero';
-import { FeaturedStoryTemplates } from '@/components/featured-story-templates';
-import { CommunityHub } from '@/components/community-hub';
-import { MyTemplates } from '@/components/my-templates';
+import { Lobby } from '@/components/pages/lobby';
 import db from '@/lib/db';
+import { getCurrentUser } from '@/lib/session';
+import { redirect } from 'next/navigation';
 
 export default async function Home() {
-  const featuredTemplates = await db.instanceTemplate
-    .findMany({
-      orderBy: {
-        plays: 'desc',
-      },
-      include: {
-        user: {
-          select: {
-            name: true,
-            image: true,
-          },
-        },
-      },
-      take: 5,
-    })
-    .then((templates) =>
-      templates.map((template) => ({
-        ...template,
-        user: {
-          ...template.user,
-          name: template.user.name || 'Anonymous',
-          image: template.user.image || '/profile.png',
-        },
-      })),
-    );
+  const user = await getCurrentUser();
 
-  return (
-    <div className="h-[100dvh] w-full flex flex-col items-center gap-y-10 overflow-y-scroll pb-60">
-      <Hero />
-      <FeaturedStoryTemplates featuredStoryTemplates={featuredTemplates} />
-      <CommunityHub />
-      <MyTemplates />
-    </div>
-  );
+  if (!user) {
+    redirect('/login');
+  }
+
+  // TODO: add suspend barrier for this data
+  const messages = await db.message.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    where: {
+      role: 'function',
+      name: 'generate_image',
+    },
+    take: 30,
+  });
+
+  // only give images that are generate_image
+  const images = messages.map((message) => {
+    return message.content;
+  });
+
+  // shuffle images
+  for (let i = images.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = images[i];
+    images[i] = images[j];
+    images[j] = temp;
+  }
+
+  return <Lobby user={user} imageUrls={images} />;
 }

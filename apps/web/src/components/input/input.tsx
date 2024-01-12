@@ -82,7 +82,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
         disabled={disabled}
         {...props}
       />
-      {disabled ? (
+      {/* {disabled ? (
         <Icons.microphoneSlash className="w-4 h-4 text-neutral-400 mr-2" />
       ) : (
         <Icons.microphone
@@ -107,7 +107,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
             }
           }}
         />
-      )}
+      )} */}
       {disabled ? (
         <Icons.lockClosed className="w-4 h-4 text-neutral-400" />
       ) : (

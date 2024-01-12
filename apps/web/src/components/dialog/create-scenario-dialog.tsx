@@ -3,7 +3,6 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Icons } from '@/components/icons';
 import { useDialogStore } from '@/stores/dialog-store';
-import { useWebsocketStore } from '@/stores/websocket-store';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '../ui/textarea';
 import { useState, useEffect } from 'react';
@@ -14,46 +13,12 @@ export function CreateScenarioDialog() {
   const isCreateScenarioDialogOpen = useDialogStore((state) => state.isCreateScenarioDialogOpen);
   const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
 
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState('narrator');
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [coverArt, setCoverArt] = useState('');
   const [persona, setPersona] = useState('');
   const [voice, setVoice] = useState('');
   const [outline, setOutline] = useState('');
   const [style, setStyle] = useState('');
-
-  useEffect(() => {
-    if (!isCreateScenarioDialogOpen) {
-      setActiveTab('info');
-      setTitle('');
-      setDescription('');
-      setCoverArt('');
-      setPersona('');
-      setVoice('');
-      setOutline('');
-      setStyle('');
-    }
-  }, [isCreateScenarioDialogOpen]);
-
-  const sendToServer = useWebsocketStore((state) => state.sendToServer);
-
-  const createScenario = () => {
-    sendToServer({
-      type: StarlightWebSocketRequestType.createInstanceTemplate,
-      data: {
-        name: title,
-        description,
-        imageURL: coverArt,
-        narratorPersonality: persona,
-        narratorVoiceId: voice,
-        storyOutline: outline,
-        imageStyle: style,
-      },
-    });
-    setIsCreateScenarioDialogOpen(false);
-  };
 
   return (
     <Dialog open={isCreateScenarioDialogOpen} onOpenChange={setIsCreateScenarioDialogOpen}>
@@ -63,10 +28,6 @@ export function CreateScenarioDialog() {
         </DialogHeader>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="pt-5 flex h-full" orientation="vertical">
           <TabsList className="mr-6 flex flex-col gap-y-1 h-full justify-start items-start bg-neutral-950">
-            <TabsTrigger value="info" className="p-0 text-md flex gap-x-2">
-              <Icons.infoCircle />
-              Info
-            </TabsTrigger>
             <TabsTrigger value="narrator" className="p-0 text-md flex gap-x-2">
               <Icons.person />
               Narrator
@@ -79,38 +40,6 @@ export function CreateScenarioDialog() {
               Image Style
             </TabsTrigger>
           </TabsList>
-          {activeTab === 'info' ? (
-            <div className="flex flex-col w-full h-full gap-y-3">
-              <div className="flex flex-col gap-y-1">
-                <div>Title</div>
-                <Textarea value={title} onChange={(e) => setTitle(e.target.value)} className="w-full h-20 border-white/10 bg-neutral-900" />
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <div>Description</div>
-                <Textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full h-20 border-white/10 bg-neutral-900"
-                />
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <div>Cover Art</div>
-                <Textarea
-                  value={coverArt}
-                  onChange={(e) => setCoverArt(e.target.value)}
-                  className="w-full h-20 border-white/10 bg-neutral-900"
-                />
-              </div>
-              <Button
-                className="mt-auto ml-auto w-20"
-                onClick={() => {
-                  setActiveTab('narrator');
-                }}
-              >
-                Next
-              </Button>
-            </div>
-          ) : null}
 
           {activeTab === 'narrator' ? (
             <div className="flex flex-col w-full h-full gap-y-3">
@@ -165,9 +94,6 @@ export function CreateScenarioDialog() {
                 <div>Style</div>
                 <Textarea value={style} onChange={(e) => setStyle(e.target.value)} className="w-full h-20 border-white/10 bg-neutral-900" />
               </div>
-              <Button className="mt-auto ml-auto w-20" onClick={createScenario}>
-                Create
-              </Button>
             </div>
           ) : null}
         </Tabs>

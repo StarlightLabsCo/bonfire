@@ -76,7 +76,6 @@ model User {
 
   // Core
   instances Instance[]
-  instanceTemplates InstanceTemplate[]
 
   // Logging / Dataset Collection
   openAIRequestLog     OpenAIRequestLog[]
@@ -124,31 +123,6 @@ enum InstanceStage {
   CONTINUE_STORY_FINISH
 }
 
-// TODO: no need to overthink templates, we can use the existing structure but in each step check to see if a template exists and if so use it
-
-model InstanceTemplate {
-  id String @id @default(cuid())
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
-  instances Instance[]
-  visibility String @default("private") // private, public, unlisted
-  plays Int @default(0)
-
-  name String
-  description String?
-  imageURL String?
-
-  narratorPersonality String? // first message - system prompt - the personality of the narrator
-  narratorVoiceId String? // used throughout the story
-
-  storyOutline String? // second message - system prompt - the outline of the story
-  
-  imageStyle String? // third message - system prompt - the style of the image used in dalle3 generations
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model Instance {
   id String @id @default(cuid())
@@ -158,11 +132,13 @@ model Instance {
 
   name String
 
-  templateId String?
-  template InstanceTemplate? @relation(fields: [templateId], references: [id])
+  narratorPersonality String? 
+  narratorVoiceId String? 
 
-  description String? // rename this to requested story
-  narratorVoiceId String? // used throughout the story
+  description String? // Description is what's given by quickstart
+  storyOutline String? // Story Outline is defined by the user if they want to use it
+
+  imageStyle String?
 
   stage InstanceStage @default(INIT_STORY_FINISH)
   history InstanceStage[]
