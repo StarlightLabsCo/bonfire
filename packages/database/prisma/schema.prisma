@@ -130,7 +130,7 @@ model Instance {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  name String
+  name String @default("Untitled Instance")
 
   narratorPrompt String? 
   narratorVoiceId String? 
