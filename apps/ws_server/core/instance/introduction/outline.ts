@@ -9,6 +9,20 @@ import { updateInstanceStage } from '../utils';
 export async function createOutline(instance: Instance & { messages: Message[] }) {
   let updatedInstance = await updateInstanceStage(instance, InstanceStage.CREATE_OUTLINE_START);
 
+  // If the instance already has an outline, skip this step
+  if (instance.storyOutline && instance.storyOutline.length > 0) {
+    updatedInstance = await updateInstanceStage(instance, InstanceStage.CREATE_OUTLINE_FINISH);
+
+    sendToInstanceSubscribers(updatedInstance.id, {
+      type: StarlightWebSocketResponseType.instanceCreated,
+      data: {
+        instanceId: updatedInstance.id,
+      },
+    });
+
+    return updatedInstance;
+  }
+
   const messages = convertInstanceToChatCompletionMessageParams(instance);
 
   const startTime = Date.now();

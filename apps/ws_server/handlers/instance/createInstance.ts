@@ -14,210 +14,67 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     throw new Error('Invalid request type for createInstanceHandler');
   }
 
-  let instance;
-  if (request.data.instanceTemplateId) {
-    console.log('[Debug] Creating instance from template id', request.data.instanceTemplateId);
-    let instanceTemplate = await db.instanceTemplate.findUnique({
-      where: {
-        id: request.data.instanceTemplateId,
-      },
-    });
+  let initPrompt = request.data.narratorPrompt || defaultNarrator;
 
-    if (!instanceTemplate) {
-      throw new Error('Invalid instance template id');
-    }
+  let initMessage = {
+    content: initPrompt,
+    role: MessageRole.system,
+    name: 'system_prompt',
+  };
 
-    await db.instanceTemplate.update({
-      where: {
-        id: instanceTemplate.id,
-      },
-      data: {
-        plays: instanceTemplate.plays + 1,
-      },
-    });
-
-    // Narrator Personality Prompt
-    let initPrompt = instanceTemplate.narratorPersonality || defaultNarrator;
-
-    let initMessage = {
-      content: initPrompt,
-      role: MessageRole.system,
-      name: 'system_prompt',
-    };
-
-    instance = await db.instance.create({
-      data: {
-        user: {
-          connect: {
-            id: ws.data.webSocketToken?.userId!,
-          },
+  let instance = await db.instance.create({
+    data: {
+      user: {
+        connect: {
+          id: ws.data.webSocketToken?.userId!,
         },
-        template: {
-          connect: {
-            id: instanceTemplate.id,
-          },
-        },
-        narratorVoiceId: instanceTemplate.narratorVoiceId,
-        name: instanceTemplate.name,
-        messages: {
-          create: initMessage,
-        },
-        stage: InstanceStage.INIT_STORY_FINISH,
-        locked: true,
-        lockedAt: new Date(),
       },
-      include: {
-        messages: true,
+      name: request.data.description || 'Unnamed Story',
+      description: request.data.description,
+      narratorPrompt: request.data.narratorPrompt,
+      narratorVoiceId: request.data.narratorVoiceId,
+      storyOutline: request.data.storyOutline,
+      imageStyle: request.data.imageStyle,
+      messages: {
+        create: initMessage,
       },
-    });
+      stage: InstanceStage.INIT_STORY_FINISH,
+      locked: true,
+      lockedAt: new Date(),
+    },
+    include: {
+      messages: true,
+    },
+  });
 
-    console.log('[Debug] Created instance', instance);
+  subscribeUserToInstance(ws.data.webSocketToken?.userId!, instance.id);
 
-    subscribeUserToInstance(ws.data.webSocketToken?.userId!, instance.id);
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceStageChanged,
+    data: {
+      instanceId: instance.id,
+      stage: instance.stage,
+    },
+  });
 
-    sendToInstanceSubscribers(instance.id, {
-      type: StarlightWebSocketResponseType.instanceStageChanged,
-      data: {
-        instanceId: instance.id,
-        stage: instance.stage,
-      },
-    });
+  await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 
-    // Story Outline Prompt
-    if (instanceTemplate.storyOutline) {
-      let outlinePrompt = instanceTemplate.storyOutline;
+  await db.instance.update({
+    where: {
+      id: instance.id,
+    },
+    data: {
+      locked: false,
+      lockedAt: null,
+    },
+  });
 
-      let outlineMessage = {
-        content: outlinePrompt,
-        role: MessageRole.system,
-        name: 'story_outline',
-      };
-
-      instance = await db.instance.update({
-        where: {
-          id: instance.id,
-        },
-        data: {
-          messages: {
-            create: outlineMessage,
-          },
-          history: {
-            push: [instance.stage, InstanceStage.CREATE_OUTLINE_START],
-          },
-          stage: InstanceStage.CREATE_OUTLINE_FINISH,
-        },
-        include: {
-          messages: true,
-        },
-      });
-
-      sendToInstanceSubscribers(instance.id, {
-        type: StarlightWebSocketResponseType.instanceStageChanged,
-        data: {
-          instanceId: instance.id,
-          stage: instance.stage,
-        },
-      });
-
-      sendToInstanceSubscribers(instance.id, {
-        type: StarlightWebSocketResponseType.instanceCreated,
-        data: {
-          instanceId: instance.id,
-        },
-      });
-    }
-
-    console.log(`[Debug] Stepping instance ${instance.id} to ${InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH}`);
-
-    await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
-
-    await db.instance.update({
-      where: {
-        id: instance.id,
-      },
-      data: {
-        locked: false,
-        lockedAt: null,
-      },
-    });
-
-    sendToInstanceSubscribers(instance.id, {
-      type: StarlightWebSocketResponseType.instanceLockStatusChanged,
-      data: {
-        instanceId: instance.id,
-        locked: false,
-        lockedAt: null,
-      },
-    });
-  } else if (request.data.description) {
-    console.log('[Debug] Creating instance from description', request.data.description);
-
-    // Default Prompt
-    let initPrompt = defaultNarrator;
-
-    let initMessage = {
-      content: initPrompt,
-      role: MessageRole.system,
-      name: 'system_prompt',
-    };
-
-    instance = await db.instance.create({
-      data: {
-        user: {
-          connect: {
-            id: ws.data.webSocketToken?.userId!,
-          },
-        },
-        name: request.data.description,
-        description: request.data.description,
-        messages: {
-          create: initMessage,
-        },
-        stage: InstanceStage.INIT_STORY_FINISH,
-        locked: true,
-        lockedAt: new Date(),
-      },
-      include: {
-        messages: true,
-      },
-    });
-
-    console.log('[Debug] Created instance', instance);
-
-    subscribeUserToInstance(ws.data.webSocketToken?.userId!, instance.id);
-
-    sendToInstanceSubscribers(instance.id, {
-      type: StarlightWebSocketResponseType.instanceStageChanged,
-      data: {
-        instanceId: instance.id,
-        stage: instance.stage,
-      },
-    });
-
-    console.log(`[Debug] Stepping instance ${instance.id} to ${InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH}`);
-
-    await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
-
-    await db.instance.update({
-      where: {
-        id: instance.id,
-      },
-      data: {
-        locked: false,
-        lockedAt: null,
-      },
-    });
-
-    sendToInstanceSubscribers(instance.id, {
-      type: StarlightWebSocketResponseType.instanceLockStatusChanged,
-      data: {
-        instanceId: instance.id,
-        locked: false,
-        lockedAt: null,
-      },
-    });
-  } else {
-    console.error('Invalid request data for createInstanceHandler');
-    throw new Error('Invalid request data for createInstanceHandler');
-  }
+  sendToInstanceSubscribers(instance.id, {
+    type: StarlightWebSocketResponseType.instanceLockStatusChanged,
+    data: {
+      instanceId: instance.id,
+      locked: false,
+      lockedAt: null,
+    },
+  });
 }

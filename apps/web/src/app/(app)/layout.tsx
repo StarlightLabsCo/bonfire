@@ -1,11 +1,13 @@
-import { getCurrentUser } from '@/lib/session';
-import { Toaster } from '@/components/ui/toaster';
-import { Sidebar } from '@/components/sidebar/sidebar';
-import { OutOfCreditsDialog } from '@/components/dialog/outofcredits-dialog';
-import { Navigator } from '@/components/navigator';
-
 import db from '@/lib/db';
 import { Instance } from '@prisma/client';
+import { getCurrentUser } from '@/lib/session';
+
+import { Toaster } from '@/components/ui/toaster';
+import { Sidebar } from '@/components/sidebar/sidebar';
+import { Navigator } from '@/components/navigator';
+import { OpenSidebar } from '@/components/open-sidebar';
+
+import { OutOfCreditsDialog } from '@/components/dialog/outofcredits-dialog';
 import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
 import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
 import { StoreInitializer } from '@/components/store-initializer';
@@ -13,8 +15,9 @@ import { AnotherOpenTabDialog } from '@/components/dialog/another-open-tab-dialo
 import { DeleteInstanceDialog } from '@/components/dialog/delete-instance-dialog';
 import { SettingsDialog } from '@/components/dialog/settings-dialog';
 import { InstanceInfoDialog } from '@/components/dialog/instance-info-dialog';
-import { CreateScenarioDialog } from '@/components/dialog/create-scenario-dialog';
-import { OpenSidebar } from '@/components/open-sidebar';
+import { SetImageStyleDialog } from '@/components/dialog/set-image-style-dialog';
+import { SetStoryOutlineDialog } from '@/components/dialog/set-story-outline-dialog';
+import { SetNarratorDialog } from '@/components/dialog/set-narrator-dialog';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -37,7 +40,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {user && <OpenSidebar />}
       {children}
       <Toaster />
-      <CreateScenarioDialog />
+      <SetNarratorDialog />
+      <SetStoryOutlineDialog />
+      <SetImageStyleDialog />
       <ShareLinkDialog />
       <OutOfCreditsDialog />
       <StripeCheckoutDialog />

@@ -10,8 +10,8 @@ import { Button } from '../ui/button';
 import { StarlightWebSocketRequestType } from 'websocket';
 
 export function CreateScenarioDialog() {
-  const isCreateScenarioDialogOpen = useDialogStore((state) => state.isCreateScenarioDialogOpen);
-  const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
+  // const isCreateScenarioDialogOpen = useDialogStore((state) => state.isCreateScenarioDialogOpen);
+  // const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
 
   const [activeTab, setActiveTab] = useState('narrator');
 
@@ -21,7 +21,7 @@ export function CreateScenarioDialog() {
   const [style, setStyle] = useState('');
 
   return (
-    <Dialog open={isCreateScenarioDialogOpen} onOpenChange={setIsCreateScenarioDialogOpen}>
+    <Dialog open={false} onOpenChange={() => {}}>
       <DialogContent className="h-3/4 max-w-3xl flex flex-col">
         <DialogHeader>
           <DialogTitle>Create Scenario</DialogTitle>

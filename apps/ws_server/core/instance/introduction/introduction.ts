@@ -98,29 +98,8 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
 
       buffer += args;
       buffer = buffer.replace(/\\n/g, '\n');
-
-      // Remove the param key from the stream
-      if (
-        `{\n"story":"`.includes(buffer) ||
-        `{\n"story": "`.includes(buffer) ||
-        `{\n "story": "`.includes(buffer) ||
-        `{\n  "story": "`.includes(buffer) ||
-        `{"story": "`.includes(buffer) ||
-        `{"story":"`.includes(buffer) ||
-        `{ "story": "`.includes(buffer) ||
-        `{ "story":"`.includes(buffer)
-      ) {
-        continue;
-      }
-
-      if (args.includes('}')) {
-        continue;
-      }
-
-      content += args;
-      content = content.replace(/\\n/g, '\n');
-      content = content.replace(/\\"/g, '"');
-      content = content.replace(/\\'/g, "'");
+      buffer = buffer.replace(/\\"/g, '"');
+      buffer = buffer.replace(/\\'/g, "'");
 
       sendToInstanceSubscribers(updatedInstance.id, {
         type: StarlightWebSocketResponseType.messageUpsert,
@@ -128,7 +107,7 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
           instanceId: updatedInstance.id,
           message: {
             ...updatedInstance.messages[updatedInstance.messages.length - 1],
-            content,
+            content: buffer,
             updatedAt: new Date(),
           },
         },
@@ -152,8 +131,6 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
   buffer = buffer.replace(/\\n/g, '\n');
   buffer = buffer.replace(/\\"/g, '"');
   buffer = buffer.replace(/\\'/g, "'");
-  buffer = buffer.replace(new RegExp(`{\\s*"story"\\s*:\\s*"`, 'g'), '');
-  buffer = buffer.replace(/"\s*\}\s*$/, '');
 
   sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.messageReplace,

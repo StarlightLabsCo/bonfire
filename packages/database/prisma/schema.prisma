@@ -132,7 +132,7 @@ model Instance {
 
   name String
 
-  narratorPersonality String? 
+  narratorPrompt String? 
   narratorVoiceId String? 
 
   description String? // Description is what's given by quickstart

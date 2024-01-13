@@ -9,21 +9,22 @@ import { convertInstanceToChatCompletionMessageParams } from '../../src/utils';
 import { updateInstanceStage } from './utils';
 
 function generateUserMessageContent(imageStyle: string | null | undefined) {
-  const baseMessage = `Based on the story, pick the most interesting concept, or character from the most recent story addition and create a detailed image prompt to go with it. This could be a scene, a character, or an object. Avoid breaking the listener's immersion at all costs. If the person is talking to a character, make it a closeup of that character (or the main character talking to that character), but don't repeat a character more than once. If entering an indoor location, make it a scene of that location, etc.`;
+  const baseMessage = `Based on the story so far, pick the most interesting character, object or scene from the most recent story addition and create a detailed image prompt to go with it.
 
-  const styleMessage = imageStyle
-    ? `All images should be in this style:\n\n${imageStyle}`
-    : `If there are no prior images, pick an art style that would best accompany the story and the story's genre, and stick with it throughout.`;
+  If the person is talking to a character, make it a closeup of that character (or a wide shot of main character talking to that character), but don't repeat images of a character more than once.
+  If entering an indoor location, make it a scene of that location, etc.
+  If the most interesting thing is an object, make it a closeup of that object.
+  If the most interesting thing is a scene, make it a wide shot of that scene.
 
-  const endMessage = `Make it epic! We want to create jaw-dropping images to bring the story to life.
-
-  It is vital that you maintain world, character, and style consistency. Reference past images and expand the prompt as much as possible to ensure the images present a cohesive story. Do not create repetitive images.
+  It is vital that you maintain world, character, and style consistency. Reference past images to extract the most important details in maintaining a cohesive story.
 
   Only output the prompt as it will be feed directly to the image generation AI.`;
 
-  const message = `${baseMessage}\n\n${styleMessage}\n\n${endMessage}`;
+  const styleMessage = imageStyle
+    ? `The generated image prompt must result in an image with this style. This is a hard requrement. Address it first so the image generator will priortize it properly: ${imageStyle}`
+    : `Pick an art style that would best accompany the story and the story's genre.`;
 
-  console.log(`[Debug] Generated user message content: ${message}`);
+  const message = `${baseMessage}\n\n${styleMessage}`;
 
   return message;
 }
@@ -54,21 +55,11 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     })
     .filter((message) => message.role != 'function');
 
-  let imageStyle: string | null | undefined;
-  if (updatedInstance.templateId) {
-    const template = await db.instanceTemplate.findUnique({
-      where: {
-        id: updatedInstance.templateId,
-      },
-    });
-    imageStyle = template?.imageStyle;
-  }
-
   modifiedMessages = [
     ...(modifiedMessages as any),
     {
       role: 'user',
-      content: generateUserMessageContent(imageStyle),
+      content: generateUserMessageContent(instance.imageStyle),
     },
   ];
 
@@ -87,6 +78,8 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
   logNonStreamedOpenAIResponse(instance.userId, modifiedMessages as ChatCompletionMessageParam[], response, endTime - startTime);
 
   // Step 2 - Use DALL-E to generate an image that matches the art style of the story for a new concept
+  console.log('Prompt:', response.choices[0].message.content);
+
   const imageResponse = await openai.images.generate({
     model: 'dall-e-3',
     prompt: response.choices[0].message.content,
@@ -94,6 +87,8 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     size: '1792x1024',
     quality: 'hd',
   });
+
+  console.log('Generated image prompt:', imageResponse.data[0].revised_prompt);
 
   const imageURL = imageResponse.data[0].url!;
 

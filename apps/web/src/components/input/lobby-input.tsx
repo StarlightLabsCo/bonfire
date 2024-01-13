@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useAdventureSuggestionsStore } from '@/stores/adventure-suggestions-store';
 import { StarlightWebSocketRequestType } from 'websocket';
 import { useWebsocketStore } from '@/stores/websocket-store';
+import { useLobbyStore } from '@/stores/lobby-store';
 
 interface LobbyInputProps {
   submitted: boolean;
@@ -14,22 +15,15 @@ interface LobbyInputProps {
 }
 
 export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputProps) {
-  const [description, setDescription] = useState('');
-
-  const sendToServer = useWebsocketStore((state) => state.sendToServer);
   const socketState = useWebsocketStore((state) => state.socketState);
 
+  const description = useLobbyStore((state) => state.description);
+  const setDescription = useLobbyStore((state) => state.setDescription);
+
+  const sendToServer = useWebsocketStore((state) => state.sendToServer);
   const adventureSuggestions = useAdventureSuggestionsStore((state) => state.adventureSuggestions);
 
-  const createInstance = (description: string) => {
-    sendToServer({
-      type: StarlightWebSocketRequestType.createInstance,
-      data: {
-        description,
-        instanceTemplateId: null,
-      },
-    });
-  };
+  const createInstance = useLobbyStore((state) => state.createInstance);
 
   const submit = (description: string) => {
     setSubmitted && setSubmitted(true);

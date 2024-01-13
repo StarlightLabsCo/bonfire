@@ -21,8 +21,14 @@ type DialogState = {
   isInstanceInfoDialogOpen: boolean;
   setIsInstanceInfoDialogOpen: (open: boolean) => void;
 
-  isCreateScenarioDialogOpen: boolean;
-  setIsCreateScenarioDialogOpen: (open: boolean) => void;
+  isSetNarratorDialogOpen: boolean;
+  setIsSetNarratorDialogOpen: (open: boolean) => void;
+
+  isSetStoryOutlineDialogOpen: boolean;
+  setIsSetStoryOutlineDialogOpen: (open: boolean) => void;
+
+  isSetImageStyleDialogOpen: boolean;
+  setIsSetImageStyleDialogOpen: (open: boolean) => void;
 };
 
 export const useDialogStore = create<DialogState>((set) => ({
@@ -44,6 +50,12 @@ export const useDialogStore = create<DialogState>((set) => ({
   isInstanceInfoDialogOpen: false,
   setIsInstanceInfoDialogOpen: (open) => set(() => ({ isInstanceInfoDialogOpen: open })),
 
-  isCreateScenarioDialogOpen: false,
-  setIsCreateScenarioDialogOpen: (open) => set(() => ({ isCreateScenarioDialogOpen: open })),
+  isSetNarratorDialogOpen: false,
+  setIsSetNarratorDialogOpen: (open) => set(() => ({ isSetNarratorDialogOpen: open })),
+
+  isSetStoryOutlineDialogOpen: false,
+  setIsSetStoryOutlineDialogOpen: (open) => set(() => ({ isSetStoryOutlineDialogOpen: open })),
+
+  isSetImageStyleDialogOpen: false,
+  setIsSetImageStyleDialogOpen: (open) => set(() => ({ isSetImageStyleDialogOpen: open })),
 }));
