@@ -32,7 +32,6 @@
     "@vercel/speed-insights": "^1.0.1",
     "cmdk": "^0.2.0",
     "database": "workspace:*",
-    "embla-carousel-react": "^8.0.0-rc18",
     "eslint-config-custom": "workspace:*",
     "lucide-react": "^0.309.0",
     "million": "^2.6.4",
