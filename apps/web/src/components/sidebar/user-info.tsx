@@ -13,8 +13,6 @@ import { useEffect, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useStripeStore } from '@/stores/stripe-store';
 import { useDialogStore } from '@/stores/dialog-store';
-import { useWebsocketStore } from '@/stores/websocket-store';
-import { StarlightWebSocketRequestType } from 'websocket';
 
 export function UserInfo({
   user,
@@ -37,10 +35,6 @@ export function UserInfo({
   const createCheckoutSession = useStripeStore((state) => state.createCheckoutSession);
   const createPortalSession = useStripeStore((state) => state.createPortalSession);
   const setIsSettingsDialogOpen = useDialogStore((state) => state.setIsSettingsDialogOpen);
-
-  // TODO: Remove these.
-  const setIsCreateScenarioDialogOpen = useDialogStore((state) => state.setIsCreateScenarioDialogOpen);
-  // TODO END
 
   useEffect(() => {
     async function getStripeSubscriptionStatus() {
@@ -70,12 +64,6 @@ export function UserInfo({
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger />
         <DropdownMenuContent className="w-56">
-          {/* DEBUG. TODO: Remove. */}
-          <DropdownMenuLabel>Debug</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setIsCreateScenarioDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
-            <Icons.gear className="mr-2 h-3 w-3" />
-            Create Scenario
-          </DropdownMenuItem>
           <DropdownMenuLabel>Community</DropdownMenuLabel>
           <DropdownMenuGroup>
             <DropdownMenuItem
