@@ -17,7 +17,9 @@ export function SetStoryOutlineDialog() {
       <DialogContent className="h-[100dvh] md:h-3/4 max-w-3xl flex flex-col">
         <DialogHeader>
           <DialogTitle>Story Outline</DialogTitle>
-          <DialogDescription>Write a brief outline of the story. Give specific characters, and plot points.</DialogDescription>
+          <DialogDescription>
+            Write a brief outline of the story. Give specific details about characters, locations, and events.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col w-full h-full gap-y-5 mt-2">
