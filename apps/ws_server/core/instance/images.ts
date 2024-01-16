@@ -89,6 +89,7 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
   });
 
   console.log('Generated image prompt:', imageResponse.data[0].revised_prompt);
+  console.log('Generated image:', imageResponse.data[0].url!);
 
   const imageURL = imageResponse.data[0].url!;
 

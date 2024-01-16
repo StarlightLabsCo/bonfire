@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "openai": "4.24.2",
-    "@aws-sdk/client-s3": "latest"
+    "@aws-sdk/client-s3": "latest",
+    "database": "workspace:*"
   }
 }
