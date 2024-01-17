@@ -48,9 +48,13 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
     setCurrentStageProgress(0);
 
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({
-        behavior: 'smooth',
-      });
+      setTimeout(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollIntoView({
+            behavior: 'smooth',
+          });
+        }
+      }, 250);
     }
 
     sendToServer({

@@ -238,6 +238,7 @@ export function Story({
               </div>
             </>
           )}
+          <div className="h-16" />
           <div ref={scrollRef} />
         </div>
       </div>
