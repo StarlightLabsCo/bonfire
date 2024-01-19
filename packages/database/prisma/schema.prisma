@@ -134,6 +134,7 @@ model Instance {
 
   narratorPrompt String? 
   narratorVoiceId String? 
+  narratorResponseLength Int @default(5) // number of sentences
 
   description String? // Description is what's given by quickstart
   storyOutline String? // Story Outline is defined by the user if they want to use it

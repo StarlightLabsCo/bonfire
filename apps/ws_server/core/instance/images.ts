@@ -78,8 +78,6 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
   logNonStreamedOpenAIResponse(instance.userId, modifiedMessages as ChatCompletionMessageParam[], response, endTime - startTime);
 
   // Step 2 - Use DALL-E to generate an image that matches the art style of the story for a new concept
-  console.log('Prompt:', response.choices[0].message.content);
-
   const imageResponse = await openai.images.generate({
     model: 'dall-e-3',
     prompt: response.choices[0].message.content,
@@ -87,9 +85,6 @@ export async function createImage(instance: Instance & { messages: Message[] }) 
     size: '1792x1024',
     quality: 'hd',
   });
-
-  console.log('Generated image prompt:', imageResponse.data[0].revised_prompt);
-  console.log('Generated image:', imageResponse.data[0].url!);
 
   const imageURL = imageResponse.data[0].url!;
 

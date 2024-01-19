@@ -50,7 +50,8 @@ export type CreateInstanceRequest = GenericStarlightWebSocketRequest<StarlightWe
 export type CreateInstanceData = {
   description: string | null;
   narratorPrompt: string | null;
-  narratorVoiceId: string | null;
+  narratorVoiceId: string;
+  narratorResponseLength: number;
   storyOutline: string | null;
   imageStyle: string | null;
 };

@@ -5,6 +5,7 @@ import { appendToSpeechStream, endSpeechStream, initSpeechStreamConnection } fro
 import { sendToInstanceSubscribers } from '../../../src/connection';
 import { StarlightWebSocketResponseType } from 'websocket/types';
 import { convertInstanceToChatCompletionMessageParams } from '../../../src/utils';
+import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
 export async function introduceStory(instance: Instance & { messages: Message[] }) {
   const messages = convertInstanceToChatCompletionMessageParams(instance);
@@ -58,23 +59,24 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
     await initSpeechStreamConnection(updatedInstance.id);
   }
 
+  const instructionMessage = {
+    role: 'user',
+    content: `Given the story outline, create a hook to the beginning of this text-adventure game. Remember that the player has no prior information so make sure to introduce anything you mention. Vibrantly show the setting & characters. If the player hasn't met a character yet, they won't know who they are. End with a clear decision point for the player, which should not be explicitly described. Do not break the 4th wall, or ask the player to make a choice.
+
+    Be concrete and avoid vaguness. Do not refer to fate, or destiny. Do not foreshadow any future events under any circumstances. Do not prescribe actions or thoughts to the player, as this removes their agency.
+
+    Lean towards a hyper-detailed play-by-play telling of events.
+
+    Do not under any circumstances ask any questions to the player e.g. \"Will you accept this quest?\", "Will you tempt fate?". Only output the story.
+
+    Keep it concsise and punchy! Your response MUST be ${instance.narratorResponseLength} sentence${
+      instance.narratorResponseLength > 1 ? 's' : ''
+    } long. Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!`,
+  } as ChatCompletionMessageParam;
+
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
-    messages: [
-      ...messages,
-      {
-        role: 'user',
-        content: `Given the story outline, create a hook to the beginning of this text-adventure game. Remember that the player has no prior information so make sure to introduce anything you mention. Vibrantly show the setting & characters. If the player hasn't met a character yet, they won't know who they are. End with a clear decision point for the player, which should not be explicitly described. Do not break the 4th wall, or ask the player to make a choice.
-
-        Be concrete and avoid vaguness. Do not refer to fate, or destiny. Do not foreshadow any future events under any circumstances. Do not prescribe actions or thoughts to the player, as this removes their agency.
-
-        Lean towards a hyper-detailed play-by-play telling of events.
-
-        Do not under any circumstances ask any questions to the player e.g. \"Will you accept this quest?\", "Will you tempt fate?". Only output the story.
-
-        Keep it concsise and punchy! DO NOT under any circumstance exceed 5 sentences (although you may use newlines). Most importantly, be creative, and create an introduction that wows the player and makes it unthinkable not to play further!`,
-      },
-    ],
+    messages: [...messages, instructionMessage],
     model: 'gpt-4-32k-0613',
     stream: true,
   });

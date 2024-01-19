@@ -33,6 +33,7 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
       description: request.data.description,
       narratorPrompt: request.data.narratorPrompt,
       narratorVoiceId: request.data.narratorVoiceId,
+      narratorResponseLength: request.data.narratorResponseLength,
       storyOutline: request.data.storyOutline,
       imageStyle: request.data.imageStyle,
       messages: {
