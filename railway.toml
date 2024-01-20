@@ -10,4 +10,4 @@ restartPolicyMaxRetries = 10
 numReplicas = 1
 
 [environments.staging.deploy]
-numReplicas = 1
+numReplicas = 2

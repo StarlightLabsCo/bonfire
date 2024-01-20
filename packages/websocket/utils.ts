@@ -1,5 +1,6 @@
-import { requestTypeToSchema, responseTypeToSchema } from 'websocket/schema';
+import { InterReplicaMessageZodSchema, requestTypeToSchema, responseTypeToSchema } from 'websocket/schema';
 import {
+  InterReplicaMessage,
   StarlightWebSocketRequest,
   StarlightWebSocketRequestType,
   StarlightWebSocketResponse,
@@ -54,4 +55,17 @@ export function validateResponse(message: string | Buffer) {
   }
 
   return result.data as StarlightWebSocketResponse;
+}
+
+export function validateInterReplicaMessage(message: string | Buffer) {
+  const rawMessage = JSON.parse(message.toString());
+
+  const result = InterReplicaMessageZodSchema.safeParse(rawMessage);
+
+  if (!result.success) {
+    console.error('Invalid message data:', result.error);
+    return;
+  }
+
+  return result.data as InterReplicaMessage;
 }

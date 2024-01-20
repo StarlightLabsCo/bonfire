@@ -1,11 +1,11 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '.';
-import { redis } from '../services/redis';
-import { StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
-import { validateResponse } from 'websocket/utils';
+import { redis, redisSubscriber } from '../services/redis';
+import { InterReplicaMessage, StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
+import { validateInterReplicaMessage, validateResponse } from 'websocket/utils';
 
 // This map maintains the most updated websocket for each user. Stored as a map of userId-connectionId to websocket
-const userIdToWebSocket: Record<string, ServerWebSocket<WebSocketData>> = {};
+export const userIdToWebSocket: Record<string, ServerWebSocket<WebSocketData>> = {};
 
 export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData>) {
   const userId = ws.data.webSocketToken!.userId!;
@@ -35,17 +35,30 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 }
 
 // *** User ***
-export function sendToUser(userId: string, data: StarlightWebSocketResponse) {
+export function sendToUser(userId: string, data: StarlightWebSocketResponse, broadcastIfNoWebsocket = true) {
   const websocket = userIdToWebSocket[userId];
 
   if (typeof websocket === 'undefined') {
-    console.log(`No websocket found for user ${userId}`);
+    console.log(`No websocket found on this replica for this user ${userId}`);
+
+    if (broadcastIfNoWebsocket) {
+      // If we don't have the websocket on this replica, publish the message to redis for other replicas to try
+      console.log(`Could not find websocket for user (${userId}). Publishing message to redis for other replicas to try`);
+
+      redis.publish(
+        'inter-replica-messages',
+        JSON.stringify({
+          userId,
+          data,
+        } as InterReplicaMessage),
+      );
+    }
+
     return;
   }
 
   if (websocket.readyState !== 1) {
-    console.log('Websocket found but not open, queueing message');
-    redis.rpush(websocket.data.connectionId!, JSON.stringify(data));
+    console.log(`Websocket for user ${userId} is not open`);
     return;
   }
 
@@ -55,6 +68,17 @@ export function sendToUser(userId: string, data: StarlightWebSocketResponse) {
     redis.rpush(websocket.data.connectionId!, JSON.stringify(data));
   }
 }
+
+// ** Forwarded User Message (from another replica) **
+redisSubscriber.on('message', (channel, message) => {
+  const validatedMessage = validateInterReplicaMessage(message);
+  if (!validatedMessage) return;
+
+  console.log(`Received message from another replica for user ${validatedMessage.userId}, attempting to send`);
+  const { userId, data } = validatedMessage;
+
+  sendToUser(userId, data, false);
+});
 
 // *** Instance Publish / Subscribe ***
 export async function subscribeUserToInstance(userId: string, instanceId: string) {

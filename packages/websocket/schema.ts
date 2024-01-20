@@ -387,3 +387,31 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.heartbeatServerRequest]: HeartbeatServerRequestZodSchema,
   [Types.StarlightWebSocketResponseType.heartbeatServerResponse]: HeartbeatServerResponseZodSchema,
 };
+
+// ** --------------------------------- Inter Replica Message Zod Schema --------------------------------- **
+const AllResponsesZodSchema = z.union([
+  AdventureSuggestionsCreatedResponseZodSchema,
+  InstanceCreatedResponseZodSchema,
+  InstanceLockStatusChangedResponseZodSchema,
+  InstanceSubscriptionStatusResponseZodSchema,
+  InstanceStageChangedResponseZodSchema,
+  MessageAddedResponseZodSchema,
+  MessageReplaceResponseZodSchema,
+  MessageUpsertResponseZodSchema,
+  MessageDeletedResponseZodSchema,
+  AudioCreatedResponseZodSchema,
+  AudioTimingsCreatedResponseZodSchema,
+  VoiceTranscriptionProcessedResponseZodSchema,
+  OutOfCreditsResponseZodSchema,
+  AnotherOpenTabResponseZodSchema,
+  ErrorResponseZodSchema,
+  HeartbeatServerRequestZodSchema,
+  HeartbeatServerResponseZodSchema,
+]);
+
+export const InterReplicaMessageZodSchema: z.ZodType<Types.InterReplicaMessage> = z
+  .object({
+    userId: z.string(),
+    data: AllResponsesZodSchema,
+  })
+  .strict();

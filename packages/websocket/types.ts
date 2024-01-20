@@ -354,3 +354,9 @@ export type HeartbeatServerResponseData = {
   timestamp: number;
   receivedTimestamp: number;
 };
+
+// ** --------------------------------- Intranetwork Redis Message --------------------------------- **
+export type InterReplicaMessage = {
+  userId: string;
+  data: StarlightWebSocketResponse;
+};
