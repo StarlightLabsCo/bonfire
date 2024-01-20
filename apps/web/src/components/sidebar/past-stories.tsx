@@ -8,6 +8,7 @@ import { useSidebarStore } from '@/stores/sidebar-store';
 import { Icons } from '@/components/icons';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export function PastStories({ instances, className }: { instances: Instance[]; className?: string }) {
   const pathname = usePathname();
@@ -25,18 +26,17 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
     }
   };
 
-  const isClient = typeof window !== 'undefined';
-  const isDesktop = isClient && window.innerWidth >= 768;
-  const isMobile = isClient && window.innerWidth < 768;
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 768);
+  }, []);
 
   return (
     <div
       className={cn(
         'w-full grow px-2 flex flex-col',
-        {
-          'overflow-y-hidden hover:overflow-y-scroll': isDesktop,
-          'overflow-y-scroll': isMobile,
-        },
+        isDesktop ? 'overflow-y-hidden hover:overflow-y-scroll' : 'overflow-y-scroll',
         className,
       )}
     >
