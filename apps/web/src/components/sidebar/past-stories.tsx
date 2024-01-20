@@ -26,7 +26,12 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
   };
 
   return (
-    <div className={cn('w-full grow px-2 flex flex-col overflow-y-scroll', className)}>
+    <div
+      className={cn('w-full grow px-2 flex flex-col', className, {
+        'overflow-y-hidden hover:overflow-y-scroll': window.innerWidth >= 768,
+        'overflow-y-scroll': window.innerWidth < 768,
+      })}
+    >
       <div className="text-xs p-2">Past Stories</div>
       <div className="flex flex-col gap-y-2">
         {instances.map((instance, index) => {
