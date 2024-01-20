@@ -25,12 +25,20 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
     }
   };
 
+  const isClient = typeof window !== 'undefined';
+  const isDesktop = isClient && window.innerWidth >= 768;
+  const isMobile = isClient && window.innerWidth < 768;
+
   return (
     <div
-      className={cn('w-full grow px-2 flex flex-col', className, {
-        'overflow-y-hidden hover:overflow-y-scroll': window.innerWidth >= 768,
-        'overflow-y-scroll': window.innerWidth < 768,
-      })}
+      className={cn(
+        'w-full grow px-2 flex flex-col',
+        {
+          'overflow-y-hidden hover:overflow-y-scroll': isDesktop,
+          'overflow-y-scroll': isMobile,
+        },
+        className,
+      )}
     >
       <div className="text-xs p-2">Past Stories</div>
       <div className="flex flex-col gap-y-2">
