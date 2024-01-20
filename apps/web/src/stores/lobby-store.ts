@@ -1,6 +1,6 @@
 import { CreateInstanceRequest, StarlightWebSocketRequestType } from 'websocket';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { useWebsocketStore } from './websocket-store';
 
 type LobbyStore = {
@@ -58,7 +58,7 @@ export const useLobbyStore = create<LobbyStore>()(
     }),
     {
       name: 'lobby-store', // unique name for local storage key
-      getStorage: () => localStorage, // specify local storage as the storage option
+      storage: createJSONStorage(() => localStorage), // specify local storage as the storage option
     },
   ),
 );
