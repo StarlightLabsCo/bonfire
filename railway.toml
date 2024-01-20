@@ -7,7 +7,7 @@ restartPolicyType = "ALWAYS"
 restartPolicyMaxRetries = 10
 
 [environments.production.deploy]
-numReplicas = 1
+numReplicas = 5
 
 [environments.staging.deploy]
 numReplicas = 2
