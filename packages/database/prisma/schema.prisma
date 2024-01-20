@@ -76,6 +76,7 @@ model User {
 
   // Core
   instances Instance[]
+  sharedInstances Instance[] @relation("sharedInstances") // instances that are shared with this user - multiplayer
 
   // Logging / Dataset Collection
   openAIRequestLog     OpenAIRequestLog[]
@@ -129,6 +130,8 @@ model Instance {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  players User[] @relation("sharedInstances") // allows owner to share with other users - multiplayer
 
   name String @default("Untitled Instance")
 
