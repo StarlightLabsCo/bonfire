@@ -405,6 +405,7 @@ const AllResponsesZodSchema = z.union([
   InstanceCreatedResponseZodSchema,
   InstanceLockStatusChangedResponseZodSchema,
   InstanceSubscriptionStatusResponseZodSchema,
+  InstanceConnectedUsersStatusResponseZodSchema,
   InstanceStageChangedResponseZodSchema,
   MessageAddedResponseZodSchema,
   MessageReplaceResponseZodSchema,
