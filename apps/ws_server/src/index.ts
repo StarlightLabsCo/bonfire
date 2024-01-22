@@ -9,7 +9,7 @@ import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'w
 import { validateRequest } from 'websocket/utils';
 
 import { handlers } from '../handlers';
-import { handleWebsocketConnected, handleWebsocketDisconnected, sendToWebsocket, unsubscribeWebsocketFromInstance } from './connection';
+import { handleWebsocketConnected, handleWebsocketDisconnected, sendToWebsocket } from './connection';
 import { clearHeartbeat, heartbeatClientRequestHandler, heartbeatClientResponseHandler, setupHeartbeat } from './heartbeat';
 
 export type WebSocketData = {

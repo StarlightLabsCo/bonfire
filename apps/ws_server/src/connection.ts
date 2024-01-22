@@ -27,7 +27,7 @@ export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData
 }
 
 export async function handleWebsocketDisconnected(ws: ServerWebSocket<WebSocketData>) {
-  for (const instanceId of ws.data.subscribedInstanceIds) {
+  for (const instanceId of Array.from(ws.data.subscribedInstanceIds)) {
     unsubscribeWebsocketFromInstance(ws.data.connectionId!, instanceId);
   }
 
@@ -84,6 +84,11 @@ redisSubscriber.on('message', (channel, message) => {
 export async function subscribeWebsocketToInstance(connectionId: string, instanceId: string) {
   await redis.sadd(`instanceSubscriptions:${instanceId}`, connectionId);
 
+  const websocket = websocketMap.get(connectionId);
+  if (websocket) {
+    websocket.data.subscribedInstanceIds.push(instanceId);
+  }
+
   sendToWebsocket(connectionId, {
     type: StarlightWebSocketResponseType.instanceSubscriptionStatus,
     data: {
@@ -97,6 +102,11 @@ export async function subscribeWebsocketToInstance(connectionId: string, instanc
 
 export async function unsubscribeWebsocketFromInstance(connectionId: string, instanceId: string) {
   await redis.srem(`instanceSubscriptions:${instanceId}`, connectionId);
+
+  const websocket = websocketMap.get(connectionId);
+  if (websocket) {
+    websocket.data.subscribedInstanceIds = websocket.data.subscribedInstanceIds.filter((id) => id !== instanceId);
+  }
 
   sendToWebsocket(connectionId, {
     type: StarlightWebSocketResponseType.instanceSubscriptionStatus,
