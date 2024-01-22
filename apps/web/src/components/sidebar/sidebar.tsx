@@ -13,6 +13,7 @@ import { Icons } from '../icons';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useDialogStore } from '@/stores/dialog-store';
+import { ConnectedUsersMobile } from '../connected-users-mobile';
 
 export function Sidebar({
   user,
@@ -92,11 +93,14 @@ export function Sidebar({
         <div className="h-10 grow flex items-center justify-center font-sans">
           {/* TODO: title could go here -  make it so it reflects current instance */}
         </div>
-        {instanceId && (
-          <button className="h-10 flex-shrink-0  w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
-            <Icons.share />
-          </button>
-        )}
+        <div className="flex items-center">
+          <ConnectedUsersMobile userId={user.id} />
+          {instanceId && (
+            <button className="h-10 flex-shrink-0 w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
+              <Icons.share />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Desktop */}

@@ -150,6 +150,7 @@ export type StarlightWebSocketResponse =
   | InstanceCreatedResponse
   | InstanceLockStatusChangedResponse
   | InstanceSubscriptionStatusResponse
+  | InstanceConnectedUsersStatusResponse
   | InstanceStageChangedResponse
   | MessageAddedResponse
   | MessageReplaceResponse
@@ -174,6 +175,7 @@ export enum StarlightWebSocketResponseType {
   instanceCreated,
   instanceLockStatusChanged,
   instanceSubscriptionStatus,
+  instanceConnectedUsersStatus,
   instanceStageChanged,
   messageAdded,
   messageReplace,
@@ -230,6 +232,21 @@ export type InstanceSubscriptionStatusResponse = GenericStarlightWebSocketRespon
 export type InstanceSubscriptionStatusData = {
   instanceId: string;
   subscribed: boolean;
+};
+
+// Instance Connected Users Status
+export type InstanceConnectedUsersStatusResponse = GenericStarlightWebSocketResponse<
+  StarlightWebSocketResponseType.instanceConnectedUsersStatus,
+  InstanceConnectedUsersStatusData
+>;
+
+export type InstanceConnectedUsersStatusData = {
+  instanceId: string;
+  connectedUsers: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  }[];
 };
 
 // Instance Stage Changed

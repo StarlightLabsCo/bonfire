@@ -1,4 +1,4 @@
-import { StarlightWebSocketResponseType } from 'websocket';
+import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket';
 import { handleHeartbeatRequest } from './heartbeat/heartbeatServerRequest';
 import { handleHeartbeatResponse } from './heartbeat/heartbeatServerResponse';
 import { handleAdventureSuggestionsCreated } from './lobby/adventureSuggestionsCreated';
@@ -8,6 +8,7 @@ import { handleVoiceTranscriptionProcessed } from './audio/voiceTranscriptionPro
 import { handleInstanceCreated } from './instance/instanceCreated';
 import { handleInstanceLockStatusChanged } from './instance/instanceLockStatusChanged';
 import { handleInstanceSubscriptionStatus } from './instance/instanceSubscriptionStatus';
+import { handleInstanceConnectedUsersStatus } from './instance/instanceConnectedUsersStatus';
 import { handleInstanceStageChanged } from './instance/instanceStageChanged';
 import { handleMessageAdded } from './message/messageAdded';
 import { handleMessageUpsert } from './message/messageUpsert';
@@ -25,6 +26,7 @@ export const handlers = {
   [StarlightWebSocketResponseType.instanceCreated]: handleInstanceCreated,
   [StarlightWebSocketResponseType.instanceLockStatusChanged]: handleInstanceLockStatusChanged,
   [StarlightWebSocketResponseType.instanceSubscriptionStatus]: handleInstanceSubscriptionStatus,
+  [StarlightWebSocketResponseType.instanceConnectedUsersStatus]: handleInstanceConnectedUsersStatus,
   [StarlightWebSocketResponseType.instanceStageChanged]: handleInstanceStageChanged,
   [StarlightWebSocketResponseType.messageAdded]: handleMessageAdded,
   [StarlightWebSocketResponseType.messageReplace]: handleMessageReplace,

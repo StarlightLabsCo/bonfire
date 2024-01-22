@@ -3,6 +3,7 @@ import { WebSocketData } from '.';
 import { redis, redisSubscriber } from '../services/redis';
 import { InterReplicaMessage, StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateInterReplicaMessage, validateResponse } from 'websocket/utils';
+import { db } from '../services/db';
 
 // This map maintains the most updated websocket for each user. Stored as a map of userId-connectionId to websocket
 export const userIdToWebSocket: Record<string, ServerWebSocket<WebSocketData>> = {};
@@ -91,6 +92,8 @@ export async function subscribeUserToInstance(userId: string, instanceId: string
       subscribed: true,
     },
   });
+
+  updateInstanceConnectedUsersStatus(instanceId);
 }
 
 export async function unsubscribeUserFromInstance(userId: string, instanceId: string) {
@@ -101,6 +104,34 @@ export async function unsubscribeUserFromInstance(userId: string, instanceId: st
     data: {
       instanceId,
       subscribed: false,
+    },
+  });
+
+  updateInstanceConnectedUsersStatus(instanceId);
+}
+
+async function updateInstanceConnectedUsersStatus(instanceId: string) {
+  const subscribedIds = await redis.smembers(`instanceSubscriptions:${instanceId}`);
+  if (!subscribedIds || subscribedIds.length === 0) return;
+
+  const connectedUsers = await db.user.findMany({
+    where: {
+      id: {
+        in: subscribedIds,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+    },
+  });
+
+  sendToInstanceSubscribers(instanceId, {
+    type: StarlightWebSocketResponseType.instanceConnectedUsersStatus,
+    data: {
+      instanceId,
+      connectedUsers,
     },
   });
 }
