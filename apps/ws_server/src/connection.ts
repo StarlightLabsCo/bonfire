@@ -82,10 +82,13 @@ redisSubscriber.on('message', (channel, message) => {
 
 // *** Instance Publish / Subscribe ***
 export async function subscribeWebsocketToInstance(connectionId: string, instanceId: string) {
+  console.log(`[Debug] Subscribing connection ${connectionId} to instance ${instanceId}`);
+
   await redis.sadd(`instanceSubscriptions:${instanceId}`, connectionId);
 
   const websocket = websocketMap.get(connectionId);
   if (websocket) {
+    console.log(`[Debug] Adding instance ${instanceId} to subscribedInstanceIds for connection ${connectionId}`);
     websocket.data.subscribedInstanceIds.push(instanceId);
   }
 
@@ -101,10 +104,13 @@ export async function subscribeWebsocketToInstance(connectionId: string, instanc
 }
 
 export async function unsubscribeWebsocketFromInstance(connectionId: string, instanceId: string) {
+  console.log(`[Debug] Unsubscribing connection ${connectionId} from instance ${instanceId}`);
+
   await redis.srem(`instanceSubscriptions:${instanceId}`, connectionId);
 
   const websocket = websocketMap.get(connectionId);
   if (websocket) {
+    console.log(`[Debug] Removing instance ${instanceId} from subscribedInstanceIds for connection ${connectionId}`);
     websocket.data.subscribedInstanceIds = websocket.data.subscribedInstanceIds.filter((id) => id !== instanceId);
   }
 
@@ -120,6 +126,8 @@ export async function unsubscribeWebsocketFromInstance(connectionId: string, ins
 }
 
 async function updateInstanceConnectedUsersStatus(instanceId: string) {
+  console.log(`[Debug] Updating instance connected users status for instance: ${instanceId}`);
+
   const connectionIds = await redis.smembers(`instanceSubscriptions:${instanceId}`); // Get all the connectionIds subscribed to this instance
   if (!connectionIds || connectionIds.length === 0) return;
 
