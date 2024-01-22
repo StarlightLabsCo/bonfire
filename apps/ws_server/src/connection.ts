@@ -113,8 +113,7 @@ async function updateInstanceConnectedUsersStatus(instanceId: string) {
   const connectionIds = await redis.smembers(`instanceSubscriptions:${instanceId}`); // Get all the connectionIds subscribed to this instance
   if (!connectionIds || connectionIds.length === 0) return;
 
-  const websockets = connectionIds.map((id) => websocketMap.get(id)).filter((ws) => ws !== undefined); // Get all the websockets for those connectionIds
-  const userIds = websockets.map((ws) => ws!.data.webSocketToken!.userId); // Get all the userIds for those websockets
+  const userIds = connectionIds.map((connectionId) => connectionId.split('-')[0]); // Get all the userIds from the connectionIds
 
   const connectedUsers = await db.user.findMany({
     where: {
