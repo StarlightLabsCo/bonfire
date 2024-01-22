@@ -84,7 +84,8 @@ redisSubscriber.on('message', (channel, message) => {
 export async function subscribeWebsocketToInstance(connectionId: string, instanceId: string) {
   console.log(`[Debug] Subscribing connection ${connectionId} to instance ${instanceId}`);
 
-  await redis.sadd(`instanceSubscriptions:${instanceId}`, connectionId);
+  const result = await redis.sadd(`instanceSubscriptions:${instanceId}`, connectionId);
+  console.log(`[Debug] Redis added ${result} number of items to instanceSubscriptions:${instanceId}`);
 
   const websocket = websocketMap.get(connectionId);
   if (websocket) {
@@ -106,7 +107,8 @@ export async function subscribeWebsocketToInstance(connectionId: string, instanc
 export async function unsubscribeWebsocketFromInstance(connectionId: string, instanceId: string) {
   console.log(`[Debug] Unsubscribing connection ${connectionId} from instance ${instanceId}`);
 
-  await redis.srem(`instanceSubscriptions:${instanceId}`, connectionId);
+  const result = await redis.srem(`instanceSubscriptions:${instanceId}`, connectionId);
+  console.log(`[Debug] Redis removed ${result} number of items from instanceSubscriptions:${instanceId}`);
 
   const websocket = websocketMap.get(connectionId);
   if (websocket) {
