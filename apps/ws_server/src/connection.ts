@@ -124,6 +124,11 @@ export async function unsubscribeWebsocketFromInstance(connectionId: string, ins
     },
   });
 
+  const connectionIds = await redis.smembers(`instanceSubscriptions:${instanceId}`);
+  if (!connectionIds || connectionIds.length === 0) {
+    await redis.del(`instanceSubscriptions:${instanceId}`);
+  }
+
   updateInstanceConnectedUsersStatus(instanceId);
 }
 
