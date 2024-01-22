@@ -3,7 +3,7 @@ import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../../services/db';
 import { InstanceStage } from 'database';
-import { sendToInstanceSubscribers, sendToUser } from '../../src/connection';
+import { sendToInstanceSubscribers, sendToWebsocket } from '../../src/connection';
 
 export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.undoMessage) {
@@ -27,7 +27,7 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
   });
 
   if (!instance) {
-    sendToUser(ws.data.webSocketToken!.userId, {
+    sendToWebsocket(ws.data.connectionId!, {
       type: StarlightWebSocketResponseType.error,
       data: {
         message: `Instance ${instanceId} not found`,

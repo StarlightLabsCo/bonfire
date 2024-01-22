@@ -16,8 +16,6 @@ type WebsocketStore = {
   heartbeat: NodeJS.Timeout | null;
   isAlive: boolean;
 
-  disconnectedByServer: boolean;
-
   sendToServer: (request: StarlightWebSocketRequest) => void;
 };
 
@@ -160,23 +158,19 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
         });
       }
 
-      if (!get().disconnectedByServer) {
-        setTimeout(() => {
-          set({ exponentialBackoff: get().exponentialBackoff * 2 });
-          get().connect();
-        }, get().exponentialBackoff);
-      }
+      setTimeout(() => {
+        set({ exponentialBackoff: get().exponentialBackoff * 2 });
+        get().connect();
+      }, get().exponentialBackoff);
     });
   } catch (error) {
     console.error('Error in connecting to WebSocket:', error);
     Sentry.captureException(error);
 
-    if (!get().disconnectedByServer) {
-      setTimeout(() => {
-        set({ exponentialBackoff: get().exponentialBackoff * 2 });
-        get().connect();
-      }, get().exponentialBackoff);
-    }
+    setTimeout(() => {
+      set({ exponentialBackoff: get().exponentialBackoff * 2 });
+      get().connect();
+    }, get().exponentialBackoff);
   }
 }
 

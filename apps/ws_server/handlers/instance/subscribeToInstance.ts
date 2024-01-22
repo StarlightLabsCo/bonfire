@@ -1,7 +1,7 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser, subscribeUserToInstance } from '../../src/connection';
+import { sendToWebsocket, subscribeWebsocketToInstance } from '../../src/connection';
 import { db } from '../../services/db';
 
 export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
@@ -18,7 +18,7 @@ export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketDa
   });
 
   if (!instance) {
-    sendToUser(ws.data.webSocketToken!.userId, {
+    sendToWebsocket(ws.data.connectionId!, {
       type: StarlightWebSocketResponseType.error,
       data: {
         message: `Instance ${instanceId} not found`,
@@ -28,7 +28,7 @@ export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketDa
   }
 
   if (instance.userId !== ws.data.webSocketToken!.userId && !instance.public) {
-    sendToUser(ws.data.webSocketToken!.userId, {
+    sendToWebsocket(ws.data.connectionId!, {
       type: StarlightWebSocketResponseType.error,
       data: {
         message: `Instance ${instanceId} not found`, // Don't leak that the instance exists
@@ -37,5 +37,5 @@ export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketDa
     throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to subscribe from this instance ${instanceId}`);
   }
 
-  subscribeUserToInstance(ws.data.webSocketToken!.userId, request.data.instanceId);
+  subscribeWebsocketToInstance(ws.data.connectionId!, request.data.instanceId);
 }

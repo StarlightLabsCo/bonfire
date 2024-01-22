@@ -9,9 +9,6 @@ type DialogState = {
   isCreditsDialogOpen: boolean;
   setIsCreditsDialogOpen: (open: boolean) => void;
 
-  isAnotherOpenTabDialogOpen: boolean;
-  setIsAnotherOpenTabDialogOpen: (open: boolean) => void;
-
   isDeleteInstanceDialogOpen: boolean;
   setIsDeleteInstanceDialogOpen: (open: boolean) => void;
 
@@ -37,9 +34,6 @@ export const useDialogStore = create<DialogState>((set) => ({
 
   isCreditsDialogOpen: false,
   setIsCreditsDialogOpen: (open) => set(() => ({ isCreditsDialogOpen: open })),
-
-  isAnotherOpenTabDialogOpen: false,
-  setIsAnotherOpenTabDialogOpen: (open) => set(() => ({ isAnotherOpenTabDialogOpen: open })),
 
   isDeleteInstanceDialogOpen: false,
   setIsDeleteInstanceDialogOpen: (open) => set(() => ({ isDeleteInstanceDialogOpen: open })),

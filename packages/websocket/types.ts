@@ -160,7 +160,6 @@ export type StarlightWebSocketResponse =
   | AudioTimingsCreatedResponse
   | VoiceTranscriptionProcessedResponse
   | OutOfCreditsResponse
-  | AnotherOpenTabResponse
   | ErrorResponse
   | HeartbeatServerRequest
   | HeartbeatServerResponse;
@@ -185,7 +184,6 @@ export enum StarlightWebSocketResponseType {
   audioTimingsCreated,
   voiceTranscriptionProcessed,
   outOfCredits,
-  anotherOpenTab,
   error,
   heartbeatServerRequest,
   heartbeatServerResponse,
@@ -339,11 +337,6 @@ export type OutOfCreditsResponse = GenericStarlightWebSocketResponse<StarlightWe
 
 export type OutOfCreditsData = {};
 
-// Another Open Tab
-export type AnotherOpenTabResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.anotherOpenTab, AnotherOpenTabData>;
-
-export type AnotherOpenTabData = {};
-
 // Error
 export type ErrorResponse = GenericStarlightWebSocketResponse<StarlightWebSocketResponseType.error, ErrorData>;
 
@@ -374,6 +367,6 @@ export type HeartbeatServerResponseData = {
 
 // ** --------------------------------- Intranetwork Redis Message --------------------------------- **
 export type InterReplicaMessage = {
-  userId: string;
+  connectionId: string;
   data: StarlightWebSocketResponse;
 };

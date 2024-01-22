@@ -15,7 +15,6 @@ import { handleMessageUpsert } from './message/messageUpsert';
 import { handleMessageReplace } from './message/messageReplace';
 import { handleMessageDeleted } from './message/messageDeleted';
 import { handleOutOfCredits } from './outOfCredits';
-import { handleAnotherOpenTab } from './anotherOpenTab';
 import { handleError } from './error';
 
 export const handlers = {
@@ -36,6 +35,5 @@ export const handlers = {
   [StarlightWebSocketResponseType.audioTimingsCreated]: handleAudioTimingsCreated,
   [StarlightWebSocketResponseType.voiceTranscriptionProcessed]: handleVoiceTranscriptionProcessed,
   [StarlightWebSocketResponseType.outOfCredits]: handleOutOfCredits,
-  [StarlightWebSocketResponseType.anotherOpenTab]: handleAnotherOpenTab,
   [StarlightWebSocketResponseType.error]: handleError,
 };

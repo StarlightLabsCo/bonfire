@@ -8,8 +8,8 @@ import { db } from '../services/db';
 import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateRequest } from 'websocket/utils';
 
-import { handleWebsocketConnected, sendToUser } from './connection';
 import { handlers } from '../handlers';
+import { handleWebsocketConnected, handleWebsocketDisconnected, sendToWebsocket, unsubscribeWebsocketFromInstance } from './connection';
 import { clearHeartbeat, heartbeatClientRequestHandler, heartbeatClientResponseHandler, setupHeartbeat } from './heartbeat';
 
 export type WebSocketData = {
@@ -20,6 +20,9 @@ export type WebSocketData = {
   // User data
   webSocketToken: WebSocketAuthenticationToken | null;
   connectionId: string | null; // userId-connectionIdFromClient
+
+  // Instance data
+  subscribedInstanceIds: string[];
 };
 
 const server = Bun.serve<WebSocketData>({
@@ -61,6 +64,7 @@ const server = Bun.serve<WebSocketData>({
         isAlive: true,
         webSocketToken: webSocketToken,
         connectionId: `${webSocketToken.userId}-${connectionId}`,
+        subscribedInstanceIds: [],
       },
     });
 
@@ -94,7 +98,7 @@ const server = Bun.serve<WebSocketData>({
 
       if (!handler) {
         console.error('No handler found for ' + request.type);
-        return sendToUser(ws.data.webSocketToken!.userId, {
+        return sendToWebsocket(ws.data.connectionId!, {
           type: StarlightWebSocketResponseType.error,
           data: {
             message: 'Invalid request.',
@@ -106,7 +110,7 @@ const server = Bun.serve<WebSocketData>({
         await handler(ws, request);
       } catch (error) {
         console.error('Error handling request: ', error);
-        sendToUser(ws.data.webSocketToken!.userId, {
+        sendToWebsocket(ws.data.connectionId!, {
           type: StarlightWebSocketResponseType.error,
           data: {
             message: 'Error handling request. Please try again.',
@@ -116,7 +120,7 @@ const server = Bun.serve<WebSocketData>({
     },
 
     async close(ws) {
-      console.log('Websocket closed. ', ws.data.connectionId);
+      console.log('Websocket closed. Connection Id:', ws.data.connectionId);
 
       await db.webSocketAuthenticationToken.delete({
         where: {
@@ -125,6 +129,7 @@ const server = Bun.serve<WebSocketData>({
       });
 
       clearHeartbeat(ws);
+      handleWebsocketDisconnected(ws);
     },
   },
 });

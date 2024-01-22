@@ -59,16 +59,15 @@ export const InstanceStageToError = {
   // Introduction sequence
   [InstanceStage.CREATE_OUTLINE_START]: InstanceStage.CREATE_OUTLINE_ERROR,
   [InstanceStage.INTRODUCE_STORY_START]: InstanceStage.INTRODUCE_STORY_ERROR,
-  [InstanceStage.CREATE_IMAGE_START]: InstanceStage.CREATE_IMAGE_ERROR,
 
   // Action sequence
   [InstanceStage.ROLL_DICE_START]: InstanceStage.ROLL_DICE_ERROR,
   [InstanceStage.NARRATOR_REACTION_START]: InstanceStage.NARRATOR_REACTION_ERROR,
   [InstanceStage.NARRATOR_PLANNING_START]: InstanceStage.NARRATOR_PLANNING_ERROR,
   [InstanceStage.CONTINUE_STORY_START]: InstanceStage.CONTINUE_STORY_ERROR,
-  [InstanceStage.CREATE_IMAGE_START]: InstanceStage.CREATE_IMAGE_ERROR,
 
   // Shared
+  [InstanceStage.CREATE_IMAGE_START]: InstanceStage.CREATE_IMAGE_ERROR,
   [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: InstanceStage.GENERATE_ACTION_SUGGESTIONS_ERROR,
 
   // Database couldn't transition to start state (try again)

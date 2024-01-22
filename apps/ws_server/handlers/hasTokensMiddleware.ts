@@ -2,11 +2,9 @@ import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
 import { StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../services/db';
-import { sendToUser } from '../src/connection';
+import { sendToWebsocket } from '../src/connection';
 
-export function hasTokensMiddleware(
-  handler: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void,
-) {
+export function hasTokensMiddleware(handler: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void) {
   return async (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => {
     // TODO: optimize
     /*
@@ -40,7 +38,8 @@ export function hasTokensMiddleware(
 
       if (tokens._sum.totalTokens && tokens._sum.totalTokens > 100000) {
         console.log(`[hasTokensMiddleware] Sending out of credits message...`);
-        sendToUser(user.id, {
+
+        sendToWebsocket(ws.data.connectionId!, {
           type: StarlightWebSocketResponseType.outOfCredits,
           data: {},
         });

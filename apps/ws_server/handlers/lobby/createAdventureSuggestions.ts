@@ -4,14 +4,12 @@ import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websoc
 import { db } from '../../services/db';
 import { generateAdventureSuggestions } from '../../core/lobby/adventures';
 
-export async function createAdventureSuggestionsHandler(
-  ws: ServerWebSocket<WebSocketData>,
-  request: StarlightWebSocketRequest,
-) {
+export async function createAdventureSuggestionsHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {
   if (request.type !== StarlightWebSocketRequestType.createAdventureSuggestions) {
     throw new Error('Invalid request type for createAdventureSuggestionsHandler');
   }
 
+  const connectionId = ws.data.connectionId!;
   const userId = ws.data.webSocketToken?.userId!;
 
   const instances = await db.instance.findMany({
@@ -23,5 +21,5 @@ export async function createAdventureSuggestionsHandler(
     },
   });
 
-  await generateAdventureSuggestions(userId, instances);
+  await generateAdventureSuggestions(userId, connectionId, instances);
 }

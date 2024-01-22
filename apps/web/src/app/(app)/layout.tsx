@@ -11,7 +11,6 @@ import { OutOfCreditsDialog } from '@/components/dialog/outofcredits-dialog';
 import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
 import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
 import { StoreInitializer } from '@/components/store-initializer';
-import { AnotherOpenTabDialog } from '@/components/dialog/another-open-tab-dialog';
 import { DeleteInstanceDialog } from '@/components/dialog/delete-instance-dialog';
 import { SettingsDialog } from '@/components/dialog/settings-dialog';
 import { InstanceInfoDialog } from '@/components/dialog/instance-info-dialog';
@@ -46,7 +45,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <ShareLinkDialog />
       <OutOfCreditsDialog />
       <StripeCheckoutDialog />
-      <AnotherOpenTabDialog />
       <InstanceInfoDialog />
       <DeleteInstanceDialog />
       <SettingsDialog />

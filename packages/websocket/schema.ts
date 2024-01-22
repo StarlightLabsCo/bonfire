@@ -325,13 +325,6 @@ export const OutOfCreditsResponseZodSchema: z.ZodType<Types.OutOfCreditsResponse
   })
   .strict();
 
-export const AnotherOpenTabResponseZodSchema: z.ZodType<Types.AnotherOpenTabResponse> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketResponseType.anotherOpenTab),
-    data: z.object({}).strict(),
-  })
-  .strict();
-
 export const ErrorResponseZodSchema: z.ZodType<Types.ErrorResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.error),
@@ -401,7 +394,6 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.audioTimingsCreated]: AudioTimingsCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed]: VoiceTranscriptionProcessedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.outOfCredits]: OutOfCreditsResponseZodSchema,
-  [Types.StarlightWebSocketResponseType.anotherOpenTab]: AnotherOpenTabResponseZodSchema,
   [Types.StarlightWebSocketResponseType.error]: ErrorResponseZodSchema,
   [Types.StarlightWebSocketResponseType.heartbeatServerRequest]: HeartbeatServerRequestZodSchema,
   [Types.StarlightWebSocketResponseType.heartbeatServerResponse]: HeartbeatServerResponseZodSchema,
@@ -422,7 +414,6 @@ const AllResponsesZodSchema = z.union([
   AudioTimingsCreatedResponseZodSchema,
   VoiceTranscriptionProcessedResponseZodSchema,
   OutOfCreditsResponseZodSchema,
-  AnotherOpenTabResponseZodSchema,
   ErrorResponseZodSchema,
   HeartbeatServerRequestZodSchema,
   HeartbeatServerResponseZodSchema,
@@ -430,7 +421,7 @@ const AllResponsesZodSchema = z.union([
 
 export const InterReplicaMessageZodSchema: z.ZodType<Types.InterReplicaMessage> = z
   .object({
-    userId: z.string(),
+    connectionId: z.string(),
     data: AllResponsesZodSchema,
   })
   .strict();

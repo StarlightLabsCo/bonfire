@@ -2,7 +2,7 @@ import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
 import { StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../services/db';
-import { sendToInstanceSubscribers, sendToUser } from '../src/connection';
+import { sendToInstanceSubscribers, sendToWebsocket } from '../src/connection';
 
 const LOCK_TIMEOUT = 60 * 1000 * 5; // 5 minutes
 
@@ -46,7 +46,7 @@ export function withInstanceLock(
       await handler(ws, request);
     } catch (error) {
       console.error('Error handling request: ', error);
-      sendToUser(ws.data.webSocketToken!.userId, {
+      sendToWebsocket(ws.data.connectionId!, {
         type: StarlightWebSocketResponseType.error,
         data: {
           message: 'Error handling request. Please try again.',

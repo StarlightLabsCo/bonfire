@@ -1,7 +1,7 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser } from '../../src/connection';
+import { sendToWebsocket } from '../../src/connection';
 import { db } from '../../services/db';
 import { stepInstanceUntil } from '../../core/instance/stateMachine';
 import { InstanceStage } from 'database';
@@ -28,7 +28,7 @@ export async function resumeInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
   });
 
   if (!instance) {
-    sendToUser(ws.data.webSocketToken!.userId, {
+    sendToWebsocket(ws.data.connectionId!, {
       type: StarlightWebSocketResponseType.error,
       data: {
         message: `Instance ${instanceId} not found`,

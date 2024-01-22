@@ -1,10 +1,10 @@
 import { logNonStreamedOpenAIResponse, openai } from '../../services/openai';
 import { StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToUser } from '../../src/connection';
+import { sendToWebsocket } from '../../src/connection';
 import { Instance } from 'database';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
-export async function generateAdventureSuggestions(userId: string, instances: Instance[]) {
+export async function generateAdventureSuggestions(userId: string, connectionId: string, instances: Instance[]) {
   const messages = [
     {
       role: 'system',
@@ -63,7 +63,7 @@ export async function generateAdventureSuggestions(userId: string, instances: In
   const args = response.choices[0].message.tool_calls[0].function.arguments;
   const argsJSON = JSON.parse(args);
 
-  sendToUser(userId, {
+  sendToWebsocket(connectionId, {
     type: StarlightWebSocketResponseType.adventureSuggestionsCreated,
     data: {
       suggestions: argsJSON.new_adventure_suggestions,
