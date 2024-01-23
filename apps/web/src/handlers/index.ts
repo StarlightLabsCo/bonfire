@@ -1,10 +1,9 @@
-import { StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket';
+import { StarlightWebSocketResponseType } from 'websocket';
 import { handleHeartbeatRequest } from './heartbeat/heartbeatServerRequest';
 import { handleHeartbeatResponse } from './heartbeat/heartbeatServerResponse';
 import { handleAdventureSuggestionsCreated } from './lobby/adventureSuggestionsCreated';
 import { handleAudioCreated } from './audio/audioCreated';
 import { handleAudioTimingsCreated } from './audio/audioTimingsCreated';
-import { handleVoiceTranscriptionProcessed } from './audio/voiceTranscriptionProcessed';
 import { handleInstanceCreated } from './instance/instanceCreated';
 import { handleInstanceLockStatusChanged } from './instance/instanceLockStatusChanged';
 import { handleInstanceSubscriptionStatus } from './instance/instanceSubscriptionStatus';
@@ -33,7 +32,6 @@ export const handlers = {
   [StarlightWebSocketResponseType.messageDeleted]: handleMessageDeleted,
   [StarlightWebSocketResponseType.audioCreated]: handleAudioCreated,
   [StarlightWebSocketResponseType.audioTimingsCreated]: handleAudioTimingsCreated,
-  [StarlightWebSocketResponseType.voiceTranscriptionProcessed]: handleVoiceTranscriptionProcessed,
   [StarlightWebSocketResponseType.outOfCredits]: handleOutOfCredits,
   [StarlightWebSocketResponseType.error]: handleError,
 };

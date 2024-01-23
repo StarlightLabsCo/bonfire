@@ -5,7 +5,6 @@ import { setupAudio } from '@/lib/audio';
 import { clearBufferedPlayerNodeBuffer } from '@/lib/audio/playback';
 import { AudioWordTimings, StarlightWebSocketRequestType, StopAudioRequest } from 'websocket/types';
 import { useWebsocketStore } from '../websocket-store';
-import { useTranscriptionStore } from './transcription-store';
 
 type PlaybackStore = {
   audioContext: AudioContext | null;
@@ -77,8 +76,6 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => {
       const { audioContext, bufferedPlayerNode, gainNode, volume } = await setupAudio();
 
       set({ audioContext, bufferedPlayerNode, gainNode, volume });
-
-      useTranscriptionStore.getState().setupAudioRecorder();
     },
   };
 });

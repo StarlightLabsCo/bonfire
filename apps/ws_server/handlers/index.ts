@@ -6,8 +6,6 @@ import { withInstanceLock } from './withInstanceLock';
 import { hasTokensMiddleware } from './hasTokensMiddleware';
 
 import { stopAudioHandler } from './audio/stopAudio';
-import { processVoiceTranscriptionHandler } from './audio/processVoiceTranscription';
-import { finishVoiceTranscriptionHandler } from './audio/finishVoiceTranscription';
 
 import { createAdventureSuggestionsHandler } from './lobby/createAdventureSuggestions';
 import { createInstanceHandler } from './instance/createInstance';
@@ -28,8 +26,6 @@ export const handlers: {
   // *** Paid requests ***
   [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokensMiddleware(createAdventureSuggestionsHandler),
   [StarlightWebSocketRequestType.createInstance]: hasTokensMiddleware(createInstanceHandler),
-  [StarlightWebSocketRequestType.processVoiceTranscription]: hasTokensMiddleware(processVoiceTranscriptionHandler),
-  [StarlightWebSocketRequestType.finishVoiceTranscription]: hasTokensMiddleware(finishVoiceTranscriptionHandler),
 
   [StarlightWebSocketRequestType.addPlayerMessage]: withInstanceLock(hasTokensMiddleware(addPlayerMessageHandler)),
   [StarlightWebSocketRequestType.undoMessage]: withInstanceLock(hasTokensMiddleware(undoMessageHandler)),

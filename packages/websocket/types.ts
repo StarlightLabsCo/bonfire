@@ -11,8 +11,6 @@ export type StarlightWebSocketRequest =
   | AddPlayerMessageRequest
   | UndoMessageRequest
   | StopAudioRequest
-  | ProcessVoiceTranscriptionRequest
-  | FinishVoiceTranscriptionRequest
   | HeartbeatClientRequest
   | HeartbeatClientResponse;
 
@@ -30,8 +28,6 @@ export enum StarlightWebSocketRequestType {
   addPlayerMessage,
   undoMessage,
   stopAudio,
-  processVoiceTranscription,
-  finishVoiceTranscription,
   heartbeatClientRequest,
   heartbeatClientResponse,
 }
@@ -105,23 +101,6 @@ export type UndoMessageData = {
 export type StopAudioRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.stopAudio, StopAudioData>;
 
 export type StopAudioData = {};
-
-// Process Voice Transcription
-export type ProcessVoiceTranscriptionRequest = GenericStarlightWebSocketRequest<
-  StarlightWebSocketRequestType.processVoiceTranscription,
-  ProcessVoiceTranscriptionData
->;
-
-export type ProcessVoiceTranscriptionData = {
-  audio: string; // base64 encoded audio
-};
-
-export type FinishVoiceTranscriptionRequest = GenericStarlightWebSocketRequest<
-  StarlightWebSocketRequestType.finishVoiceTranscription,
-  FinishVoiceTranscriptionData
->;
-
-export type FinishVoiceTranscriptionData = {};
 
 // Heartbeat Client Request
 export type HeartbeatClientRequest = GenericStarlightWebSocketRequest<

@@ -107,24 +107,6 @@ export const StopAudioRequestZodSchema: z.ZodType<Types.StopAudioRequest> = z
   })
   .strict();
 
-export const ProcessVoiceTranscriptionRequestZodSchema: z.ZodType<Types.ProcessVoiceTranscriptionRequest> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketRequestType.processVoiceTranscription),
-    data: z
-      .object({
-        audio: z.string(), // base64 encoded audio
-      })
-      .strict(),
-  })
-  .strict();
-
-export const FinishVoiceTranscriptionRequestZodSchema: z.ZodType<Types.FinishVoiceTranscriptionRequest> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketRequestType.finishVoiceTranscription),
-    data: z.object({}).strict(),
-  })
-  .strict();
-
 export const HeartbeatClientRequestZodSchema: z.ZodType<Types.HeartbeatClientRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.heartbeatClientRequest),
@@ -371,8 +353,6 @@ export const requestTypeToSchema: {
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.stopAudio]: StopAudioRequestZodSchema,
-  [Types.StarlightWebSocketRequestType.processVoiceTranscription]: ProcessVoiceTranscriptionRequestZodSchema,
-  [Types.StarlightWebSocketRequestType.finishVoiceTranscription]: FinishVoiceTranscriptionRequestZodSchema,
   [Types.StarlightWebSocketRequestType.heartbeatClientRequest]: HeartbeatClientRequestZodSchema,
   [Types.StarlightWebSocketRequestType.heartbeatClientResponse]: HeartbeatClientResponseZodSchema,
 };

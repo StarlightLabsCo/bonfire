@@ -2,14 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { User } from 'next-auth';
-import { OpenSidebar } from '../open-sidebar';
 import { LobbyInput } from '../input/lobby-input';
 import { cn } from '@/lib/utils';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
-import { useWebsocketStore } from '@/stores/websocket-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
-import { useTranscriptionStore } from '@/stores/audio/transcription-store';
 import { Icons } from '../icons';
 import { useDialogStore } from '@/stores/dialog-store';
 import { useLobbyStore } from '@/stores/lobby-store';
@@ -56,7 +53,6 @@ export function Lobby({
   const setDescription = useLobbyStore((state) => state.setDescription);
   const setMessages = useMessagesStore((state) => state.setMessages);
   const clearAudio = usePlaybackStore((state) => state.clearAudio);
-  const setTranscription = useTranscriptionStore((state) => state.setTranscription);
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
 
   const [submitted, setSubmitted] = useState(false);
@@ -68,10 +64,8 @@ export function Lobby({
 
   // clear messages and transcription on each lobby load
   useEffect(() => {
-    console.log(`[Lobby] Clearing messages and transcription`);
     setDescription('');
     setMessages([]);
-    setTranscription('');
     clearAudio();
     setInstanceId(null);
   }, []);
