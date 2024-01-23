@@ -178,19 +178,21 @@ export const InstanceSubscriptionStatusResponseZodSchema: z.ZodType<Types.Instan
   })
   .strict();
 
+export const InstanceConnectedUserZodSchema: z.ZodType<Types.InstanceConnectedUser> = z
+  .object({
+    id: z.string(),
+    name: z.string().nullable(),
+    image: z.string().nullable(),
+  })
+  .strict();
+
 export const InstanceConnectedUsersStatusResponseZodSchema: z.ZodType<Types.InstanceConnectedUsersStatusResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.instanceConnectedUsersStatus),
     data: z
       .object({
         instanceId: z.string(),
-        connectedUsers: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string().nullable(),
-            image: z.string().nullable(),
-          }),
-        ),
+        connectedUsers: z.array(InstanceConnectedUserZodSchema),
       })
       .strict(),
   })

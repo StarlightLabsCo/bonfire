@@ -13,6 +13,16 @@ export async function GET(request: Request, { params }: { params: { id: string }
     where: {
       id: params.id,
     },
+    include: {
+      players: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
+      },
+    },
   });
 
   if (!instance) {

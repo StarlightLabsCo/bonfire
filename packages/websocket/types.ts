@@ -217,13 +217,15 @@ export type InstanceConnectedUsersStatusResponse = GenericStarlightWebSocketResp
   InstanceConnectedUsersStatusData
 >;
 
+export type InstanceConnectedUser = {
+  id: string;
+  name: string | null;
+  image: string | null;
+};
+
 export type InstanceConnectedUsersStatusData = {
   instanceId: string;
-  connectedUsers: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  }[];
+  connectedUsers: InstanceConnectedUser[];
 };
 
 // Instance Stage Changed

@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { useWebsocketStore } from './websocket-store';
-import { StarlightWebSocketRequestType } from 'websocket';
+import { InstanceConnectedUser, StarlightWebSocketRequestType } from 'websocket';
 import { InstanceStage } from 'database';
 
 type CurrentInstanceStore = {
@@ -10,11 +10,7 @@ type CurrentInstanceStore = {
   locked: boolean;
   lockedAt: Date | null;
   subscribed: boolean;
-  connectedUsers: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  }[];
+  connectedUsers: InstanceConnectedUser[];
   stage: InstanceStage | null;
   setInstanceId: (instanceId: string | null) => void;
   setLocked: (locked: boolean) => void;
