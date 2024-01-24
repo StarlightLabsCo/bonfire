@@ -31,7 +31,11 @@ export function Story({
   user: {
     id: string;
   } & User;
-  instance: Instance;
+  instance: Instance & {
+    players: {
+      id: string;
+    }[];
+  };
   dbMessages: Message[];
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -143,6 +147,9 @@ export function Story({
   }, [wordTimings, audioStartTime]);
 
   const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
+  const isOwner = user && instance && user.id === instance.userId;
+  const isPlayer = user && instance && instance.players.find((p) => user.id === p.id);
+
   return (
     <div className="flex flex-col items-center w-full mx-auto h-[100dvh] relative">
       <div
@@ -242,7 +249,7 @@ export function Story({
           <div ref={scrollRef} />
         </div>
       </div>
-      {user && user.id === instance.userId && <StoryInput instance={instance} scrollRef={scrollRef} />}
+      {user && (isOwner || isPlayer) && <StoryInput instance={instance} scrollRef={scrollRef} canShare={isOwner} />}
     </div>
   );
 }

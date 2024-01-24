@@ -16,7 +16,6 @@ export async function resumeInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
   const instance = await db.instance.findUnique({
     where: {
       id: instanceId,
-      userId: ws.data.webSocketToken!.userId,
     },
     include: {
       messages: {
@@ -24,17 +23,16 @@ export async function resumeInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
           createdAt: 'asc',
         },
       },
+      players: true,
     },
   });
 
   if (!instance) {
-    sendToWebsocket(ws.data.connectionId!, {
-      type: StarlightWebSocketResponseType.error,
-      data: {
-        message: `Instance ${instanceId} not found`,
-      },
-    });
     throw new Error('No instance found');
+  }
+
+  if (instance.userId !== ws.data.webSocketToken!.userId && !instance.players.find((p) => p.id === ws.data.webSocketToken!.userId)) {
+    throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to resume this instance ${instanceId}`);
   }
 
   await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);

@@ -38,6 +38,13 @@ export default async function Instance({ params }: { params: { id: string } }) {
     where: {
       id: params.id,
     },
+    include: {
+      players: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
 
   if (!instance) {
@@ -45,7 +52,7 @@ export default async function Instance({ params }: { params: { id: string } }) {
   }
 
   const user = await getCurrentUser();
-  if (!instance.public && (!user || user.id !== instance.userId)) {
+  if (!instance.public && (!user || user.id !== instance.userId) && !instance.players.find((p) => p.id === user?.id)) {
     redirect('/');
   }
 

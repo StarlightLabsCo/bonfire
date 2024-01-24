@@ -45,13 +45,7 @@ export function withInstanceLock(
     try {
       await handler(ws, request);
     } catch (error) {
-      console.error('Error handling request: ', error);
-      sendToWebsocket(ws.data.connectionId!, {
-        type: StarlightWebSocketResponseType.error,
-        data: {
-          message: 'Error handling request. Please try again.',
-        },
-      });
+      throw error; // we have an error handler at the top level that will handle this
     } finally {
       await db.instance.update({ where: { id: instanceId }, data: { locked: false, lockedAt: null } });
 

@@ -15,7 +15,6 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
   const instance = await db.instance.findUnique({
     where: {
       id: instanceId,
-      userId: ws.data.webSocketToken!.userId,
     },
     include: {
       messages: {
@@ -23,17 +22,16 @@ export async function undoMessageHandler(ws: ServerWebSocket<WebSocketData>, req
           createdAt: 'desc',
         },
       },
+      players: true,
     },
   });
 
   if (!instance) {
-    sendToWebsocket(ws.data.connectionId!, {
-      type: StarlightWebSocketResponseType.error,
-      data: {
-        message: `Instance ${instanceId} not found`,
-      },
-    });
     throw new Error('No instance found');
+  }
+
+  if (instance.userId !== ws.data.webSocketToken!.userId && !instance.players.find((p) => p.id === ws.data.webSocketToken!.userId)) {
+    throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to undo this instance ${instanceId}`);
   }
 
   // Find the most recent ADD_PLAYER_MESSAGE_FINISH message

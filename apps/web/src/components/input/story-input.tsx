@@ -16,10 +16,11 @@ import { Button, UndoButton, ShareButton, RetryButton, ProgressButton } from './
 interface StoryInputProps {
   instance: Instance;
   scrollRef: React.RefObject<HTMLDivElement>;
+  canShare: boolean;
   className?: string;
 }
 
-export function StoryInput({ instance, scrollRef, className }: StoryInputProps) {
+export function StoryInput({ instance, scrollRef, canShare, className }: StoryInputProps) {
   const socketState = useWebsocketStore((state) => state.socketState);
   const sendToServer = useWebsocketStore((state) => state.sendToServer);
 
@@ -148,7 +149,7 @@ export function StoryInput({ instance, scrollRef, className }: StoryInputProps) 
           <div className="hidden md:flex gap-x-2 items-center h-full">
             {error && <RetryButton />}
             {messages.some((message) => message.role === MessageRole.user) && !locked && !error && <UndoButton className="fade-in-2s" />}
-            <ShareButton />
+            {canShare && <ShareButton />}
           </div>
         </div>
         <div className="flex gap-x-2 items-center md:block">

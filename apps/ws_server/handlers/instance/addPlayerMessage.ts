@@ -1,10 +1,6 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
-import {
-  StarlightWebSocketRequest,
-  StarlightWebSocketRequestType,
-  StarlightWebSocketResponseType,
-} from 'websocket/types';
+import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
 import { db } from '../../services/db';
 import { InstanceStage, MessageRole } from 'database';
 import { sendToInstanceSubscribers } from '../../src/connection';
@@ -20,7 +16,6 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
   let instance = await db.instance.findUnique({
     where: {
       id: instanceId,
-      userId: ws.data.webSocketToken?.userId!,
       stage: InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH,
     },
     include: {
@@ -29,6 +24,7 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
           createdAt: 'asc',
         },
       },
+      players: true,
     },
   });
 
@@ -36,7 +32,11 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     throw new Error('Instance not found'); // either the instance doesn't exist, or the user doesn't own it, or it's not in the right stage
   }
 
-  instance = await db.instance.update({
+  if (!(instance.userId === ws.data.webSocketToken?.userId) && !instance.players.find((p) => p.id === ws.data.webSocketToken?.userId)) {
+    throw new Error('User is not a player in this instance');
+  }
+
+  let updatedInstance = await db.instance.update({
     where: {
       id: instanceId,
     },
@@ -61,13 +61,13 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     },
   });
 
-  sendToInstanceSubscribers(instance.id, {
+  sendToInstanceSubscribers(updatedInstance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId,
-      message: instance.messages[instance.messages.length - 1],
+      message: updatedInstance.messages[updatedInstance.messages.length - 1],
     },
   });
 
-  await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
+  await stepInstanceUntil(updatedInstance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 }

@@ -15,25 +15,20 @@ export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketDa
     where: {
       id: instanceId,
     },
+    include: {
+      players: true,
+    },
   });
 
   if (!instance) {
-    sendToWebsocket(ws.data.connectionId!, {
-      type: StarlightWebSocketResponseType.error,
-      data: {
-        message: `Instance ${instanceId} not found`,
-      },
-    });
     throw new Error('No instance found');
   }
 
-  if (instance.userId !== ws.data.webSocketToken!.userId && !instance.public) {
-    sendToWebsocket(ws.data.connectionId!, {
-      type: StarlightWebSocketResponseType.error,
-      data: {
-        message: `Instance ${instanceId} not found`, // Don't leak that the instance exists
-      },
-    });
+  if (
+    instance.userId !== ws.data.webSocketToken!.userId &&
+    !instance.public &&
+    !instance.players.find((p) => p.id === ws.data.webSocketToken!.userId)
+  ) {
     throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to subscribe from this instance ${instanceId}`);
   }
 
