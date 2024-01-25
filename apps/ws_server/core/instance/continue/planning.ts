@@ -20,7 +20,7 @@ export async function narratorPlanning(instance: Instance & { messages: Message[
   const planningStartTime = Date.now();
   const planningResponse = await openai.chat.completions.create({
     messages: planningMessages,
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4-turbo-preview',
     tools: [
       {
         type: 'function',

@@ -44,7 +44,7 @@ export async function createOutline(instance: Instance & { messages: Message[] }
         Keep it concise, but detailed! This outline should not be longer than a few sentences.`,
       },
     ],
-    model: 'gpt-4-32k-0613',
+    model: 'gpt-4-turbo-preview',
   });
   const endTime = Date.now();
 

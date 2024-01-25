@@ -78,7 +78,7 @@ export async function continueStory(instance: Instance & { messages: Message[] }
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: [...messages, instructionMessage],
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4-turbo-preview',
     stream: true,
   });
 

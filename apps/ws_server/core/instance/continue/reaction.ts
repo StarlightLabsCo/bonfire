@@ -19,7 +19,7 @@ export async function narratorReaction(instance: Instance & { messages: Message[
   const reactionStartTime = Date.now();
   const reactionResponse = await openai.chat.completions.create({
     messages: reactionMessages,
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4-turbo-preview',
     tools: [
       {
         type: 'function',

@@ -82,7 +82,7 @@ export async function generateModifier(instance: Instance & { messages: Message[
   const startTime = Date.now();
   const response = await openai.chat.completions.create({
     messages: messages,
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4-turbo-preview',
     tools: [
       {
         type: 'function',
