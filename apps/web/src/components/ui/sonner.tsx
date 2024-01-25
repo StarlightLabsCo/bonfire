@@ -1,22 +1,12 @@
 'use client';
 
-import { useUiStore } from '@/stores/ui-store';
 import { useTheme } from 'next-themes';
-import { useEffect } from 'react';
 import { Toaster as Sonner, toast } from 'sonner';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
-  const requestedToast = useUiStore((state) => state.toast);
-
-  useEffect(() => {
-    if (requestedToast) {
-      toast(requestedToast);
-      useUiStore.setState({ toast: null });
-    }
-  }, [requestedToast]);
 
   return (
     <Sonner
