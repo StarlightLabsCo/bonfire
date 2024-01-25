@@ -2,6 +2,7 @@ import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
 
+import { isInstancePlayer } from './isInstancePlayer';
 import { withInstanceLock } from './withInstanceLock';
 import { hasTokensMiddleware } from './hasTokensMiddleware';
 
@@ -27,7 +28,7 @@ export const handlers: {
   [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokensMiddleware(createAdventureSuggestionsHandler),
   [StarlightWebSocketRequestType.createInstance]: hasTokensMiddleware(createInstanceHandler),
 
-  [StarlightWebSocketRequestType.addPlayerMessage]: withInstanceLock(hasTokensMiddleware(addPlayerMessageHandler)),
-  [StarlightWebSocketRequestType.undoMessage]: withInstanceLock(hasTokensMiddleware(undoMessageHandler)),
-  [StarlightWebSocketRequestType.resumeInstance]: withInstanceLock(hasTokensMiddleware(resumeInstanceHandler)),
+  [StarlightWebSocketRequestType.addPlayerMessage]: isInstancePlayer(hasTokensMiddleware(withInstanceLock(addPlayerMessageHandler))),
+  [StarlightWebSocketRequestType.undoMessage]: isInstancePlayer(hasTokensMiddleware(withInstanceLock(undoMessageHandler))),
+  [StarlightWebSocketRequestType.resumeInstance]: isInstancePlayer(hasTokensMiddleware(withInstanceLock(resumeInstanceHandler))),
 };

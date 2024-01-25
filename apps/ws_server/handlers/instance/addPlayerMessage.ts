@@ -24,19 +24,14 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
           createdAt: 'asc',
         },
       },
-      players: true,
     },
   });
 
   if (!instance) {
-    throw new Error('Instance not found'); // either the instance doesn't exist, or the user doesn't own it, or it's not in the right stage
+    throw new Error('Instance not found'); // either the instance doesn't exist, or it's not in the right stage
   }
 
-  if (!(instance.userId === ws.data.webSocketToken?.userId) && !instance.players.find((p) => p.id === ws.data.webSocketToken?.userId)) {
-    throw new Error('User is not a player in this instance');
-  }
-
-  let updatedInstance = await db.instance.update({
+  instance = await db.instance.update({
     where: {
       id: instanceId,
     },
@@ -61,13 +56,13 @@ export async function addPlayerMessageHandler(ws: ServerWebSocket<WebSocketData>
     },
   });
 
-  sendToInstanceSubscribers(updatedInstance.id, {
+  sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.messageAdded,
     data: {
       instanceId,
-      message: updatedInstance.messages[updatedInstance.messages.length - 1],
+      message: instance.messages[instance.messages.length - 1],
     },
   });
 
-  await stepInstanceUntil(updatedInstance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
+  await stepInstanceUntil(instance, InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH);
 }
