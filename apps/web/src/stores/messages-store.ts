@@ -59,7 +59,8 @@ export const useMessagesStore = create<MessagesStore>((set, get) => ({
         }
         return m;
       }),
-      streamedWords: state.streamedMessageId === message.id ? message.content.split(' ') : null,
+      streamedMessageId: message.id,
+      streamedWords: message.content.split(' '),
     }));
 
     if (!found) {
