@@ -46,9 +46,7 @@ export function ShareLinkDialog() {
     setValue('');
     setPlayers(players);
 
-    toast.success('Success', {
-      description: 'Player invited to instance.',
-    });
+    toast.success('Player invited to instance.');
     setDisabled(false);
   };
 
