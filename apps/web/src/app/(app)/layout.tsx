@@ -2,7 +2,7 @@ import db from '@/lib/db';
 import { Instance } from '@prisma/client';
 import { getCurrentUser } from '@/lib/session';
 
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { Sidebar } from '@/components/sidebar/sidebar';
 import { Navigator } from '@/components/navigator';
 import { OpenSidebar } from '@/components/open-sidebar';

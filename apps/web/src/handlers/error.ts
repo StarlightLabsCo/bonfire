@@ -1,12 +1,8 @@
-import { ToasterToast } from '@/components/ui/use-toast';
-import { useUiStore } from '@/stores/ui-store';
 import { StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket';
+import { toast } from 'sonner';
 
 export function handleError(response: StarlightWebSocketResponse) {
   if (response.type === StarlightWebSocketResponseType.error) {
-    useUiStore.getState().setToast({
-      title: 'Error',
-      description: response.data.message,
-    } as ToasterToast);
+    toast.error(response.data.message);
   }
 }

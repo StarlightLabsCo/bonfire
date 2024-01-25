@@ -4,15 +4,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Switch } from '@/components/ui/switch';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { useToast } from '../ui/use-toast';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useDialogStore } from '@/stores/dialog-store';
 import { Icons } from '../icons';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { toast } from 'sonner';
 
 export function ShareLinkDialog() {
-  const { toast } = useToast();
-
   const canShare = typeof navigator !== 'undefined' && navigator.share;
   const isShareDialogOpen = useDialogStore((state) => state.isShareDialogOpen);
   const setIsShareDialogOpen = useDialogStore((state) => state.setIsShareDialogOpen);
@@ -38,10 +36,7 @@ export function ShareLinkDialog() {
     });
 
     if (response.status !== 200) {
-      toast({
-        title: 'Error',
-        description: 'Unable to invite player to instance.',
-      });
+      toast.error('Unable to invite player to instance.');
       setDisabled(false);
       return;
     }
@@ -51,8 +46,7 @@ export function ShareLinkDialog() {
     setValue('');
     setPlayers(players);
 
-    toast({
-      title: 'Success',
+    toast.success('Success', {
       description: 'Player invited to instance.',
     });
     setDisabled(false);
@@ -80,10 +74,7 @@ export function ShareLinkDialog() {
     if (response.status !== 200) {
       setPlayers([...players, playerToRemove]);
 
-      toast({
-        title: 'Error',
-        description: 'Unable to remove player from instance.',
-      });
+      toast.error('Unable to remove player from instance.');
       return;
     }
   };
@@ -103,10 +94,7 @@ export function ShareLinkDialog() {
 
       if (response.status !== 200) {
         setChecked(false);
-        toast({
-          title: 'Error',
-          description: 'Unable to make instance public.',
-        });
+        toast.error('Unable to make instance public.');
         return;
       }
     } else {
@@ -121,10 +109,7 @@ export function ShareLinkDialog() {
 
       if (response.status !== 200) {
         setChecked(true);
-        toast({
-          title: 'Error',
-          description: 'Unable to make instance private.',
-        });
+        toast.error('Unable to make instance private.');
         return;
       }
     }
@@ -153,15 +138,9 @@ export function ShareLinkDialog() {
     try {
       const link = `${window.location.origin}/instances/${instanceId}`;
       await navigator.clipboard.writeText(link);
-      toast({
-        title: 'Success',
-        description: 'Link copied to clipboard.',
-      });
+      toast.success('Link copied to clipboard.');
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: 'Failed to copy link.',
-      });
+      toast.error('Failed to copy link.');
     }
   };
 
