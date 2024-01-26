@@ -1,7 +1,7 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType, StarlightWebSocketResponseType } from 'websocket/types';
-import { sendToWebsocket, subscribeWebsocketToInstance } from '../../src/connection';
+import { subscribeWebsocketToInstance } from '../../src/connection';
 import { db } from '../../services/db';
 
 export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) {

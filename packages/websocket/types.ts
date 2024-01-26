@@ -10,7 +10,6 @@ export type StarlightWebSocketRequest =
   | ResumeInstanceRequest
   | AddPlayerMessageRequest
   | UndoMessageRequest
-  | StopAudioRequest
   | HeartbeatClientRequest
   | HeartbeatClientResponse;
 
@@ -27,7 +26,6 @@ export enum StarlightWebSocketRequestType {
   resumeInstance,
   addPlayerMessage,
   undoMessage,
-  stopAudio,
   heartbeatClientRequest,
   heartbeatClientResponse,
 }
@@ -97,11 +95,6 @@ export type UndoMessageData = {
   instanceId: string;
 };
 
-// Stop Audio
-export type StopAudioRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.stopAudio, StopAudioData>;
-
-export type StopAudioData = {};
-
 // Heartbeat Client Request
 export type HeartbeatClientRequest = GenericStarlightWebSocketRequest<
   StarlightWebSocketRequestType.heartbeatClientRequest,
@@ -137,7 +130,6 @@ export type StarlightWebSocketResponse =
   | MessageDeletedResponse
   | AudioCreatedResponse
   | AudioTimingsCreatedResponse
-  | VoiceTranscriptionProcessedResponse
   | OutOfCreditsResponse
   | ErrorResponse
   | HeartbeatServerRequest
@@ -161,7 +153,6 @@ export enum StarlightWebSocketResponseType {
   messageDeleted,
   audioCreated,
   audioTimingsCreated,
-  voiceTranscriptionProcessed,
   outOfCredits,
   error,
   heartbeatServerRequest,
@@ -301,16 +292,6 @@ export type AudioWordTimings = {
 
 export type AudioTimingsCreatedData = {
   timings: AudioWordTimings;
-};
-
-// Voice Transcription Processed
-export type VoiceTranscriptionProcessedResponse = GenericStarlightWebSocketResponse<
-  StarlightWebSocketResponseType.voiceTranscriptionProcessed,
-  VoiceTranscriptionProcessedData
->;
-
-export type VoiceTranscriptionProcessedData = {
-  transcription: string;
 };
 
 // Out Of Credits

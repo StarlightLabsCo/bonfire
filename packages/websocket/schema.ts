@@ -100,13 +100,6 @@ export const UndoMessageRequestZodSchema: z.ZodType<Types.UndoMessageRequest> = 
   })
   .strict();
 
-export const StopAudioRequestZodSchema: z.ZodType<Types.StopAudioRequest> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketRequestType.stopAudio),
-    data: z.object({}).strict(),
-  })
-  .strict();
-
 export const HeartbeatClientRequestZodSchema: z.ZodType<Types.HeartbeatClientRequest> = z
   .object({
     type: z.literal(Types.StarlightWebSocketRequestType.heartbeatClientRequest),
@@ -291,17 +284,6 @@ export const AudioTimingsCreatedResponseZodSchema: z.ZodType<Types.AudioTimingsC
   })
   .strict();
 
-export const VoiceTranscriptionProcessedResponseZodSchema: z.ZodType<Types.VoiceTranscriptionProcessedResponse> = z
-  .object({
-    type: z.literal(Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed),
-    data: z
-      .object({
-        transcription: z.string(),
-      })
-      .strict(),
-  })
-  .strict();
-
 export const OutOfCreditsResponseZodSchema: z.ZodType<Types.OutOfCreditsResponse> = z
   .object({
     type: z.literal(Types.StarlightWebSocketResponseType.outOfCredits),
@@ -354,7 +336,6 @@ export const requestTypeToSchema: {
   [Types.StarlightWebSocketRequestType.resumeInstance]: ResumeInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
-  [Types.StarlightWebSocketRequestType.stopAudio]: StopAudioRequestZodSchema,
   [Types.StarlightWebSocketRequestType.heartbeatClientRequest]: HeartbeatClientRequestZodSchema,
   [Types.StarlightWebSocketRequestType.heartbeatClientResponse]: HeartbeatClientResponseZodSchema,
 };
@@ -374,7 +355,6 @@ export const responseTypeToSchema: {
   [Types.StarlightWebSocketResponseType.messageDeleted]: MessageDeletedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.audioCreated]: AudioCreatedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.audioTimingsCreated]: AudioTimingsCreatedResponseZodSchema,
-  [Types.StarlightWebSocketResponseType.voiceTranscriptionProcessed]: VoiceTranscriptionProcessedResponseZodSchema,
   [Types.StarlightWebSocketResponseType.outOfCredits]: OutOfCreditsResponseZodSchema,
   [Types.StarlightWebSocketResponseType.error]: ErrorResponseZodSchema,
   [Types.StarlightWebSocketResponseType.heartbeatServerRequest]: HeartbeatServerRequestZodSchema,
@@ -395,7 +375,6 @@ const AllResponsesZodSchema = z.union([
   MessageDeletedResponseZodSchema,
   AudioCreatedResponseZodSchema,
   AudioTimingsCreatedResponseZodSchema,
-  VoiceTranscriptionProcessedResponseZodSchema,
   OutOfCreditsResponseZodSchema,
   ErrorResponseZodSchema,
   HeartbeatServerRequestZodSchema,

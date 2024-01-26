@@ -6,8 +6,6 @@ import { isInstancePlayer } from './isInstancePlayer';
 import { withInstanceLock } from './withInstanceLock';
 import { hasTokensMiddleware } from './hasTokensMiddleware';
 
-import { stopAudioHandler } from './audio/stopAudio';
-
 import { createAdventureSuggestionsHandler } from './lobby/createAdventureSuggestions';
 import { createInstanceHandler } from './instance/createInstance';
 import { subscribeToInstanceHandler } from './instance/subscribeToInstance';
@@ -20,7 +18,6 @@ export const handlers: {
   [key: string]: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void;
 } = {
   // *** Free requests ***
-  [StarlightWebSocketRequestType.stopAudio]: stopAudioHandler,
   [StarlightWebSocketRequestType.subscribeToInstance]: subscribeToInstanceHandler,
   [StarlightWebSocketRequestType.unsubscribeFromInstance]: unsubscribeFromInstanceHandler,
 

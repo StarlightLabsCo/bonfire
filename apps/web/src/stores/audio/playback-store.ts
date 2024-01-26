@@ -3,8 +3,7 @@
 import { create } from 'zustand';
 import { setupAudio } from '@/lib/audio';
 import { clearBufferedPlayerNodeBuffer } from '@/lib/audio/playback';
-import { AudioWordTimings, StarlightWebSocketRequestType, StopAudioRequest } from 'websocket/types';
-import { useWebsocketStore } from '../websocket-store';
+import { AudioWordTimings } from 'websocket/types';
 
 type PlaybackStore = {
   audioContext: AudioContext | null;
@@ -23,7 +22,6 @@ type PlaybackStore = {
   setup: () => void;
 };
 
-// TODO: clean up
 export const usePlaybackStore = create<PlaybackStore>((set, get) => {
   return {
     audioContext: null,
@@ -54,15 +52,6 @@ export const usePlaybackStore = create<PlaybackStore>((set, get) => {
       set({ audioStartTime });
     },
     clearAudio: () => {
-      const socketState = useWebsocketStore.getState().socketState;
-      const sendToServer = useWebsocketStore.getState().sendToServer;
-      if (socketState == 'open') {
-        sendToServer({
-          type: StarlightWebSocketRequestType.stopAudio,
-          data: {},
-        } as StopAudioRequest);
-      }
-
       const { bufferedPlayerNode } = get();
       clearBufferedPlayerNodeBuffer(bufferedPlayerNode);
 
