@@ -1,10 +1,10 @@
 import { ServerWebSocket } from 'bun';
-import { WebSocketData } from '../src';
+import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
-import { db } from '../services/db';
-import { sendToWebsocket } from '../src/connection';
+import { db } from '../../services/db';
+import { sendToWebsocket } from '../../src/connection';
 
-export function hasTokensMiddleware(handler: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void) {
+export function hasTokens(handler: (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => void) {
   return async (ws: ServerWebSocket<WebSocketData>, request: StarlightWebSocketRequest) => {
     // TODO: optimize
     /*
@@ -13,9 +13,14 @@ export function hasTokensMiddleware(handler: (ws: ServerWebSocket<WebSocketData>
     - figure out better way to calculate limit rather than just 100k tokens (input / output are different and we need to account for that, etc)
     */
 
+    const userId = ws.data.webSocketToken?.userId;
+    if (!userId) {
+      throw new Error('No user associated with websocket');
+    }
+
     const user = await db.user.findUnique({
       where: {
-        id: ws.data.webSocketToken?.userId,
+        id: userId,
       },
     });
 
@@ -39,7 +44,7 @@ export function hasTokensMiddleware(handler: (ws: ServerWebSocket<WebSocketData>
       if (tokens._sum.totalTokens && tokens._sum.totalTokens > 100000) {
         console.log(`[hasTokensMiddleware] Sending out of credits message...`);
 
-        sendToWebsocket(ws.data.connectionId!, {
+        sendToWebsocket(ws.data.connectionId, {
           type: StarlightWebSocketResponseType.outOfCredits,
           data: {},
         });

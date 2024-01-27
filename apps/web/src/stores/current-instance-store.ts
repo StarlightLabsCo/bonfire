@@ -10,12 +10,15 @@ type CurrentInstanceStore = {
   locked: boolean;
   lockedAt: Date | null;
   subscribed: boolean;
-  connectedUsers: InstanceConnectedUser[];
+  connectedRegisteredUsers: InstanceConnectedUser[];
+  connectedAnonymousUsers: number;
+
   stage: InstanceStage | null;
   setInstanceId: (instanceId: string | null) => void;
   setLocked: (locked: boolean) => void;
   setLockedAt: (lockedAt: Date | null) => void;
-  setConnectedUsers: (connectedUsers: CurrentInstanceStore['connectedUsers']) => void;
+  setConnectedRegisteredUsers: (connectedUsers: CurrentInstanceStore['connectedRegisteredUsers']) => void;
+  setConnectedAnonymousUsers: (connectedUsers: number) => void;
   setStage: (stage: InstanceStage | null) => void;
 
   subscribeToInstance: (instanceId: string) => void;
@@ -27,7 +30,8 @@ export const useCurrentInstanceStore = create<CurrentInstanceStore>((set, get) =
   locked: false,
   lockedAt: null,
   subscribed: false,
-  connectedUsers: [],
+  connectedRegisteredUsers: [],
+  connectedAnonymousUsers: 0,
   stage: null,
   setInstanceId: (instanceId: string | null) => {
     const { instanceId: currentInstanceId, unsubscribeFromInstance } = get();
@@ -38,7 +42,9 @@ export const useCurrentInstanceStore = create<CurrentInstanceStore>((set, get) =
   },
   setLocked: (locked: boolean) => set({ locked }),
   setLockedAt: (lockedAt: Date | null) => set({ lockedAt }),
-  setConnectedUsers: (connectedUsers: CurrentInstanceStore['connectedUsers']) => set({ connectedUsers }),
+  setConnectedRegisteredUsers: (connectedRegisteredUsers: CurrentInstanceStore['connectedRegisteredUsers']) =>
+    set({ connectedRegisteredUsers }),
+  setConnectedAnonymousUsers: (connectedAnonymousUsers: number) => set({ connectedAnonymousUsers }),
   setStage: (stage: InstanceStage | null) => set({ stage }),
 
   subscribeToInstance: (instanceId: string) => {

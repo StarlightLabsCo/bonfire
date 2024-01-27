@@ -2,36 +2,26 @@ import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '.';
 import { redis, redisSubscriber } from '../services/redis';
 import { InterReplicaMessage, StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
-import { validateInterReplicaMessage, validateResponse } from 'websocket/utils';
+import { validateInterReplicaMessage } from 'websocket/utils';
 import { db } from '../services/db';
 
 const websocketMap = new Map<string, ServerWebSocket<WebSocketData>>();
 
+// Timer to display the number of connected users
+setInterval(() => {
+  console.log(`Connected sockets: ${websocketMap.size}`);
+}, 1000 * 60);
+
 export async function handleWebsocketConnected(ws: ServerWebSocket<WebSocketData>) {
-  const connectionId = ws.data.connectionId!;
-
-  // Store the websocket in the global map using connectionId as the key
-  websocketMap.set(connectionId, ws);
-
-  // Send any queued messages
-  const queuedMessages = await redis.lrange(connectionId, 0, -1);
-  for (const message of queuedMessages) {
-    const validated = validateResponse(message);
-    if (!validated) return;
-
-    ws.send(message);
-  }
-
-  // Clear the queue
-  await redis.del(connectionId);
+  websocketMap.set(ws.data.connectionId, ws);
 }
 
 export async function handleWebsocketDisconnected(ws: ServerWebSocket<WebSocketData>) {
   for (const instanceId of Array.from(ws.data.subscribedInstanceIds)) {
-    unsubscribeWebsocketFromInstance(ws.data.connectionId!, instanceId);
+    await unsubscribeWebsocketFromInstance(ws.data.connectionId, instanceId);
   }
 
-  websocketMap.delete(ws.data.connectionId!);
+  websocketMap.delete(ws.data.connectionId);
 }
 
 // *** User ***
@@ -62,11 +52,7 @@ export function sendToWebsocket(connectionId: string, data: StarlightWebSocketRe
     return;
   }
 
-  const status = websocket.send(JSON.stringify(data));
-  if (status === 0) {
-    console.log('Message failed to send, queueing message');
-    redis.rpush(websocket.data.connectionId!, JSON.stringify(data));
-  }
+  websocket.send(JSON.stringify(data));
 }
 
 // ** Forwarded User Message (from another replica) **
@@ -128,9 +114,18 @@ async function updateInstanceConnectedUsersStatus(instanceId: string) {
   const connectionIds = await redis.smembers(`instanceSubscriptions:${instanceId}`); // Get all the connectionIds subscribed to this instance
   if (!connectionIds || connectionIds.length === 0) return;
 
-  const userIds = connectionIds.map((connectionId) => connectionId.split('-')[0]); // Get all the userIds from the connectionIds
+  let anonymousUsers = 0;
+  const userIds = connectionIds.reduce((acc: string[], connectionId) => {
+    const parts = connectionId.split(':');
+    if (parts.length > 1) {
+      acc.push(parts[0]); // Get all the userIds from the connectionIds
+    } else {
+      anonymousUsers++;
+    }
+    return acc;
+  }, []);
 
-  const connectedUsers = await db.user.findMany({
+  const registeredUsers = await db.user.findMany({
     where: {
       id: {
         in: userIds,
@@ -143,11 +138,16 @@ async function updateInstanceConnectedUsersStatus(instanceId: string) {
     },
   });
 
+  console.log(
+    `Updating instance ${instanceId} connected users status. Registered: ${registeredUsers.length}, Anonymous: ${anonymousUsers}`,
+  );
+
   sendToInstanceSubscribers(instanceId, {
     type: StarlightWebSocketResponseType.instanceConnectedUsersStatus,
     data: {
       instanceId,
-      connectedUsers,
+      registeredUsers,
+      anonymousUsers,
     },
   });
 }

@@ -9,7 +9,7 @@ export async function createAdventureSuggestionsHandler(ws: ServerWebSocket<WebS
     throw new Error('Invalid request type for createAdventureSuggestionsHandler');
   }
 
-  const connectionId = ws.data.connectionId!;
+  const connectionId = ws.data.connectionId;
   const userId = ws.data.webSocketToken?.userId!;
 
   const instances = await db.instance.findMany({

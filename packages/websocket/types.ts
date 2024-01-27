@@ -216,7 +216,8 @@ export type InstanceConnectedUser = {
 
 export type InstanceConnectedUsersStatusData = {
   instanceId: string;
-  connectedUsers: InstanceConnectedUser[];
+  registeredUsers: InstanceConnectedUser[];
+  anonymousUsers: number;
 };
 
 // Instance Stage Changed

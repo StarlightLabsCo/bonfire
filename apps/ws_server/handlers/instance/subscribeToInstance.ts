@@ -25,12 +25,12 @@ export async function subscribeToInstanceHandler(ws: ServerWebSocket<WebSocketDa
   }
 
   if (
-    instance.userId !== ws.data.webSocketToken!.userId &&
-    !instance.public &&
-    !instance.players.find((p) => p.id === ws.data.webSocketToken!.userId)
+    !instance.public && // Instance is not public
+    instance.userId !== ws.data.webSocketToken!.userId && // User is not the owner
+    !instance.players.find((p) => p.id === ws.data.webSocketToken!.userId) // User is not a player
   ) {
     throw new Error(`User ${ws.data.webSocketToken!.userId} is not authorized to subscribe from this instance ${instanceId}`);
   }
 
-  subscribeWebsocketToInstance(ws.data.connectionId!, request.data.instanceId);
+  subscribeWebsocketToInstance(ws.data.connectionId, request.data.instanceId);
 }

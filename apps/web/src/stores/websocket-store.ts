@@ -12,7 +12,6 @@ type WebsocketStore = {
   socket: WebSocket | null;
   socketState: string | null;
 
-  connectionId: string | null;
   heartbeat: NodeJS.Timeout | null;
   isAlive: boolean;
 
@@ -26,21 +25,16 @@ export const useWebsocketStore = create<WebsocketStore>((set, get) => ({
   socket: null,
   socketState: null,
 
-  connectionId: null,
   heartbeat: null,
   isAlive: false,
-
-  disconnectedByServer: false,
 
   sendToServer: (request) => sendToServer(get, request),
 }));
 
 type WebsocketStoreSet = (arg0: {
   socket?: WebSocket | null;
-  connectionId?: string;
   socketState?: string;
   isAlive?: boolean;
-  disconnectedByServer?: boolean;
   exponentialBackoff?: number;
   heartbeat?: NodeJS.Timeout | null;
 }) => void;
@@ -51,8 +45,6 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
   }
 
   try {
-    set({ disconnectedByServer: false });
-
     // Clear existing socket (if any)
     const { socket } = get();
     if (socket) {
@@ -60,24 +52,19 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
       set({ socket: null });
     }
 
-    // Fetch websocket auth token
+    // Initialize new socket
+    let ws: WebSocket;
+
     let tokenRequest = await fetch('/api/websocket/', {
       method: 'POST',
     });
 
     if (tokenRequest.status !== 200) {
-      console.error('Unable to fetch websocket token.');
-      return;
+      ws = new WebSocket(process.env.NEXT_PUBLIC_BACKEND_URL);
+    } else {
+      let response = await tokenRequest.json();
+      ws = new WebSocket(`${process.env.NEXT_PUBLIC_BACKEND_URL}?token=${response.token}`);
     }
-
-    let response = await tokenRequest.json();
-
-    // Create connectionId if it doesn't exist
-    let connectionId = get().connectionId || Math.random().toString(36).substring(2, 15);
-    set({ connectionId });
-
-    // Intialize websocket connection
-    let ws = new WebSocket(`${process.env.NEXT_PUBLIC_BACKEND_URL}?token=${response.token}&connectionId=${connectionId}`);
 
     set({ socket: ws, socketState: 'connecting' });
 

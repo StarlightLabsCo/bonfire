@@ -1,8 +1,8 @@
 import { ServerWebSocket } from 'bun';
-import { WebSocketData } from '../src';
+import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest, StarlightWebSocketResponseType } from 'websocket/types';
-import { db } from '../services/db';
-import { sendToInstanceSubscribers, sendToWebsocket } from '../src/connection';
+import { db } from '../../services/db';
+import { sendToInstanceSubscribers, sendToWebsocket } from '../../src/connection';
 
 const LOCK_TIMEOUT = 60 * 1000 * 5; // 5 minutes
 

@@ -185,7 +185,8 @@ export const InstanceConnectedUsersStatusResponseZodSchema: z.ZodType<Types.Inst
     data: z
       .object({
         instanceId: z.string(),
-        connectedUsers: z.array(InstanceConnectedUserZodSchema),
+        registeredUsers: z.array(InstanceConnectedUserZodSchema),
+        anonymousUsers: z.number(),
       })
       .strict(),
   })

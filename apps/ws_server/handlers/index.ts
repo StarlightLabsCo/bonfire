@@ -2,9 +2,9 @@ import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '../src';
 import { StarlightWebSocketRequest, StarlightWebSocketRequestType } from 'websocket/types';
 
-import { isInstancePlayer } from './isInstancePlayer';
-import { withInstanceLock } from './withInstanceLock';
-import { hasTokensMiddleware } from './hasTokensMiddleware';
+import { isInstancePlayer } from './middleware/isInstancePlayer';
+import { hasTokens } from './middleware/hasTokens';
+import { withInstanceLock } from './middleware/withInstanceLock';
 
 import { createAdventureSuggestionsHandler } from './lobby/createAdventureSuggestions';
 import { createInstanceHandler } from './instance/createInstance';
@@ -22,10 +22,10 @@ export const handlers: {
   [StarlightWebSocketRequestType.unsubscribeFromInstance]: unsubscribeFromInstanceHandler,
 
   // *** Paid requests ***
-  [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokensMiddleware(createAdventureSuggestionsHandler),
-  [StarlightWebSocketRequestType.createInstance]: hasTokensMiddleware(createInstanceHandler),
+  [StarlightWebSocketRequestType.createAdventureSuggestions]: hasTokens(createAdventureSuggestionsHandler),
+  [StarlightWebSocketRequestType.createInstance]: hasTokens(createInstanceHandler),
 
-  [StarlightWebSocketRequestType.addPlayerMessage]: isInstancePlayer(hasTokensMiddleware(withInstanceLock(addPlayerMessageHandler))),
-  [StarlightWebSocketRequestType.undoMessage]: isInstancePlayer(hasTokensMiddleware(withInstanceLock(undoMessageHandler))),
-  [StarlightWebSocketRequestType.resumeInstance]: isInstancePlayer(hasTokensMiddleware(withInstanceLock(resumeInstanceHandler))),
+  [StarlightWebSocketRequestType.addPlayerMessage]: isInstancePlayer(hasTokens(withInstanceLock(addPlayerMessageHandler))),
+  [StarlightWebSocketRequestType.undoMessage]: isInstancePlayer(hasTokens(withInstanceLock(undoMessageHandler))),
+  [StarlightWebSocketRequestType.resumeInstance]: isInstancePlayer(hasTokens(withInstanceLock(resumeInstanceHandler))),
 };

@@ -48,7 +48,7 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     },
   });
 
-  subscribeWebsocketToInstance(ws.data.connectionId!, instance.id);
+  subscribeWebsocketToInstance(ws.data.connectionId, instance.id);
 
   sendToInstanceSubscribers(instance.id, {
     type: StarlightWebSocketResponseType.instanceStageChanged,

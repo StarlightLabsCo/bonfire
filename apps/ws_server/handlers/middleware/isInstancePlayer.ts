@@ -1,7 +1,7 @@
 import { ServerWebSocket } from 'bun';
-import { WebSocketData } from '../src';
+import { WebSocketData } from '../../src';
 import { StarlightWebSocketRequest } from 'websocket/types';
-import { db } from '../services/db';
+import { db } from '../../services/db';
 
 function isInstanceRequest(request: StarlightWebSocketRequest): request is StarlightWebSocketRequest & { data: { instanceId: string } } {
   return 'instanceId' in request.data;
@@ -15,6 +15,11 @@ export function isInstancePlayer(
       throw new Error('Request is not an instance request');
     }
 
+    const userId = ws.data.webSocketToken?.userId;
+    if (!userId) {
+      throw new Error('No user associated with websocket');
+    }
+
     const instanceId = request.data.instanceId;
     const instance = await db.instance.findUnique({
       where: { id: instanceId },
@@ -25,7 +30,6 @@ export function isInstancePlayer(
       throw new Error('Instance not found');
     }
 
-    const userId = ws.data.webSocketToken?.userId;
     if (!(instance.userId === userId) && !instance.players.find((p) => p.id === userId)) {
       throw new Error('User is not a player in this instance');
     }

@@ -8,5 +8,5 @@ export async function unsubscribeFromInstanceHandler(ws: ServerWebSocket<WebSock
     throw new Error('Invalid request type for unsubscribeFromInstanceHandler');
   }
 
-  unsubscribeWebsocketFromInstance(ws.data.connectionId!, request.data.instanceId);
+  unsubscribeWebsocketFromInstance(ws.data.connectionId, request.data.instanceId);
 }

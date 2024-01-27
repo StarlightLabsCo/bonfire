@@ -2,6 +2,7 @@ console.log(
   `[Bun: ${Bun.version}] [Node: ${process.version}] [PID: ${process.pid}] [ENV: ${process.env.NODE_ENV}] Starting websocket server...`,
 );
 
+import { v4 as uuidv4 } from 'uuid';
 import { WebSocketAuthenticationToken } from 'database';
 import { db } from '../services/db';
 
@@ -19,7 +20,7 @@ export type WebSocketData = {
 
   // User data
   webSocketToken: WebSocketAuthenticationToken | null;
-  connectionId: string | null; // userId-connectionIdFromClient
+  connectionId: string;
 
   // Instance data
   subscribedInstanceIds: string[];
@@ -28,29 +29,26 @@ export type WebSocketData = {
 const server = Bun.serve<WebSocketData>({
   port: process.env.PORT ? parseInt(process.env.PORT) : 80,
   async fetch(req, server) {
-    // Auth via query param
+    let connectionId: string = uuidv4();
+
+    // Auth via query params
+    let webSocketToken: WebSocketAuthenticationToken | null = null;
+
     const url = new URL(req.url);
     const token = url.searchParams.get('token');
 
-    if (!token) {
-      return new Response('Missing authentication token.', { status: 400 });
-    }
+    if (token) {
+      webSocketToken = await db.webSocketAuthenticationToken.findUnique({
+        where: {
+          token,
+        },
+      });
 
-    const webSocketToken = await db.webSocketAuthenticationToken.findUnique({
-      where: {
-        token,
-      },
-    });
+      if (!webSocketToken || webSocketToken.expires < new Date()) {
+        return new Response('Invalid authentication token.', { status: 400 });
+      }
 
-    if (!webSocketToken || webSocketToken.expires < new Date()) {
-      return new Response('Invalid authentication token.', { status: 400 });
-    }
-
-    // Get connectionId from query param
-    const connectionId = url.searchParams.get('connectionId');
-
-    if (!connectionId) {
-      return new Response('Missing connectionId.', { status: 400 });
+      connectionId = `${webSocketToken.userId}:${connectionId}`;
     }
 
     // Success - Upgrade to websocket
@@ -59,7 +57,7 @@ const server = Bun.serve<WebSocketData>({
         heartbeatInterval: null,
         isAlive: true,
         webSocketToken: webSocketToken,
-        connectionId: `${webSocketToken.userId}-${connectionId}`,
+        connectionId: connectionId,
         subscribedInstanceIds: [],
       },
     });
@@ -94,7 +92,7 @@ const server = Bun.serve<WebSocketData>({
 
       if (!handler) {
         console.error('No handler found for ' + request.type);
-        return sendToWebsocket(ws.data.connectionId!, {
+        return sendToWebsocket(ws.data.connectionId, {
           type: StarlightWebSocketResponseType.error,
           data: {
             message: 'Invalid request.',
@@ -106,7 +104,7 @@ const server = Bun.serve<WebSocketData>({
         await handler(ws, request);
       } catch (error) {
         console.error('Error handling request: ', error);
-        sendToWebsocket(ws.data.connectionId!, {
+        sendToWebsocket(ws.data.connectionId, {
           type: StarlightWebSocketResponseType.error,
           data: {
             message: 'Error handling request. Please try again.',
@@ -118,11 +116,13 @@ const server = Bun.serve<WebSocketData>({
     async close(ws) {
       console.log('Websocket closed. Connection Id:', ws.data.connectionId);
 
-      await db.webSocketAuthenticationToken.delete({
-        where: {
-          id: ws.data.webSocketToken!.id,
-        },
-      });
+      if (ws.data.webSocketToken) {
+        await db.webSocketAuthenticationToken.delete({
+          where: {
+            id: ws.data.webSocketToken.id,
+          },
+        });
+      }
 
       clearHeartbeat(ws);
       handleWebsocketDisconnected(ws);
