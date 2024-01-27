@@ -9,7 +9,6 @@ import Zoom from 'react-medium-image-zoom';
 import './image-zoom-styles.css';
 
 import { Instance, Message } from '@prisma/client';
-import { OpenSidebar } from '@/components/open-sidebar';
 import { StoryInput } from '@/components/input/story-input';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useMessagesStore } from '@/stores/messages-store';
