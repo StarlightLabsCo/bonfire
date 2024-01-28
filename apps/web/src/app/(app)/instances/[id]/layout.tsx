@@ -6,7 +6,7 @@ export default async function InstanceLayout({ children }: { children: React.Rea
 
   return (
     <>
-      {user && <ConnectedUsersDesktop userId={user.id} />}
+      <ConnectedUsersDesktop userId={user && user.id} />
       {children}
     </>
   );

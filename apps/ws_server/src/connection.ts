@@ -1,7 +1,7 @@
 import { ServerWebSocket } from 'bun';
 import { WebSocketData } from '.';
 import { redis, redisSubscriber } from '../services/redis';
-import { InterReplicaMessage, StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
+import { InstanceConnectedUser, InterReplicaMessage, StarlightWebSocketResponse, StarlightWebSocketResponseType } from 'websocket/types';
 import { validateInterReplicaMessage } from 'websocket/utils';
 import { db } from '../services/db';
 
@@ -110,25 +110,46 @@ export async function unsubscribeWebsocketFromInstance(connectionId: string, ins
   updateInstanceConnectedUsersStatus(instanceId);
 }
 
+const anonymousImages = [
+  { name: 'Anonymous Bear', image: '/anonymous/bear.png' },
+  { name: 'Anonymous Bunny', image: '/anonymous/bunny.png' },
+  { name: 'Anonymous Elephant', image: '/anonymous/elephant.png' },
+  { name: 'Anonymous Fox', image: '/anonymous/fox.webp' },
+  { name: 'Anonymous Racoon', image: '/anonymous/racoon.webp' },
+  { name: 'Anonymous Tortoise', image: '/anonymous/tortoise.png' },
+  { name: 'Anonymous Turtle', image: '/anonymous/turtle.png' },
+];
+
+function hashCode(s: string): number {
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) {
+    const char = s.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+}
+
 async function updateInstanceConnectedUsersStatus(instanceId: string) {
   const connectionIds = await redis.smembers(`instanceSubscriptions:${instanceId}`); // Get all the connectionIds subscribed to this instance
   if (!connectionIds || connectionIds.length === 0) return;
 
-  let anonymousUsers = 0;
-  const userIds = connectionIds.reduce((acc: string[], connectionId) => {
+  const connectionIdToInstanceConnectedUserMap = new Map<string, InstanceConnectedUser>();
+
+  // Get registered users
+  const userIdToConnectionIdMap = new Map<string, string>();
+  connectionIds.forEach((connectionId) => {
     const parts = connectionId.split(':');
     if (parts.length > 1) {
-      acc.push(parts[0]); // Get all the userIds from the connectionIds
-    } else {
-      anonymousUsers++;
+      const userId = parts[0];
+      userIdToConnectionIdMap.set(userId, connectionId);
     }
-    return acc;
-  }, []);
+  });
 
   const registeredUsers = await db.user.findMany({
     where: {
       id: {
-        in: userIds,
+        in: Array.from(userIdToConnectionIdMap.keys()),
       },
     },
     select: {
@@ -138,18 +159,44 @@ async function updateInstanceConnectedUsersStatus(instanceId: string) {
     },
   });
 
-  console.log(
-    `Updating instance ${instanceId} connected users status. Registered: ${registeredUsers.length}, Anonymous: ${anonymousUsers}`,
-  );
-
-  sendToInstanceSubscribers(instanceId, {
-    type: StarlightWebSocketResponseType.instanceConnectedUsersStatus,
-    data: {
-      instanceId,
-      registeredUsers,
-      anonymousUsers,
-    },
+  registeredUsers.forEach((user) => {
+    const connectionId = userIdToConnectionIdMap.get(user.id);
+    if (connectionId) {
+      connectionIdToInstanceConnectedUserMap.set(connectionId, {
+        id: user.id,
+        name: user.name,
+        image: user.image,
+      } as InstanceConnectedUser);
+    }
   });
+
+  // Handle anonymous users
+  const anonymousUsers = connectionIds.filter((connectionId) => !connectionIdToInstanceConnectedUserMap.has(connectionId));
+
+  anonymousUsers.forEach((connectionId) => {
+    const { name, image } = anonymousImages[hashCode(connectionId) % anonymousImages.length];
+
+    connectionIdToInstanceConnectedUserMap.set(connectionId, {
+      id: connectionId,
+      name,
+      image,
+    } as InstanceConnectedUser);
+  });
+
+  // Send to all the connectionIds - but make it so the current connectionId doesn't get its own data
+  for (const connectionId of connectionIdToInstanceConnectedUserMap.keys()) {
+    const data = {
+      instanceId,
+      connectedUsers: Array.from(connectionIdToInstanceConnectedUserMap.entries())
+        .filter(([id]) => id !== connectionId) // Exclude the current connectionId
+        .map(([, user]) => user), // Get the user data
+    };
+
+    sendToWebsocket(connectionId, {
+      type: StarlightWebSocketResponseType.instanceConnectedUsersStatus,
+      data,
+    });
+  }
 }
 
 export async function sendToInstanceSubscribers(instanceId: string, data: StarlightWebSocketResponse) {
