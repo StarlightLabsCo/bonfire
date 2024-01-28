@@ -5,11 +5,10 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { cn } from '@/lib/utils';
 
 type ConnectedUsersProps = {
-  userId?: string;
   className?: string;
 };
 
-export function ConnectedUsersMobile({ userId, className }: ConnectedUsersProps) {
+export function ConnectedUsersMobile({ className }: ConnectedUsersProps) {
   const currentInstanceId = useCurrentInstanceStore((state) => state.instanceId);
   const connectedUsers = useCurrentInstanceStore((state) => state.connectedUsers);
   if (!currentInstanceId || connectedUsers.length === 0) return null;

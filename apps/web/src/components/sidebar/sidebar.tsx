@@ -94,7 +94,7 @@ export function Sidebar({
           {/* TODO: title could go here -  make it so it reflects current instance */}
         </div>
         <div className="flex items-center">
-          <ConnectedUsersMobile userId={user && user.id} />
+          <ConnectedUsersMobile />
           {instanceId && (
             <button className="h-10 flex-shrink-0 w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
               <Icons.share />
