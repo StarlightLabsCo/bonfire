@@ -118,6 +118,18 @@ const anonymousImages = [
   { name: 'Anonymous Racoon', image: '/anonymous/racoon.webp' },
   { name: 'Anonymous Tortoise', image: '/anonymous/tortoise.png' },
   { name: 'Anonymous Turtle', image: '/anonymous/turtle.png' },
+  { name: 'Anonymous Owl', image: '/anonymous/owl.png' },
+  { name: 'Anonymous Dragon', image: '/anonymous/dragon.png' },
+  { name: 'Anonymous Panda', image: '/anonymous/panda.png' },
+  { name: 'Anonymous Cat', image: '/anonymous/cat.png' },
+  { name: 'Anonymous Dog', image: '/anonymous/dog.png' },
+  { name: 'Anonymous Raven', image: '/anonymous/raven.png' },
+  { name: 'Anonymous Tiger', image: '/anonymous/tiger.png' },
+  { name: 'Anonymous Wolf', image: '/anonymous/wolf.png' },
+  { name: 'Anonymous Bee', image: '/anonymous/bee.png' },
+  { name: 'Anonymous Snail', image: '/anonymous/snail.png' },
+  { name: 'Anonymous Rhino', image: '/anonymous/rhino.png' },
+  { name: 'Anonymous Dinosaur', image: '/anonymous/dinosaur.png' },
 ];
 
 function hashCode(s: string): number {
