@@ -12,15 +12,20 @@ import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { ActionSuggestions } from './action-suggestions';
 import { Icons } from '../icons';
 import { Button, UndoButton, ShareButton, RetryButton, ProgressButton } from './buttons';
+import { User } from 'next-auth';
 
 interface StoryInputProps {
-  instance: Instance;
+  user: User | undefined;
+  instance: Instance & {
+    players: {
+      id: string;
+    }[];
+  };
   scrollRef: React.RefObject<HTMLDivElement>;
-  canShare: boolean;
   className?: string;
 }
 
-export function StoryInput({ instance, scrollRef, canShare, className }: StoryInputProps) {
+export function StoryInput({ user, instance, scrollRef, className }: StoryInputProps) {
   const socketState = useWebsocketStore((state) => state.socketState);
   const sendToServer = useWebsocketStore((state) => state.sendToServer);
 
@@ -36,6 +41,8 @@ export function StoryInput({ instance, scrollRef, canShare, className }: StoryIn
   const clearAudio = usePlaybackStore((state) => state.clearAudio);
 
   const [input, setInput] = useState('');
+
+  const isOwner = user && instance && user.id === instance.userId;
 
   const submitAction = (action: string) => {
     if (!instance.id) return;
@@ -84,7 +91,7 @@ export function StoryInput({ instance, scrollRef, canShare, className }: StoryIn
     [InstanceStage.ROLL_DICE_START]: 'Continuing story...',
     [InstanceStage.CREATE_IMAGE_START]: 'Creating image...',
     [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: 'Generating actions...',
-    [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: 'What do you do?',
+    [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: typeof user === 'undefined' ? `You are observing this story.` : 'What do you do?',
   };
 
   const StageIcons = {
@@ -142,14 +149,16 @@ export function StoryInput({ instance, scrollRef, canShare, className }: StoryIn
       <div className={cn(`story-input-wrapper absolute bottom-0 px-4 md:px-2 lg:px-0 pb-2 w-full max-w-3xl flex flex-col z-10`, className)}>
         <div className="flex items-center justify-between mb-2">
           <div className={cn('flex flex-nowrap flex-row gap-x-2 gap-y-2 overflow-x-auto scrollbar-hide', className)}>
-            {showSuggestions && socketState == 'open' && !locked && (
+            {showSuggestions && socketState == 'open' && !locked && typeof user !== 'undefined' && (
               <ActionSuggestions suggestions={suggestions} submitAction={submitAction} />
             )}
           </div>
           <div className="hidden md:flex gap-x-2 items-center h-full">
             {error && <RetryButton />}
-            {messages.some((message) => message.role === MessageRole.user) && !locked && !error && <UndoButton className="fade-in-2s" />}
-            {canShare && <ShareButton />}
+            {messages.some((message) => message.role === MessageRole.user) && !locked && typeof user !== 'undefined' && !error && (
+              <UndoButton className="fade-in-2s" />
+            )}
+            {isOwner && <ShareButton />}
           </div>
         </div>
         <div className="flex gap-x-2 items-center md:block">
@@ -167,7 +176,7 @@ export function StoryInput({ instance, scrollRef, canShare, className }: StoryIn
             value={input}
             setValue={setInput}
             submit={() => submitAction(input)}
-            disabled={locked}
+            disabled={locked || typeof user === 'undefined'}
           />
         </div>
       </div>
