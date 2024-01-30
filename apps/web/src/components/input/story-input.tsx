@@ -84,14 +84,14 @@ export function StoryInput({ user, instance, scrollRef, className }: StoryInputP
   const suggestions = showSuggestions ? JSON.parse(messages[messages.length - 1].content) : [];
 
   const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
-  const errorText = 'Please try again';
+  const errorText = typeof user !== 'undefined' ? 'Something went wrong. Please try again.' : 'You are observing this story.';
 
   const StageText = {
     [InstanceStage.INTRODUCE_STORY_START]: 'Introducing story...',
     [InstanceStage.ROLL_DICE_START]: 'Continuing story...',
     [InstanceStage.CREATE_IMAGE_START]: 'Creating image...',
     [InstanceStage.GENERATE_ACTION_SUGGESTIONS_START]: 'Generating actions...',
-    [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: typeof user === 'undefined' ? `You are observing this story.` : 'What do you do?',
+    [InstanceStage.GENERATE_ACTION_SUGGESTIONS_FINISH]: typeof user !== 'undefined' ? 'What do you do?' : `You are observing this story.`,
   };
 
   const StageIcons = {
@@ -154,7 +154,7 @@ export function StoryInput({ user, instance, scrollRef, className }: StoryInputP
             )}
           </div>
           <div className="hidden md:flex gap-x-2 items-center h-full">
-            {error && <RetryButton />}
+            {error && typeof user !== 'undefined' && <RetryButton />}
             {messages.some((message) => message.role === MessageRole.user) && !locked && typeof user !== 'undefined' && !error && (
               <UndoButton className="fade-in-2s" />
             )}
@@ -166,9 +166,13 @@ export function StoryInput({ user, instance, scrollRef, className }: StoryInputP
             <Button disabled icon={<Icons.link />} className="md:hidden" />
           ) : (
             <>
-              {error && <RetryButton className="block md:hidden" />}
+              {typeof user !== 'undefined' && error && <RetryButton className="block md:hidden" />}
+              {typeof user !== 'undefined' && !error && !locked && messages.some((message) => message.role === MessageRole.user) && (
+                <UndoButton className="md:hidden" />
+              )}
+
               {!error && locked && <ProgressButton icon={currentStageIcon} progress={currentStageProgress} className="md:hidden" />}
-              {!error && !locked && messages.some((message) => message.role === MessageRole.user) && <UndoButton className="md:hidden" />}
+              {typeof user === 'undefined' && !error && !locked && <Button disabled icon={<Icons.eye />} className="md:hidden" />}
             </>
           )}
           <Input

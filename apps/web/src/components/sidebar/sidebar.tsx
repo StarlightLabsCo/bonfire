@@ -14,18 +14,10 @@ import { useSidebarStore } from '@/stores/sidebar-store';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useDialogStore } from '@/stores/dialog-store';
 import { ConnectedUsersMobile } from '../connected-users-mobile';
+import { User } from 'next-auth';
+import { CallToAction } from './call-to-action';
 
-export function Sidebar({
-  user,
-  instances,
-}: {
-  user: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  } & { id: string };
-  instances: Instance[];
-}) {
+export function Sidebar({ user, instances }: { user: User | undefined; instances: Instance[] }) {
   const pathname = usePathname();
 
   const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
@@ -66,9 +58,9 @@ export function Sidebar({
         onTransitionEnd={handleTransitionEnd}
       >
         <TopActions />
-        <PastStories instances={displayedInstances} />
+        {typeof user !== 'undefined' ? <PastStories instances={displayedInstances} /> : <CallToAction />}
         <AudioSidebar />
-        <UserInfo user={user} />
+        {typeof user !== 'undefined' && <UserInfo user={user} />}
       </div>
 
       {/* Mobile Background Overlay */}
@@ -113,9 +105,9 @@ export function Sidebar({
       >
         <div className={cn('h-full w-[250px] flex flex-col justify-between items-center bg-black border-r border-white/10')}>
           <TopActions />
-          <PastStories instances={displayedInstances} />
+          {typeof user !== 'undefined' ? <PastStories instances={displayedInstances} /> : <CallToAction />}
           <AudioSidebar />
-          <UserInfo user={user} />
+          {typeof user !== 'undefined' && <UserInfo user={user} />}
         </div>
       </div>
     </>

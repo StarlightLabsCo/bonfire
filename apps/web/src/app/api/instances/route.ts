@@ -6,7 +6,9 @@ export async function GET(request: Request) {
   const session = await getSession();
 
   if (!session || !session.user) {
-    return NextResponse.redirect('/login');
+    return new Response(null, {
+      status: 401,
+    });
   }
 
   const instances = await db.instance.findMany({

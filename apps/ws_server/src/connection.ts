@@ -29,12 +29,7 @@ export function sendToWebsocket(connectionId: string, data: StarlightWebSocketRe
   const websocket = websocketMap.get(connectionId);
 
   if (typeof websocket === 'undefined') {
-    console.log(`No websocket found on this replica for connectionId: ${connectionId}`);
-
     if (broadcastIfNoWebsocket) {
-      // If we don't have the websocket on this replica, publish the message to redis for other replicas to try
-      console.log(`Could not find websocket for connection ${connectionId}. Publishing message to redis for other replicas to try`);
-
       redis.publish(
         'inter-replica-messages',
         JSON.stringify({
@@ -60,7 +55,6 @@ redisSubscriber.on('message', (channel, message) => {
   const validatedMessage = validateInterReplicaMessage(message);
   if (!validatedMessage) return;
 
-  console.log(`Received message from another replica for connectionId ${validatedMessage.connectionId}, attempting to send`);
   const { connectionId, data } = validatedMessage;
 
   sendToWebsocket(connectionId, data, false);

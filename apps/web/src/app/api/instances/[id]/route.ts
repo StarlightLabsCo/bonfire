@@ -6,7 +6,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   const session = await getSession();
 
   if (!session || !session.user) {
-    return NextResponse.redirect('/login');
+    return new Response(null, {
+      status: 401,
+    });
   }
 
   const instance = await db.instance.findUnique({

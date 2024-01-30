@@ -66,10 +66,7 @@ const stripeEventHandlers = {
 
 // Subscription
 async function handleSubscriptionCreated(event: Stripe.Event) {
-  console.log('handleSubscriptionCreated');
   const subscription = event.data.object as Stripe.Subscription;
-
-  console.log('customer', subscription.customer);
 
   await db.user.update({
     where: {

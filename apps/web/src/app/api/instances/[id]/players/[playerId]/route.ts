@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import db from '@/lib/db';
 import { getSession } from '@/lib/session';
 
@@ -6,7 +5,9 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   const session = await getSession();
 
   if (!session || !session.user) {
-    return NextResponse.redirect('/login');
+    return new Response(null, {
+      status: 401,
+    });
   }
 
   const instance = await db.instance.findUnique({

@@ -35,8 +35,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="bg-neutral-950 flex flex-col md:flex-row">
-      {user && <Sidebar user={user} instances={instances} />}
-      {user && <OpenSidebar />}
+      <Sidebar user={user} instances={instances} />
+      <OpenSidebar />
       {children}
       <Toaster />
       <SetNarratorDialog />
