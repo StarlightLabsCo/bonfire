@@ -17,6 +17,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "bun-types": "canary",
     "tsconfig": "workspace:*"
   },
   "peerDependencies": {
