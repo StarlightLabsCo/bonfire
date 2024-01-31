@@ -34,7 +34,7 @@ export function initSpeechStreamConnection(instanceId: string, narratorId: strin
     let start = true;
     let end = false;
 
-    ws.addEventListener('message', (event) => {
+    ws.addEventListener('message', (event: MessageEvent) => {
       const data = JSON.parse(event.data.toString());
 
       if (data.isFinal) end = true;
@@ -60,7 +60,7 @@ export function initSpeechStreamConnection(instanceId: string, narratorId: strin
       console.error(`Error from 11 labs.`, err);
     });
 
-    ws.addEventListener('close', (event) => {
+    ws.addEventListener('close', (event: CloseEvent) => {
       delete instanceIdToElevenLabsWs[instanceId];
       console.log(`Disconnected from 11 labs.`, event.code, event.reason);
     });

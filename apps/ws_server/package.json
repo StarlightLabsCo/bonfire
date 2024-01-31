@@ -17,7 +17,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "bun-types": "latest",
     "tsconfig": "workspace:*"
   },
   "peerDependencies": {
