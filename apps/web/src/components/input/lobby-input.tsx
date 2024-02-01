@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
 import { useAdventureSuggestionsStore } from '@/stores/adventure-suggestions-store';
@@ -16,11 +16,12 @@ interface LobbyInputProps {
 
 export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputProps) {
   const socketState = useWebsocketStore((state) => state.socketState);
+  const authenticated = useWebsocketStore((state) => state.authenticated);
+  const sendToServer = useWebsocketStore((state) => state.sendToServer);
 
   const description = useLobbyStore((state) => state.description);
   const setDescription = useLobbyStore((state) => state.setDescription);
 
-  const sendToServer = useWebsocketStore((state) => state.sendToServer);
   const adventureSuggestions = useAdventureSuggestionsStore((state) => state.adventureSuggestions);
 
   const createInstance = useLobbyStore((state) => state.createInstance);
@@ -31,7 +32,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
   };
 
   useEffect(() => {
-    if (socketState == 'open' && adventureSuggestions.length == 0) {
+    if (socketState == 'open' && authenticated && adventureSuggestions.length == 0) {
       setTimeout(() => {
         sendToServer({
           type: StarlightWebSocketRequestType.createAdventureSuggestions,
@@ -39,7 +40,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
         });
       }, 1000);
     }
-  }, [adventureSuggestions, sendToServer, socketState]);
+  }, [adventureSuggestions, authenticated, sendToServer, socketState]);
 
   return (
     <div className={cn(`flex flex-col items-center gap-y-2 w-full max-w-5xl mt-10`, className)}>

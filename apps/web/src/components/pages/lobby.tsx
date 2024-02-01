@@ -1,15 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { User } from 'next-auth';
 import { LobbyInput } from '../input/lobby-input';
-import { cn } from '@/lib/utils';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
-import { Icons } from '../icons';
-import { useDialogStore } from '@/stores/dialog-store';
 import { useLobbyStore } from '@/stores/lobby-store';
+import { ImagePreview } from './lobby/image-preview';
+import { Settings } from './lobby/settings';
 
 const loadingMessages = [
   'Preparing for adventure',
@@ -36,19 +34,8 @@ const loadingMessages = [
   'Entwining the fates of mortals and gods...',
 ];
 
-export function Lobby({
-  user,
-  imageUrls,
-}: {
-  user: {
-    id: string;
-  } & User;
-  imageUrls: string[];
-}) {
-  const [imageIndex, setImageIndex] = useState(Math.floor(Math.random() * imageUrls.length));
+export function Lobby({ imageUrls }: { imageUrls: string[] }) {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [imageURL, setImageURL] = useState(imageUrls[imageIndex]);
-  const [animated, setAnimated] = useState(false);
 
   const setDescription = useLobbyStore((state) => state.setDescription);
   const setMessages = useMessagesStore((state) => state.setMessages);
@@ -58,46 +45,12 @@ export function Lobby({
   const [submitted, setSubmitted] = useState(false);
   const [loadingMessageVisible, setLoadingMessageVisible] = useState(false);
 
-  const setIsSetNarratorDialogOpen = useDialogStore((state) => state.setIsSetNarratorDialogOpen);
-  const setIsSetStoryOutlineDialogOpen = useDialogStore((state) => state.setIsSetStoryOutlineDialogOpen);
-  const setIsSetImageStyleDialogOpen = useDialogStore((state) => state.setIsSetImageStyleDialogOpen);
-
   // clear messages and transcription on each lobby load
   useEffect(() => {
     setDescription('');
     setMessages([]);
     clearAudio();
     setInstanceId(null);
-  }, []);
-
-  // cycle images
-  useEffect(() => {
-    const cycleImage = () => {
-      setAnimated(true);
-
-      // Set timeout for 2.5 (halfway through the animation) to swap the image
-      setTimeout(() => {
-        setImageIndex((oldIndex) => {
-          const newIndex = (oldIndex + 1) % imageUrls.length;
-          setImageURL(imageUrls[newIndex]);
-
-          setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
-
-          return newIndex;
-        });
-      }, 2500);
-
-      // After 5s, end the animation (this will align with the completion of the CSS animation)
-      setTimeout(() => {
-        setAnimated(false);
-      }, 5000);
-    };
-
-    cycleImage();
-
-    const interval = setInterval(cycleImage, 6000);
-
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -110,56 +63,12 @@ export function Lobby({
 
   return (
     <div className="w-full h-[100dvh] flex flex-col items-center gap-y-5 pt-10">
-      <div className="relative flex items-center justify-center w-full mt-auto">
-        <div className="relative">
-          <img
-            className={`absolute inset-0 object-cover h-60 w-60 md:h-80 md:w-80  mx-auto rounded-full opacity-100 aspect-1 blur-sm  md:blur-lg ${
-              animated ? 'animate-background-transition' : ''
-            }`}
-            src={imageURL}
-          />
-          <img
-            className={`relative object-cover h-60 w-60 md:h-80 md:w-80 mx-auto rounded-full aspect-1 -z-1 ${
-              animated ? 'animate-image-transition' : ''
-            }`}
-            src={imageURL}
-          />
-        </div>
-      </div>
+      <ImagePreview imageUrls={imageUrls} />
       <LobbyInput submitted={submitted} setSubmitted={setSubmitted} />
       <span key={currentMessageIndex} className={'h-10'}>
         {loadingMessageVisible && loadingMessages[currentMessageIndex]}
       </span>
-      <div className={cn('mt-auto mb-3', submitted && 'cursor-not-allowed fade-out-2s')}>
-        <div className="flex items-center mb-3">
-          <div className="grow h-[0.5px] border-[0.5px] border-white/10 rounded-full px-1" />
-          <div className="text-neutral-500 font-light text-xs mx-1 cursor-default">Settings</div>
-          <div className="grow h-[0.5px] border-[0.5px] border-white/10 rounded-full px-1" />
-        </div>
-        <div className="flex gap-x-4">
-          <div
-            className="flex flex-col items-center justify-center border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500 border-[0.5px] rounded-lg h-20 w-20 gap-y-2 cursor-pointer"
-            onClick={() => setIsSetNarratorDialogOpen(true)}
-          >
-            <Icons.person className="h-6 w-6" />
-            <div className="text-xs">Narrator</div>
-          </div>
-          <div
-            className="flex flex-col items-center justify-center border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500  border-[0.5px] rounded-lg h-20 w-20 gap-y-2 cursor-pointer"
-            onClick={() => setIsSetStoryOutlineDialogOpen(true)}
-          >
-            <Icons.book className="h-6 w-6" />
-            <div className="text-xs">Outline</div>
-          </div>
-          <div
-            className="flex flex-col items-center justify-center border-neutral-900 hover:border-neutral-800 text-neutral-600 hover:text-neutral-500 border-[0.5px] rounded-lg h-20 w-20 gap-y-2 cursor-pointer"
-            onClick={() => setIsSetImageStyleDialogOpen(true)}
-          >
-            <Icons.image className="h-6 w-6" />
-            <div className="text-xs">Style</div>
-          </div>
-        </div>
-      </div>
+      <Settings submitted={submitted} />
     </div>
   );
 }

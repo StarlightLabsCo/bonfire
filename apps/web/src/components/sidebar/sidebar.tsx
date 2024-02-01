@@ -38,12 +38,19 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
     }
   };
 
-  useEffect(() => {
-    async function updateDisplayedInstances() {
-      const instances = await fetch('/api/instances').then((res) => res.json());
-      setDisplayedInstances(instances);
-    }
+  async function updateDisplayedInstances() {
+    const instances = await fetch('/api/instances').then((res) => {
+      if (!res.ok) {
+        console.error('Failed to fetch instances: ', res.status, res.statusText);
+        return [];
+      }
+      return res.json();
+    });
 
+    setDisplayedInstances(instances);
+  }
+
+  useEffect(() => {
     updateDisplayedInstances();
   }, [pathname]);
 

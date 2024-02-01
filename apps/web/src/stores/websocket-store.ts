@@ -7,6 +7,7 @@ import { handlers } from '@/handlers';
 
 type WebsocketStore = {
   connect: () => void;
+  authenticated: boolean;
   exponentialBackoff: number;
 
   socket: WebSocket | null;
@@ -20,6 +21,7 @@ type WebsocketStore = {
 
 export const useWebsocketStore = create<WebsocketStore>((set, get) => ({
   connect: () => connect(set, get),
+  authenticated: false,
   exponentialBackoff: 1000,
 
   socket: null,
@@ -32,6 +34,7 @@ export const useWebsocketStore = create<WebsocketStore>((set, get) => ({
 }));
 
 type WebsocketStoreSet = (arg0: {
+  authenticated?: boolean;
   socket?: WebSocket | null;
   socketState?: string;
   isAlive?: boolean;
@@ -64,6 +67,7 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
     } else {
       let response = await tokenRequest.json();
       ws = new WebSocket(`${process.env.NEXT_PUBLIC_BACKEND_URL}?token=${response.token}`);
+      set({ authenticated: true });
     }
 
     set({ socket: ws, socketState: 'connecting' });
@@ -129,7 +133,7 @@ async function connect(set: WebsocketStoreSet, get: () => WebsocketStore) {
         clearInterval(heartbeat);
       }
 
-      set({ socket: null, socketState: 'closed', isAlive: false, heartbeat: null });
+      set({ socket: null, authenticated: false, socketState: 'closed', isAlive: false, heartbeat: null });
 
       console.log(`WebSocket connection closed. Code: ${event.code} Reason: ${event.reason}`);
 
