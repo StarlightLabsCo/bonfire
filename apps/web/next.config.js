@@ -6,6 +6,9 @@ const { withSentryConfig } = require('@sentry/nextjs');
 const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['websocket'],
+  experimental: {
+    ppr: true,
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: process.env.NEXT_PUBLIC_IMAGES_HOSTNAME },
