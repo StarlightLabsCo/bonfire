@@ -45,7 +45,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
   return (
     <div className={cn(`flex flex-col items-center gap-y-2 w-full max-w-5xl mt-10`, className)}>
       <Input
-        value={description}
+        value={description || ''}
         setValue={setDescription}
         submit={() => submit(description)}
         placeholder="Describe your adventure..."
