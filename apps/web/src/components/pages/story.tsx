@@ -208,7 +208,7 @@ export function Story({
                   return (
                     <div key={message.id} className="w-full fade-in-fast z-0">
                       <Zoom>
-                        <img src={message.content} width={1792} height={1024} className="rounded-2xl fade-in-2s" alt="Generated image" />
+                        <Image src={message.content} width={1792} height={1024} className="rounded-2xl fade-in-2s" alt="Generated image" />
                       </Zoom>
                     </div>
                   );

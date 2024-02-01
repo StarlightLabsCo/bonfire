@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { Pool } from 'pg';
+import Image from 'next/image';
 
 const alt = 'Bonfire - Storytelling Reimagined';
 const width = 1200;
@@ -9,7 +10,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const instanceId = searchParams.get('instanceId');
   if (!instanceId) {
-    return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
+    return new ImageResponse(<Image src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });
@@ -38,7 +39,7 @@ export async function GET(request: Request) {
   const result = rows[0];
 
   if (!result) {
-    return new ImageResponse(<img src="/bonfire.png" alt={alt} width={width} height={height} />, {
+    return new ImageResponse(<Image src="/bonfire.png" alt={alt} width={width} height={height} />, {
       width,
       height,
     });
@@ -46,7 +47,7 @@ export async function GET(request: Request) {
 
   pool.end(); // TODO: put this in a ctx.WaitUntil for better performance - https://github.com/vercel/next.js/issues/50522
 
-  return new ImageResponse(<img src={result.content} alt={alt} width={width} height={height} />, {
+  return new ImageResponse(<Image src={result.content} alt={alt} width={width} height={height} />, {
     width,
     height,
   });

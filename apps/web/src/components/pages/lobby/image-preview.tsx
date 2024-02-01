@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 type ImagePreviewProps = {
   imageUrls: string[];
@@ -41,17 +42,23 @@ export function ImagePreview({ imageUrls }: ImagePreviewProps) {
   return (
     <div className="relative flex items-center justify-center w-full mt-auto">
       <div className="relative">
-        <img
+        <Image
           className={`absolute inset-0 object-cover h-60 w-60 md:h-80 md:w-80  mx-auto rounded-full opacity-100 aspect-1 blur-sm  md:blur-lg ${
             animated ? 'animate-background-transition' : ''
           }`}
           src={imageURL}
+          width={1792}
+          height={1024}
+          alt="Generated image"
         />
-        <img
+        <Image
           className={`relative object-cover h-60 w-60 md:h-80 md:w-80 mx-auto rounded-full aspect-1 -z-1 ${
             animated ? 'animate-image-transition' : ''
           }`}
           src={imageURL}
+          width={1792}
+          height={1024}
+          alt="Generated image"
         />
       </div>
     </div>
