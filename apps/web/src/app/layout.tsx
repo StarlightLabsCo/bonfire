@@ -10,6 +10,7 @@ import { AxiomWebVitals } from 'next-axiom';
 import type { Metadata } from 'next';
 
 import SessionProvider from '@/components/session-provider';
+import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <Suspense>
         <PostHogPageview />
       </Suspense>
-      <body className={inter.className}>
+      <body className={cn('bg-black', inter.className)}>
         <PHProvider>
           <SessionProvider>
             <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>

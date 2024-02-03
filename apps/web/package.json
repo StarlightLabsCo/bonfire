@@ -34,6 +34,7 @@
     "cmdk": "^0.2.0",
     "database": "workspace:*",
     "eslint-config-custom": "workspace:*",
+    "framer-motion": "^11.0.3",
     "lucide-react": "^0.309.0",
     "million": "2.6.4",
     "next": "canary",

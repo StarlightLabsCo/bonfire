@@ -17,6 +17,8 @@ type MessagesStore = {
 
   streamedMessageId: string | null;
   streamedWords: Array<string> | null;
+  setStreamedMessageId: (streamedMessageId: string | null) => void;
+  setStreamedWords: (streamedWords: Array<string> | null) => void;
 };
 
 export const useMessagesStore = create<MessagesStore>((set, get) => ({
@@ -77,4 +79,6 @@ export const useMessagesStore = create<MessagesStore>((set, get) => ({
 
   streamedWords: null,
   streamedMessageId: null,
+  setStreamedMessageId: (streamedMessageId: string | null) => set(() => ({ streamedMessageId })),
+  setStreamedWords: (streamedWords: Array<string> | null) => set(() => ({ streamedWords })),
 }));

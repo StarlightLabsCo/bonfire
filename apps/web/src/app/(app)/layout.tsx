@@ -16,7 +16,7 @@ import { SidebarParent } from '@/components/sidebar/sidebar-parent';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="h-[100dvh] flex flex-col md:flex-row w-full magicpattern ">
+    <div className="h-[100dvh] flex flex-col md:flex-row w-full">
       <SidebarParent />
       <OpenSidebar />
       {children}

@@ -16,6 +16,7 @@ import { useSidebarStore } from '@/stores/sidebar-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
 import { useWebsocketStore } from '@/stores/websocket-store';
 import { Icons } from '../icons';
+import { cn } from '@/lib/utils';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -117,7 +118,6 @@ export function Story({
   }, []);
 
   // Word timings useEffect
-  const volume = usePlaybackStore((state) => state.volume);
   const wordTimings = usePlaybackStore((state) => state.wordTimings);
   const audioStartTime = usePlaybackStore((state) => state.audioStartTime);
   const currentWordIndex = usePlaybackStore((state) => state.currentWordIndex);
@@ -128,7 +128,16 @@ export function Story({
     const checkWordTimings = () => {
       if (wordTimings && audioStartTime) {
         const time = Date.now() - audioStartTime;
-        const wordIndex = wordTimings.wordStartTimesMs.findIndex((wordStartTime) => wordStartTime >= time);
+        let wordIndex = wordTimings.wordStartTimesMs.findIndex((wordStartTime) => wordStartTime >= time);
+
+        if (wordIndex === -1) {
+          wordIndex = streamedWords ? streamedWords.length : 0;
+
+          // Update messageStore to remove streamed words (since they've been spoken already)
+          useMessagesStore.getState().setStreamedWords(null);
+          useMessagesStore.getState().setStreamedMessageId(null);
+        }
+
         usePlaybackStore.getState().setCurrentWordIndex(wordIndex);
       }
       frameRef.current = requestAnimationFrame(checkWordTimings);
@@ -149,36 +158,33 @@ export function Story({
     <div className="flex flex-col items-center w-full mx-auto h-[100dvh] relative">
       <div
         ref={messageContainerRef}
-        className={`${cormorantGaramond.className} w-full flex flex-col items-center h-full px-8 overflow-y-auto overscroll-none font-[400] text-sm md:text-lg pt-16 md:pt-8`}
+        className={`${cormorantGaramond.className} w-full flex flex-col items-center h-full px-8 overflow-auto overscroll-none font-[400] text-sm md:text-lg pt-16 md:pt-8`}
       >
         <div className="max-w-3xl w-full flex flex-col items-center gap-y-8 pb-24">
           {messages.map((message: Message) => {
             if (streamedMessageId === message.id && streamedWords) {
               return (
-                <div key={message.id} className="w-full">
+                <div key={message.id} className="w-full flex flex-wrap">
                   {streamedWords.map((word, index) => {
                     const words = word.split('\n');
-
-                    // No newlines
-                    if (words.length === 1) {
-                      return (
-                        <React.Fragment key={`${message.id}-${index}`}>
-                          <span className={`fade-in-fast ${index == currentWordIndex ? 'underline' : ''}`}>{word}</span>{' '}
-                        </React.Fragment>
-                      );
-                    } // Newlines in the middle
-                    else {
-                      return (
-                        <>
-                          {words.map((word, wordIndex) => (
-                            <React.Fragment key={`${message.id}-${index}-${wordIndex}`}>
-                              <span className={`fade-in-fast ${wordIndex == currentWordIndex ? 'underline' : ''}`}>{word}</span>{' '}
-                              {wordIndex !== words.length - 1 && <br />}
-                            </React.Fragment>
-                          ))}
-                        </>
-                      );
-                    }
+                    return (
+                      <React.Fragment key={`${message.id}-${index}`}>
+                        {words.map((word, wordIndex) => {
+                          const isSpoken = index < (currentWordIndex ?? 0);
+                          return (
+                            <>
+                              <span
+                                key={`${message.id}-${index}-${wordIndex}`}
+                                className={cn(`fade-in-fast transition-colors duration-300`, isSpoken ? 'text-white' : 'text-white/20')}
+                              >
+                                {word}
+                              </span>
+                              {wordIndex !== words.length - 1 ? <br /> : <span>&nbsp;</span>}
+                            </>
+                          );
+                        })}
+                      </React.Fragment>
+                    );
                   })}
                 </div>
               );
