@@ -1,8 +1,8 @@
 import GridPattern from '@/components/animated-grid';
 import { Icons } from '@/components/icons';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default async function Home() {
   return (
@@ -26,10 +26,15 @@ export default async function Home() {
         </div>
         <div className="relative h-full pt-4">
           <div className="absolute top-0 h-full max-h-[75%] w-full max-w-5xl bg-gradient-to-b from-black to-transparent" />
-          <Button className="relative ml-4 bg-orange-500 rounded-full flex items-center w-24 z-10 text-white">
-            <div className="font-bold">Start</div>
-            <Icons.arrowRight className="ml-1 h-4 w-4" />
-          </Button>
+          <Link
+            href="/login"
+            className="relative h-8 w-24 ml-4 flex items-center justify-center bg-orange-500 rounded-full z-10 text-white"
+          >
+            <div className="flex items-center gap-x-1">
+              <div className="font-bold">Start</div>
+              <Icons.arrowRight className="h-4 w-4" />
+            </div>
+          </Link>
         </div>
       </div>
       <GridPattern className={cn('w-full h-full -z-10')} maxOpacity={0.3} />
