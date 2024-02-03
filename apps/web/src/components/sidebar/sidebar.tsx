@@ -81,9 +81,7 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
 
       {/* Mobile Header */}
       <div
-        className={
-          'absolute h-10 z-10 w-full flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200 md:hidden'
-        }
+        className={`absolute h-10 z-10 w-full flex items-center justify-between ${instanceId ? 'border-b bg-neutral-950 border-white/10' : ''} text-gray-200 md:hidden`}
         style={{ top: `${mobileHeaderHeight}px` }}
       >
         <button className="h-10 w-10 flex-shrink-0 flex items-center justify-center" onClick={() => openSidebar()}>

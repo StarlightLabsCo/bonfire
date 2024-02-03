@@ -27,6 +27,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
   const createInstance = useLobbyStore((state) => state.createInstance);
 
   const submit = (description: string) => {
+    if (!authenticated) return;
     setSubmitted && setSubmitted(true);
     createInstance(description);
   };
@@ -49,7 +50,7 @@ export function LobbyInput({ submitted, setSubmitted, className }: LobbyInputPro
         setValue={setDescription}
         submit={() => submit(description)}
         placeholder="Describe your adventure..."
-        disabled={submitted}
+        disabled={!authenticated || submitted}
         className={cn(submitted && 'cursor-not-allowed fade-out-2s')}
       />
       <div className={cn('flex flex-row justify-center flex-wrap gap-x-2 gap-y-2 h-10', submitted && 'fade-out-2s')}>

@@ -2,11 +2,14 @@ import db from '@/lib/db';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Session, User } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import AppleProvider from 'next-auth/providers/apple';
+
+if (!process.env.APPLE_CLIENT_ID || !process.env.APPLE_CLIENT_SECRET) {
+  throw new Error('Missing APPLE_ID and APPLE_SECRET environment variables.');
+}
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  throw new Error(
-    'Missing GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables. Did you forget to run `cp .env.local.example .env.local`?',
-  );
+  throw new Error('Missing GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.');
 }
 
 if (!process.env.STRIPE_SECRET) {
@@ -23,6 +26,10 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    AppleProvider({
+      clientId: process.env.APPLE_CLIENT_ID,
+      clientSecret: process.env.APPLE_CLIENT_SECRET,
     }),
   ],
   adapter: PrismaAdapter(db),
