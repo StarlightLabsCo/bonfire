@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Session, User } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import AppleProvider from 'next-auth/providers/apple';
+import DiscordProvider from 'next-auth/providers/discord';
 
 if (!process.env.APPLE_CLIENT_ID || !process.env.APPLE_CLIENT_SECRET) {
   throw new Error('Missing APPLE_ID and APPLE_SECRET environment variables.');
@@ -10,6 +11,10 @@ if (!process.env.APPLE_CLIENT_ID || !process.env.APPLE_CLIENT_SECRET) {
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
   throw new Error('Missing GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.');
+}
+
+if (!process.env.DISCORD_CLIENT_ID || !process.env.DISCORD_CLIENT_SECRET) {
+  throw new Error('Missing DISCORD_CLIENT_ID and DISCORD_CLIENT_SECRET environment variables.');
 }
 
 if (!process.env.STRIPE_SECRET) {
@@ -30,6 +35,10 @@ export const authOptions = {
     AppleProvider({
       clientId: process.env.APPLE_CLIENT_ID,
       clientSecret: process.env.APPLE_CLIENT_SECRET,
+    }),
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
     }),
   ],
   adapter: PrismaAdapter(db),
