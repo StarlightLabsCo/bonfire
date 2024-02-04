@@ -1,3 +1,3 @@
 setup:
-  project: bonfire-nextjs
+  project: bonfire-websocket-server
   config: dev

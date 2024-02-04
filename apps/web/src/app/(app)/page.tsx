@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import FadeIn from '@/components/animation/fadeIn';
 import Bounce from '@/components/animation/bounce';
+import { MarqueeImages } from '@/components/marquee-images';
 
 export default async function Home() {
   return (
@@ -24,7 +25,7 @@ export default async function Home() {
               <FadeIn>The Ultimate Storyteller</FadeIn>
             </div>
             <div className="text-sm w-4/5 text-center text-neutral-400 pb-4">
-              <FadeIn delay={0.1}>An AI narrator that brings stories to life as a text adventure with images & audio.</FadeIn>
+              <FadeIn delay={0.1}>An AI narrator that brings your stories to life as a text adventure with images & audio.</FadeIn>
             </div>
           </div>
         </div>
@@ -53,30 +54,31 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="pl-4 w-3/4 text-white">
-        <div className="h-48 pt-4">
+      <div className="w-3/4 text-white">
+        <div className="pl-4 h-48 pt-4">
           <div className="font-bold text-2xl">Bring Ideas to Life</div>
           <div className="text-xs text-neutral-400">
             Whether a few stray ideas, or a full story outline, Bonfire will create an immersive story experience just for you.
           </div>
         </div>
-        <div className="h-48 pt-4">
+        <div className="pl-4 h-48 pt-4">
           <div className="font-bold text-2xl">Infinite Possibilities</div>
           <div className="text-xs text-neutral-400">Every choice you make directs the story in a new direction.</div>
         </div>
-        <div className="h-48 pt-4">
-          <div className="font-bold text-2xl">Visualize the Story</div>
-          <div className="text-xs text-neutral-400">
+        <div className="pt-4">
+          <div className="pl-4 font-bold text-2xl">Visualize the Story</div>
+          <div className="pl-4 text-xs text-neutral-400">
             Depictions of significant characters, interactions, items, and events at every step of the story.
           </div>
+          <MarqueeImages className="w-[100dvh] pt-5" />
         </div>
-        <div className="h-48 pt-4">
+        <div className="pl-4 h-48 pt-4">
           <div className="font-bold text-2xl">Personalize Your Narrator</div>
           <div className="text-xs text-neutral-400">
             Change the narrator&apos;s voice, personality, and storytelling style to match your preferences.
           </div>
         </div>
-        <div className="h-48 pt-4">
+        <div className="pl-4 h-48 pt-4">
           <div className="font-bold text-2xl">Invite Friends</div>
           <div className="text-xs text-neutral-400">Shape the story with friends, and let them experience the world you have created.</div>
         </div>
