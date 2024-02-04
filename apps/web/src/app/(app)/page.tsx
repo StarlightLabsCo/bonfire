@@ -68,7 +68,7 @@ export default async function Home() {
         </div>
         <div className="h-48 pt-4">
           <div className="font-bold text-2xl">Personalize Your Narrator</div>
-          <div className="text-xs">Change the narrator's voice, personality, and storytelling style to match your preferences.</div>
+          <div className="text-xs">Change the narrator&apos;s voice, personality, and storytelling style to match your preferences.</div>
         </div>
         <div className="h-48 pt-4">
           <div className="font-bold text-2xl">Invite Friends</div>
