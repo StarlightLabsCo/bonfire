@@ -80,25 +80,34 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
       />
 
       {/* Mobile Header */}
-      <div
-        className={`absolute h-10 z-10 w-full flex items-center justify-between ${instanceId ? 'border-b bg-neutral-950 border-white/10' : ''} text-gray-200 md:hidden`}
-        style={{ top: `${mobileHeaderHeight}px` }}
-      >
-        <button className="h-10 w-10 flex-shrink-0 flex items-center justify-center" onClick={() => openSidebar()}>
-          <Icons.hamburger />
-        </button>
-        <div className="h-10 grow flex items-center justify-center font-sans">
-          {/* TODO: title could go here -  make it so it reflects current instance */}
-        </div>
-        <div className="flex items-center">
-          <ConnectedUsersMobile />
-          {instanceId && (
+      {instanceId ? (
+        <div
+          className="absolute h-10 z-10 w-full flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200 md:hidden"
+          style={{ top: `${mobileHeaderHeight}px` }}
+        >
+          <button className="h-10 w-10 flex-shrink-0 flex items-center justify-center" onClick={() => openSidebar()}>
+            <Icons.hamburger />
+          </button>
+          <div className="h-10 grow flex items-center justify-center font-sans">
+            {/* TODO: title could go here -  make it so it reflects current instance */}
+          </div>
+          <div className="flex items-center">
+            <ConnectedUsersMobile />
             <button className="h-10 flex-shrink-0 w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
               <Icons.share />
             </button>
-          )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="absolute h-10 z-10 w-full flex items-center text-gray-200 md:hidden">
+          <div className="flex items-center flex-shrink-0">
+            <button className="h-10 w-10 flex items-center justify-center" onClick={() => openSidebar()}>
+              <Icons.hamburger />
+            </button>
+            <div className="font-semibold text-sm">Bonfire</div>
+          </div>
+        </div>
+      )}
 
       {/* Desktop */}
       <div

@@ -1,16 +1,27 @@
 'use client';
 
 import { Icons } from '../icons';
-import { useSidebarStore } from '@/stores/sidebar-store';
 import Link from 'next/link';
+import { useCurrentInstanceStore } from '@/stores/current-instance-store';
+import { useSidebarStore } from '@/stores/sidebar-store';
+import { useMessagesStore } from '@/stores/messages-store';
+import { usePlaybackStore } from '@/stores/audio/playback-store';
 
 export function TopActions() {
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
+
+  const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
+  const setMessages = useMessagesStore((state) => state.setMessages);
+  const clearAudio = usePlaybackStore((state) => state.clearAudio);
 
   const handleClick = () => {
     if (window.innerWidth < 768) {
       closeSidebar();
     }
+
+    setInstanceId(null);
+    setMessages([]);
+    clearAudio();
   };
 
   return (
