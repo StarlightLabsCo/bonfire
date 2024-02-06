@@ -4,6 +4,8 @@ import { Icons } from '@/components/icons';
 import FadeIn from '@/components/animation/fadeIn';
 import Bounce from '@/components/animation/bounce';
 import { MarqueeImages } from '@/components/marquee-images';
+import { VoiceExample } from '@/components/pages/lobby/voice-example';
+import { ScrollArrow } from '@/components/pages/lobby/scroll-arrow';
 
 export default async function Home() {
   return (
@@ -39,7 +41,7 @@ export default async function Home() {
           <FadeIn delay={0.2}>
             <Link
               href="/login"
-              className="relative h-9 w-24 mx-auto flex items-center justify-center bg-orange-500 rounded-full z-10 text-white"
+              className="relative h-9 w-24 mx-auto flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white"
             >
               <div className="flex items-center gap-x-1">
                 <div className="font-bold">Play</div>
@@ -47,40 +49,42 @@ export default async function Home() {
             </Link>
           </FadeIn>
           <FadeIn delay={0.3} className="absolute bottom-0 w-full h-6 mb-4 text-white">
-            <Bounce className="w-full flex justify-center">
-              <Icons.doubleArrowDown className="w-6 h-6" />
-            </Bounce>
+            <ScrollArrow scrollTo="ideas" />
           </FadeIn>
         </div>
       </div>
 
-      <div className="w-3/4 text-white">
-        <div className="pl-4 h-48 pt-4">
+      {/* Sectionals */}
+      <div className="w-full text-white flex flex-col gap-y-4">
+        <div className="px-4 pt-4 w-3/4" id="ideas">
           <div className="font-bold text-2xl">Bring Ideas to Life</div>
           <div className="text-xs text-neutral-400">
-            Whether a few stray ideas, or a full story outline, Bonfire will create an immersive story experience just for you.
+            Whether a few stray ideas, or a full outline, Bonfire creates an immersive story just for you.
           </div>
         </div>
-        <div className="pl-4 h-48 pt-4">
+        <div className="px-4 pt-4 w-3/4">
           <div className="font-bold text-2xl">Infinite Possibilities</div>
           <div className="text-xs text-neutral-400">Every choice you make directs the story in a new direction.</div>
         </div>
         <div className="pt-4">
-          <div className="pl-4 font-bold text-2xl">Visualize the Story</div>
-          <div className="pl-4 text-xs text-neutral-400">
-            Depictions of significant characters, interactions, items, and events at every step of the story.
-          </div>
-          <MarqueeImages className="w-[100dvh] pt-5" />
+          <div className="w-3/4 px-4 font-bold text-2xl">Visualize the Story</div>
+          <div className="w-3/4 px-4 text-xs text-neutral-400">Depict characters, items, and events at every step of the story.</div>
+          <MarqueeImages className="mt-5" />
         </div>
-        <div className="pl-4 h-48 pt-4">
-          <div className="font-bold text-2xl">Personalize Your Narrator</div>
-          <div className="text-xs text-neutral-400">
-            Change the narrator&apos;s voice, personality, and storytelling style to match your preferences.
-          </div>
+        <div className="px-4 pt-4 w-full">
+          <div className="w-3/4 font-bold text-2xl">Personalize Your Narrator</div>
+          <div className="w-3/4 text-xs text-neutral-400">Tailor the narrator&apos;s voice, personality, and style to what you want.</div>
+          <VoiceExample className="mt-5" />
         </div>
-        <div className="pl-4 h-48 pt-4">
+        <div className="px-4 pt-4">
           <div className="font-bold text-2xl">Invite Friends</div>
           <div className="text-xs text-neutral-400">Shape the story with friends, and let them experience the world you have created.</div>
+          <div className="h-40 w-full mt-5 mr-4 border border-neutral-700 rounded-lg" />
+        </div>
+        <div className="px-4 pt-4">
+          <div className="font-bold text-2xl">Try it for yourself</div>
+          <div className="text-xs text-neutral-400">No signup required!</div>
+          <div className="h-40 w-full mt-5 mr-4 border border-neutral-700 rounded-lg" />
         </div>
       </div>
     </div>
