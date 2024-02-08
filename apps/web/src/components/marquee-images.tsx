@@ -81,12 +81,26 @@ export function MarqueeImages({ className }: { className?: string }) {
     >
       <Marquee className="[--gap:1rem]">
         {imagesFirstHalf.map((image, idx) => (
-          <Image className="rounded-lg h-24" key={idx} src={image} alt="Example generated image" width={1792} height={1024} />
+          <Image
+            className="rounded-lg h-36 w-60 object-cover"
+            key={idx}
+            src={image}
+            alt="Example generated image"
+            width={1792}
+            height={1024}
+          />
         ))}
       </Marquee>
       <Marquee className="[--gap:1rem]" reverse>
         {imagesSecondHalf.map((image, idx) => (
-          <Image className="rounded-lg h-24" key={idx} src={image} alt="Example generated image" width={1792} height={1024} />
+          <Image
+            className="rounded-lg h-36 w-60 object-cover"
+            key={idx}
+            src={image}
+            alt="Example generated image"
+            width={1792}
+            height={1024}
+          />
         ))}
       </Marquee>
     </div>

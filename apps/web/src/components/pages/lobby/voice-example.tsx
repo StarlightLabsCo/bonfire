@@ -27,7 +27,7 @@ export function VoiceExample({ className }: VoiceExampleProps) {
 
       height: 'auto',
 
-      waveColor: '#ffffff',
+      waveColor: '#646464',
       progressColor: '#ff8f00',
       barWidth: 3,
       barGap: 3,
@@ -45,6 +45,7 @@ export function VoiceExample({ className }: VoiceExampleProps) {
 
     return () => {
       wavesurferRef.current?.destroy();
+      setIsPlaying(false);
     };
   }, [selectedVoice]);
 
@@ -68,14 +69,14 @@ export function VoiceExample({ className }: VoiceExampleProps) {
       <div className="flex w-full gap-x-2 h-16 items-center">
         {isPlaying ? (
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 2, repeatDelay: 0.3 }}>
-            <Icons.pause className="w-12 h-12" onClick={handlePlayPauseClick} />
+            <Icons.pause className="w-10 h-10" onClick={handlePlayPauseClick} />
           </motion.div>
         ) : (
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 2, repeatDelay: 0.3 }}>
-            <Icons.play className="w-12 h-12" onClick={handlePlayPauseClick} />
+            <Icons.play className="w-10 h-10" onClick={handlePlayPauseClick} />
           </motion.div>
         )}
-        <div className="flex items-center w-full h-full rounded-lg bg-white/5 p-2">
+        <div className="flex items-center w-full h-full rounded-lg p-2">
           <div id="waveform" className="w-full h-full" />
         </div>
       </div>

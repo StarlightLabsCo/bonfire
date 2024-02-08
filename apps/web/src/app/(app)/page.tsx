@@ -2,10 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import FadeIn from '@/components/animation/fadeIn';
-import Bounce from '@/components/animation/bounce';
 import { MarqueeImages } from '@/components/marquee-images';
 import { VoiceExample } from '@/components/pages/lobby/voice-example';
 import { ScrollArrow } from '@/components/pages/lobby/scroll-arrow';
+import { StoryExamples } from '@/components/pages/lobby/story-examples';
+import { MultiplayerAnimation } from '@/components/pages/lobby/multiplayer-animation';
 
 export default async function Home() {
   return (
@@ -55,7 +56,7 @@ export default async function Home() {
       </div>
 
       {/* Sectionals */}
-      <div className="w-full text-white flex flex-col gap-y-4">
+      <div className="w-full text-white flex flex-col gap-y-4 mb-20">
         <div className="px-4 pt-4 w-3/4" id="ideas">
           <div className="font-bold text-2xl">Bring Ideas to Life</div>
           <div className="text-xs text-neutral-400">
@@ -79,12 +80,12 @@ export default async function Home() {
         <div className="px-4 pt-4">
           <div className="font-bold text-2xl">Invite Friends</div>
           <div className="text-xs text-neutral-400">Shape the story with friends, and let them experience the world you have created.</div>
-          <div className="h-40 w-full mt-5 mr-4 border border-neutral-700 rounded-lg" />
+          <MultiplayerAnimation className="mt-12 mb-6" />
         </div>
-        <div className="px-4 pt-4">
-          <div className="font-bold text-2xl">Try it for yourself</div>
-          <div className="text-xs text-neutral-400">No signup required!</div>
-          <div className="h-40 w-full mt-5 mr-4 border border-neutral-700 rounded-lg" />
+        <div className="pt-4">
+          <div className="px-4 font-bold text-2xl">Try it for yourself</div>
+          <div className="px-4 text-xs text-neutral-400">No signup required!</div>
+          <StoryExamples className="mt-5 w-full" />
         </div>
       </div>
     </div>

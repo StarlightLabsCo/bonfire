@@ -62,11 +62,11 @@ module.exports = {
         },
         marquee: {
           from: { transform: 'translateX(0)' },
-          to: { transform: 'translateX(calc(-50% - var(--gap)/2))' },
+          to: { transform: 'translateX(calc(-100% - var(--gap)))' },
         },
         'marquee-vertical': {
           from: { transform: 'translateY(0)' },
-          to: { transform: 'translateY(calc(-50% - var(--gap)/2))' },
+          to: { transform: 'translateY(calc(-100% - var(--gap)))' },
         },
       },
       animation: {
@@ -74,6 +74,9 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         marquee: 'marquee var(--duration) linear infinite',
         'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
+      },
+      aspectRatio: {
+        '9/16': '9 / 16',
       },
     },
   },
