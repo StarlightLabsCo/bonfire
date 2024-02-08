@@ -20,6 +20,7 @@ const friends = [
 export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const [hostImage, setHostImage] = useState(Math.random() > 0.5 ? '/multiplayer/host.webp' : '/multiplayer/host2.webp');
   const [visibleFriends, setVisibleFriends] = useState<number[]>([]);
   const timeRef = useRef(0);
   const firstRender = useRef(true);
@@ -114,7 +115,7 @@ export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
       <div ref={ref} className="h-64 w-64">
         <div className={'relative w-full h-full rounded-full flex justify-center items-center'}>
           <Image
-            src="/multiplayer/host.webp"
+            src={hostImage}
             alt="Host"
             className="absolute w-24 h-24 rounded-full border-[1px] border-white/30 drop-shadow-lg"
             height={1024}
