@@ -38,7 +38,7 @@ export function StoryExamples({ className }: StoryExamplesProps) {
             <CarouselItem
               key={index}
               index={index}
-              className={'flex justify-center transform-gpu'}
+              className={'flex justify-center'}
               renderItem={(isActive: boolean) => (
                 <StoryExampleCard
                   title={story.title}
