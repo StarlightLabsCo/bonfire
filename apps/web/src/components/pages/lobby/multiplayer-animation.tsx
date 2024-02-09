@@ -117,7 +117,7 @@ export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
           <Image
             src={hostImage}
             alt="Host"
-            className="absolute w-24 h-24 rounded-full border-[1px] border-white/30 drop-shadow-lg"
+            className="absolute w-24 h-24 rounded-full border border-white/30 drop-shadow-lg"
             height={1024}
             width={1024}
           />
@@ -136,7 +136,7 @@ export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
                 alt={`Friend ${index + 1}`}
                 height={1024}
                 width={1024}
-                className="absolute rounded-full border-[1px] border-white/30 drop-shadow-lg"
+                className="absolute rounded-full border border-white/30 drop-shadow-lg"
               />
             </motion.div>
           ))}

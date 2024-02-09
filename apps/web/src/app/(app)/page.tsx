@@ -7,6 +7,7 @@ import { VoiceExample } from '@/components/pages/lobby/voice-example';
 import { ScrollArrow } from '@/components/pages/lobby/scroll-arrow';
 import { StoryExamples } from '@/components/pages/lobby/story-examples';
 import { MultiplayerAnimation } from '@/components/pages/lobby/multiplayer-animation';
+import { ChoicesAnimation } from '@/components/pages/lobby/choices-animation';
 
 export default async function Home() {
   return (
@@ -63,9 +64,13 @@ export default async function Home() {
             Whether a few stray ideas, or a full outline, Bonfire creates an immersive story just for you.
           </div>
         </div>
-        <div className="px-4 pt-4 w-3/4">
-          <div className="font-bold text-2xl">Infinite Possibilities</div>
-          <div className="text-xs text-neutral-400">Every choice you make directs the story in a new direction.</div>
+        <div className="px-4 pt-4 w-full">
+          <div className="w-3/4 font-bold text-2xl">Infinite Possibilities</div>
+          <div className="w-3/4 text-xs text-neutral-400">Every choice you make directs the story in a new direction.</div>
+          <ChoicesAnimation className="my-6" />
+          <div className="w-3/4 text-xs text-neutral-400">
+            If you don&apos;t like the suggested actions, you can write whatever you want!
+          </div>
         </div>
         <div className="pt-4">
           <div className="w-3/4 px-4 font-bold text-2xl">Visualize the Story</div>
