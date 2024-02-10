@@ -143,12 +143,11 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
 
   useEffect(() => {
     if (inView) {
-      controls.start('visible');
-      // controls.start('visible').then(() => {
-      //   setTimeout(() => {
-      //     selectLeaf();
-      //   }, 2000);
-      // });
+      controls.start('visible').then(() => {
+        setTimeout(() => {
+          setSelectedLeafIndex(Math.floor(Math.random() * 3));
+        }, 2000);
+      });
     }
   }, [controls, inView]);
 
@@ -172,7 +171,11 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
       setSelectedLeafIndex(null);
 
       setTimeout(() => {
-        controls.start('visible');
+        controls.start('visible').then(() => {
+          setTimeout(() => {
+            setSelectedLeafIndex(Math.floor(Math.random() * 3));
+          }, 2000);
+        });
       }, 1000);
     };
 
@@ -227,7 +230,6 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
             offsetPath: `path("${leafOffsetPaths[index]}")`,
           }}
           ref={ref}
-          onClick={() => setSelectedLeafIndex(index)}
         >
           <Image
             src={leafImages[index]}
