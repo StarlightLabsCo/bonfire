@@ -10,17 +10,19 @@ type MultiplayerAnimationProps = {
 };
 
 const friends = [
-  { id: '1', imageUrl: '/multiplayer/friend1.webp' },
-  { id: '2', imageUrl: '/multiplayer/friend2.webp' },
-  { id: '3', imageUrl: '/multiplayer/friend3.webp' },
-  { id: '4', imageUrl: '/multiplayer/friend4.webp' },
-  { id: '5', imageUrl: '/multiplayer/friend5.webp' },
+  { id: '1', imageUrl: '/animations/multiplayer/friend1.webp' },
+  { id: '2', imageUrl: '/animations/multiplayer/friend2.webp' },
+  { id: '3', imageUrl: '/animations/multiplayer/friend3.webp' },
+  { id: '4', imageUrl: '/animations/multiplayer/friend4.webp' },
+  { id: '5', imageUrl: '/animations/multiplayer/friend5.webp' },
 ];
 
 export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
-  const [hostImage, setHostImage] = useState(Math.random() > 0.5 ? '/multiplayer/host.webp' : '/multiplayer/host2.webp');
+  const [hostImage, setHostImage] = useState(
+    Math.random() > 0.5 ? '/animations/multiplayer/host.webp' : '/animations/multiplayer/host2.webp',
+  );
   const [visibleFriends, setVisibleFriends] = useState<number[]>([]);
   const timeRef = useRef(0);
   const firstRender = useRef(true);
