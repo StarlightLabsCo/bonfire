@@ -28,18 +28,25 @@ const transition = {
 
 // Node Variants
 const baseNodeVariants = {
-  hidden: { opacity: 0, scale: 0, offsetDistance: '100%' },
+  hidden: { opacity: 0, scale: 0 },
   visible: { opacity: 1, scale: 1 },
 };
 
 const sourceNodeVariants = {
   ...baseNodeVariants,
+  panning: (custom: { x: number; y: number }) => ({
+    x: custom.x,
+    y: custom.y,
+  }),
 };
 
 const selectedLeafVariants = {
   ...baseNodeVariants,
   selected: {},
-  becomeSource: { offsetDistance: '0%' },
+  panning: (custom: { x: number; y: number }) => ({
+    x: custom.x,
+    y: custom.y,
+  }),
 };
 
 const nonSelectedLeafVariants = {
@@ -61,7 +68,9 @@ const nonSelectedEdgeVariants = {
 const selectedEdgeVariants = {
   ...baseEdgeVariants,
   selected: { stroke: 'rgba(255, 255, 255, 0.5)' },
-  becomeSource: { pathLength: 0 },
+  panning: (custom: { x: number; y: number }) => ({
+    pathLength: 0,
+  }),
 };
 
 export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
@@ -89,21 +98,17 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
   // Leaf nodes
   const leafRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
   const [leafStyles, setLeafStyles] = useState(['left-1/2 ', 'left-1/2 top-1/2 -mt-[2rem]', 'left-1/2 bottom-0']);
-  const [leafOffsetPaths, setLeafOffsetPaths] = useState(['', '', '']);
-
-  const updateLeafOffsetPath = (index: number, pathD: string) => {
-    setLeafOffsetPaths((prevLeafOffsetPaths) => {
-      const newLeafOffsetPaths = [...prevLeafOffsetPaths];
-      newLeafOffsetPaths[index] = pathD;
-      return newLeafOffsetPaths;
-    });
-    console.log('updateLeafOffsetPath', index, pathD);
-  };
 
   const [leafImages, setLeafImages] = useState([
     '/animations/multiplayer/host.webp',
     '/animations/multiplayer/host.webp',
     '/animations/multiplayer/host.webp',
+  ]);
+
+  const [leafDeltas, setLeafDeltas] = useState<{ x: number; y: number }[]>([
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
   ]);
 
   const [selectedLeafIndex, setSelectedLeafIndex] = useState<number | null>(null);
@@ -115,30 +120,36 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
     const parentRect = edgesParentRef.current?.getBoundingClientRect();
     if (!parentRect) return;
 
-    leafRefs.forEach((ref, index) => {
+    const newLeafDeltas = leafRefs.map((ref, index) => {
       if (ref.current) {
         const { left, top, width, height } = ref.current.getBoundingClientRect();
 
-        // Adjust calculations to be relative to the parent element
-        const endX = left + width / 2 - parentRect.left;
-        const endY = top + height / 2 - parentRect.top;
-
-        // Define the start point (source node)
+        // Start and end points
         const startX = 32;
         const startY = 120;
 
-        // Define control points for the Bezier curve
+        const endX = left + width / 2 - parentRect.left;
+        const endY = top + height / 2 - parentRect.top;
+
+        // Control points (quadratic bezier curve)
         const controlX1 = (startX + endX) / 2;
         const controlY1 = startY;
+
         const controlX2 = (startX + endX) / 2;
         const controlY2 = endY;
 
-        // Set the path data using a cubic Bezier curve
         updatePathDs(index, `M${startX},${startY} C${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`);
-        updateLeafOffsetPath(index, `M${startX},${startY} C${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`);
+
+        // Calculate deltaX and deltaY for panning (we want leaf to go to source)
+        const deltaX = startX - endX;
+        const deltaY = startY - endY;
+
+        return { x: deltaX, y: deltaY };
       }
+      return { x: 0, y: 0 };
     });
-    setLeafStyles(['', '', '']);
+
+    setLeafDeltas(newLeafDeltas);
   }, []);
 
   useEffect(() => {
@@ -154,33 +165,16 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
   useEffect(() => {
     if (selectedLeafIndex === null) return;
 
-    const triggerProgression = async () => {
+    const triggerPanning = async () => {
       controls.start('exit');
       await controls.start('selected');
-      await controls.start('becomeSource');
 
-      setSourceNodeImage(leafImages[selectedLeafIndex]);
-
-      controls.set('hidden');
-
-      setLeafImages([
-        '/animations/multiplayer/friend1.webp',
-        '/animations/multiplayer/friend2.webp',
-        '/animations/multiplayer/friend3.webp',
-      ]);
-      setSelectedLeafIndex(null);
-
-      setTimeout(() => {
-        controls.start('visible').then(() => {
-          setTimeout(() => {
-            setSelectedLeafIndex(Math.floor(Math.random() * 3));
-          }, 2000);
-        });
-      }, 1000);
+      // Animate the panning
+      controls.start('panning');
     };
 
-    triggerProgression();
-  }, [selectedLeafIndex, controls, leafImages]);
+    triggerPanning();
+  }, [selectedLeafIndex]);
 
   return (
     <div ref={ref} className={cn('w-full relative h-60', className)}>
@@ -191,6 +185,7 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
         initial="hidden"
         animate="visible"
         transition={transition}
+        custom={{ x: 0, y: 0 }}
         className="absolute top-1/2 -mt-[2rem] z-10"
       >
         <Image
@@ -212,6 +207,7 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
             stroke="rgba(255, 255, 255, 0.3)"
             strokeWidth="2"
             variants={selectedLeafIndex === index ? selectedEdgeVariants : nonSelectedEdgeVariants}
+            custom={leafDeltas[index]}
             transition={transition}
           />
         ))}
@@ -225,10 +221,8 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
           initial="hidden"
           animate={controls}
           transition={transition}
+          custom={leafDeltas[index]}
           className={`absolute ${leafStyles[index]} z-10`}
-          style={{
-            offsetPath: `path("${leafOffsetPaths[index]}")`,
-          }}
           ref={ref}
         >
           <Image
