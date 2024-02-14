@@ -39,7 +39,7 @@ export default function Resume() {
           className="rounded-xl h-full object-cover"
         />
         <div className="absolute bottom-0 h-full max-h-[70%] w-full bg-gradient-to-t from-black to-transparent rounded-xl" />
-        <div className="absolute bottom-0 h-full w-full flex items-end text-white px-4 pb-5">
+        <div className="absolute bottom-0 w-full flex items-center text-white px-4 pb-5">
           <div className="font-black text-xl drop-shadow-lg z-10 grow">New adventure?</div>
           <Link href="/" className="relative h-9 w-32 flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white">
             <div className="font-bold">Create</div>
