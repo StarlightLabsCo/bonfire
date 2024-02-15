@@ -80,12 +80,26 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
       />
 
       {/* Mobile Header */}
-      {instanceId ? (
+      {pathname === '/lobby' ? (
+        <div className="absolute h-10 z-10 w-full flex items-center justify-between text-gray-200 md:hidden">
+          <div className="flex items-center flex-shrink-0">
+            <button className="h-10 w-10 flex items-center justify-center" onClick={() => openSidebar()}>
+              <Icons.hamburger />
+            </button>
+            <div className="font-semibold text-sm">Bonfire</div>
+          </div>
+          <div className="flex items-center">
+            <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => alert('hi')}>
+              <Icons.userPlus className="h-[1.125rem] w-[1.125rem]" />
+            </button>
+          </div>
+        </div>
+      ) : instanceId ? (
         <div
           className="absolute h-10 z-10 w-full flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200 md:hidden"
           style={{ top: `${mobileHeaderHeight}px` }}
         >
-          <button className="h-10 w-10 flex-shrink-0 flex items-center justify-center" onClick={() => openSidebar()}>
+          <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => openSidebar()}>
             <Icons.hamburger />
           </button>
           <div className="h-10 grow flex items-center justify-center font-sans">
@@ -93,7 +107,7 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
           </div>
           <div className="flex items-center">
             <ConnectedUsersMobile />
-            <button className="h-10 flex-shrink-0 w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
+            <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
               <Icons.share />
             </button>
           </div>

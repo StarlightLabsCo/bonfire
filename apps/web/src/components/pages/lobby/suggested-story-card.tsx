@@ -16,9 +16,9 @@ export function SuggestedStoryCard({ isActive, title, image, className }: Sugges
       <div className="absolute bottom-0 w-full h-1/4 bg-black/90 rounded-b-xl" />
       <div className="absolute bottom-1/4 w-full h-1/4 bg-gradient-to-t from-black/90 to-transparent" />
 
-      <div className="absolute bottom-0 w-full p-3 flex flex-col items-center">
+      <div className="absolute bottom-0 w-full p-5 flex flex-col items-center">
         <TriggeredFadeIn animated={isActive}>
-          <div className="font-black text-3xl drop-shadow-lg text-center">{title}</div>
+          <div className="font-black text-3xl drop-shadow-lg text-left">{title}</div>
         </TriggeredFadeIn>
       </div>
     </div>

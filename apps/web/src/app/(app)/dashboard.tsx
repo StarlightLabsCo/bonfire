@@ -1,8 +1,13 @@
 import { Icons } from '@/components/icons';
+import { Instance } from 'database';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Resume() {
+type DashboardProps = {
+  instance: Instance;
+};
+
+export default function Dashboard({ instance }: DashboardProps) {
   return (
     <div className="h-[calc(100dvh-2.5rem)] w-full mt-10 px-4 py-2 flex flex-col gap-y-2">
       <div className="relative h-3/4 w-full border border-white rounded-xl">
@@ -18,10 +23,8 @@ export default function Resume() {
         </div>
         <div className="absolute bottom-0 h-full max-h-[70%] w-full max-w-5xl bg-gradient-to-t from-black to-transparent rounded-xl" />
         <div className="absolute bottom-0 h-full flex flex-col justify-end text-white px-4">
-          <div className="font-black text-xl drop-shadow-lg">The Dragon&apos;s Tale</div>
-          <div className="text-xs text-neutral-400 pb-2">
-            You are a dragon, and you have been asleep for a thousand years. You wake up to find the world has changed.
-          </div>
+          <div className="font-black text-xl drop-shadow-lg">{instance.name}</div>
+          <div className="text-xs text-neutral-400 pb-2">{instance.description}</div>
           <div className="w-full flex justify-end items-center mb-5">
             <Link href="/" className="relative h-9 w-32 flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white">
               <div className="font-bold">Resume</div>
@@ -41,7 +44,7 @@ export default function Resume() {
         <div className="absolute bottom-0 h-full max-h-[70%] w-full bg-gradient-to-t from-black to-transparent rounded-xl" />
         <div className="absolute bottom-0 w-full flex items-center text-white px-4 pb-5">
           <div className="font-black text-xl drop-shadow-lg z-10 grow">New adventure?</div>
-          <Link href="/" className="relative h-9 w-32 flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white">
+          <Link href="/lobby" className="relative h-9 w-32 flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white">
             <div className="font-bold">Create</div>
             <Icons.arrowRight className="h-4 w-4" />
           </Link>
