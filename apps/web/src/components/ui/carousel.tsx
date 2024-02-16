@@ -176,7 +176,7 @@ const CarouselItem = React.forwardRef<HTMLDivElement, CarouselItemProps>(({ clas
       className={cn('min-w-0 shrink-0 grow-0 w-3/4', orientation === 'horizontal' ? '' : 'pt-4', className)}
       {...props}
     >
-      <div className={cn('w-full transition-all duration-500', isActive ? 'scale-100 z-10' : 'scale-90 opacity-50 z-0')}>
+      <div className={cn('w-full h-full transition-all duration-500', isActive ? 'scale-100 z-10' : 'scale-90 opacity-50 z-0')}>
         {renderItem(isActive)}
       </div>
     </div>

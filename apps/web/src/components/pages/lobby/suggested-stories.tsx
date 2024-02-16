@@ -37,16 +37,13 @@ export function SuggestedStories({ className }: SuggestedStoriesProps) {
           <CarouselItem
             key={index}
             index={index}
-            className={'flex justify-center h-1/2'}
             renderItem={(isActive: boolean) => (
-              <>
-                <SuggestedStoryCard
-                  title={story.title}
-                  image={story.image}
-                  isActive={isActive} // Pass isActive to StoryExampleCard
-                />
-                <div className="p-4 text-neutral-400 font-light text-xs">{story.description}</div>
-              </>
+              <SuggestedStoryCard
+                title={story.title}
+                image={story.image}
+                description={story.description}
+                isActive={isActive} // Pass isActive to StoryExampleCard
+              />
             )}
           />
         ))}

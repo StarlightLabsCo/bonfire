@@ -89,6 +89,7 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
             <div className="font-semibold text-sm">Bonfire</div>
           </div>
           <div className="flex items-center">
+            <div className="text-[0.65rem] font-light">Invite friends</div>
             <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => alert('hi')}>
               <Icons.userPlus className="h-[1.125rem] w-[1.125rem]" />
             </button>

@@ -1,5 +1,6 @@
 'use client';
 
+import CustomStoryEditor from '@/components/pages/lobby/custom-story-editor';
 import { SuggestedStories } from '@/components/pages/lobby/suggested-stories';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
@@ -14,7 +15,7 @@ export default function Lobby() {
         <Switch checked={isCustom} onCheckedChange={setisCustom} />
         <div>Custom</div>
       </div>
-      {isCustom ? <div className="grow"></div> : <SuggestedStories className="h-full mt-5" />}
+      {isCustom ? <CustomStoryEditor className="grow" /> : <SuggestedStories className="h-full my-5" />}
       <div className="rounded-full grow-0 shrink-0 w-24 h-12 bg-[#ff8f00] text-white z-10 flex items-center justify-center font-black text-xl mb-6">
         Play
       </div>
