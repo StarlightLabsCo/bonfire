@@ -31,8 +31,8 @@ const stories = [
 
 export function SuggestedStories({ className }: SuggestedStoriesProps) {
   return (
-    <Carousel className={cn(className)}>
-      <CarouselContent className="w-full h-full">
+    <Carousel className={cn('flex grow h-full', className)}>
+      <CarouselContent className="w-full h-full grow">
         {stories.map((story, index) => (
           <CarouselItem
             key={index}
