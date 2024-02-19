@@ -17,6 +17,7 @@ type CarouselProps = {
   plugins?: CarouselPlugin;
   orientation?: 'horizontal' | 'vertical';
   setApi?: (api: CarouselApi) => void;
+  onSelectChange?: (selectedIndex: number) => void; // New prop for selected index change
 };
 
 type CarouselContextProps = {
@@ -42,7 +43,7 @@ function useCarousel() {
 }
 
 const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CarouselProps>(
-  ({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
+  ({ orientation = 'horizontal', opts, setApi, plugins, className, children, onSelectChange, ...props }, ref) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
@@ -63,9 +64,14 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
         setCanScrollPrev(api.canScrollPrev());
         setCanScrollNext(api.canScrollNext());
-        setSelectedIndex(api.selectedScrollSnap());
+
+        const newIndex = api.selectedScrollSnap();
+        setSelectedIndex(newIndex);
+        if (onSelectChange) {
+          onSelectChange(newIndex);
+        }
       },
-      [api],
+      [onSelectChange],
     );
 
     const scrollPrev = React.useCallback(() => {

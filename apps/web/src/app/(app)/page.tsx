@@ -15,6 +15,17 @@ export default async function Home() {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        messages: {
+          where: {
+            name: 'generate_image',
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
     });
 
     if (mostRecentInstance) {

@@ -37,7 +37,6 @@ export const CreateInstanceRequestZodSchema: z.ZodType<Types.CreateInstanceReque
         narratorVoiceId: z.string(),
         narratorResponseLength: z.number(),
         storyOutline: z.string().nullable(),
-        description: z.string().nullable(),
         imageStyle: z.string().nullable(),
       })
       .strict(),

@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import FadeIn from '@/components/animation/fadeIn';
 import { MarqueeImages } from '@/components/marquee-images';
-import { VoiceExample } from '@/components/pages/lobby/voice-example';
-import { ScrollArrow } from '@/components/pages/lobby/scroll-arrow';
-import { StoryExamples } from '@/components/pages/lobby/story-examples';
-import { MultiplayerAnimation } from '@/components/pages/lobby/multiplayer-animation';
-import { ChoicesAnimation } from '@/components/pages/lobby/choices-animation';
+import { VoiceExample } from '@/components/pages/lobby/marketing/voice-example';
+import { ScrollArrow } from '@/components/pages/lobby/marketing/scroll-arrow';
+import { StoryExamples } from '@/components/pages/lobby/marketing/story-examples';
+import { MultiplayerAnimation } from '@/components/pages/lobby/marketing/multiplayer-animation';
+import { ChoicesAnimation } from '@/components/pages/lobby/marketing/choices-animation';
 
 export default function Marketing() {
   return (

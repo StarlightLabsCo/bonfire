@@ -42,7 +42,6 @@ export type CreateAdventureSuggestionsData = {};
 export type CreateInstanceRequest = GenericStarlightWebSocketRequest<StarlightWebSocketRequestType.createInstance, CreateInstanceData>;
 
 export type CreateInstanceData = {
-  description: string | null;
   narratorPrompt: string | null;
   narratorVoiceId: string;
   narratorResponseLength: number;

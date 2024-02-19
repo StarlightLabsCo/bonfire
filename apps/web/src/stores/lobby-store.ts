@@ -1,12 +1,8 @@
 import { CreateInstanceRequest, StarlightWebSocketRequestType } from 'websocket';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
 import { useWebsocketStore } from './websocket-store';
 
 type LobbyStore = {
-  description: string;
-  setDescription: (description: string) => void;
-
   narratorPrompt: string;
   narratorVoiceId: string;
   narratorResponseLength: number;
@@ -18,47 +14,36 @@ type LobbyStore = {
   setStoryOutline: (outline: string) => void;
   setImageStyle: (style: string) => void;
 
-  createInstance: (description: string) => void;
+  createInstance: () => void;
 };
 
-export const useLobbyStore = create<LobbyStore>()(
-  persist(
-    (set, get) => ({
-      description: '',
-      setDescription: (description) => set({ description }),
+export const useLobbyStore = create<LobbyStore>()((set, get) => ({
+  storyOutline: '',
+  imageStyle: '',
+  narratorPrompt: '',
+  narratorVoiceId: '1Tbay5PQasIwgSzUscmj',
+  narratorResponseLength: 5,
 
-      storyOutline: '',
-      imageStyle: '',
-      narratorPrompt: '',
-      narratorVoiceId: '1Tbay5PQasIwgSzUscmj',
-      narratorResponseLength: 5,
-      setStoryOutline: (outline) => set({ storyOutline: outline }),
-      setImageStyle: (style) => set({ imageStyle: style }),
-      setNarratorPrompt: (prompt) => set({ narratorPrompt: prompt }),
-      setNarratorVoiceId: (voiceId) => set({ narratorVoiceId: voiceId }),
-      setNarratorResponseLength: (length) => set({ narratorResponseLength: length }),
+  setStoryOutline: (outline) => set({ storyOutline: outline }),
+  setImageStyle: (style) => set({ imageStyle: style }),
+  setNarratorPrompt: (prompt) => set({ narratorPrompt: prompt }),
+  setNarratorVoiceId: (voiceId) => set({ narratorVoiceId: voiceId }),
+  setNarratorResponseLength: (length) => set({ narratorResponseLength: length }),
 
-      createInstance: (description: string) => {
-        const { narratorPrompt, narratorVoiceId, narratorResponseLength, storyOutline, imageStyle } = get();
+  createInstance: () => {
+    const { narratorPrompt, narratorVoiceId, narratorResponseLength, storyOutline, imageStyle } = get();
 
-        const sendToServer = useWebsocketStore.getState().sendToServer;
+    const sendToServer = useWebsocketStore.getState().sendToServer;
 
-        sendToServer({
-          type: StarlightWebSocketRequestType.createInstance,
-          data: {
-            description: description,
-            narratorPrompt,
-            narratorVoiceId,
-            narratorResponseLength,
-            storyOutline,
-            imageStyle,
-          },
-        } as CreateInstanceRequest);
+    sendToServer({
+      type: StarlightWebSocketRequestType.createInstance,
+      data: {
+        narratorPrompt,
+        narratorVoiceId,
+        narratorResponseLength,
+        storyOutline,
+        imageStyle,
       },
-    }),
-    {
-      name: 'lobby-store', // unique name for local storage key
-      storage: createJSONStorage(() => localStorage), // specify local storage as the storage option
-    },
-  ),
-);
+    } as CreateInstanceRequest);
+  },
+}));
