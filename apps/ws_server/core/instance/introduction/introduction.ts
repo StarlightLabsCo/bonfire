@@ -84,7 +84,6 @@ export async function introduceStory(instance: Instance & { messages: Message[] 
   // Handle streaming response
   let chunks = [];
   let buffer = '';
-  let content = '';
 
   for await (const chunk of response) {
     chunks.push(chunk);

@@ -10,12 +10,16 @@ import ArtStyleCarousel from './art-style-carousel';
 import NarratorVoiceSelector from './narrator-voice-selector';
 import NarratorPersonaInput from './narrator-persona-input';
 import NarratorResponseLengthSlider from './narrator-response-length-slider';
+import StoryTitleInput from './story-title-input';
 
 type CustomStoryEditorProps = {
   className?: string;
 };
 
 export default function CustomStoryEditor({ className }: CustomStoryEditorProps) {
+  const storyTitle = useLobbyStore((state) => state.storyTitle);
+  const setStoryTitle = useLobbyStore((state) => state.setStoryTitle);
+
   const storyOutline = useLobbyStore((state) => state.storyOutline);
   const setStoryOutline = useLobbyStore((state) => state.setStoryOutline);
 
@@ -34,6 +38,7 @@ export default function CustomStoryEditor({ className }: CustomStoryEditorProps)
 
   return (
     <div className={cn('flex flex-col gap-y-8 w-full', className)}>
+      <StoryTitleInput storyTitle={storyTitle} setStoryTitle={setStoryTitle} />
       <StoryOutlineInput storyOutline={storyOutline} setStoryOutline={setStoryOutline} />
       <ArtStyleCarousel setSelectedArtStyle={setImageStyle} />
       <NarratorVoiceSelector

@@ -22,6 +22,12 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
     name: 'system_prompt',
   };
 
+  let storyOutline = {
+    content: request.data.storyOutline,
+    role: MessageRole.system,
+    name: 'story_outline',
+  };
+
   let instance = await db.instance.create({
     data: {
       user: {
@@ -29,15 +35,15 @@ export async function createInstanceHandler(ws: ServerWebSocket<WebSocketData>, 
           id: ws.data.webSocketToken?.userId!,
         },
       },
-      name: 'Unnamed Story', // TODO add a title field to the request
+      name: request.data.title,
       description: null,
       narratorPrompt: request.data.narratorPrompt,
       narratorVoiceId: request.data.narratorVoiceId,
       narratorResponseLength: request.data.narratorResponseLength,
-      storyOutline: request.data.storyOutline,
+      storyOutline: request.data.storyOutline, // TODO: story outline doesn't actually get used by introduction generation (it expects a message with that)
       imageStyle: request.data.imageStyle,
       messages: {
-        create: initMessage,
+        create: [initMessage, storyOutline],
       },
       stage: InstanceStage.INIT_STORY_FINISH,
       locked: true,
