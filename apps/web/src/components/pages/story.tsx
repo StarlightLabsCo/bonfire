@@ -257,13 +257,13 @@ export function Story({
                       <ContextMenuItem>
                         <div className="flex gap-x-2 items-center" onClick={() => navigator.clipboard.writeText(message.content)}>
                           <Icons.clipboard />
-                          Copy
+                          Copy Text
                         </div>
                       </ContextMenuItem>
                       {message.audioUrl && message.audioWordTimings && (
                         <ContextMenuItem>
                           <div className="flex gap-x-2 items-center" onClick={() => replayAudio(message)}>
-                            <Icons.undo />
+                            <Icons.speakerLoud />
                             Replay Audio
                           </div>
                         </ContextMenuItem>
