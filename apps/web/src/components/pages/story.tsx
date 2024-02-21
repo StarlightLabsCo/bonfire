@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { User } from 'next-auth';
@@ -15,8 +15,10 @@ import { useMessagesStore } from '@/stores/messages-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
 import { useWebsocketStore } from '@/stores/websocket-store';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { Icons } from '../icons';
 import { cn } from '@/lib/utils';
+import { bufferBase64Audio, clearBufferedPlayerNodeBuffer } from '@/lib/audio/playback';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -154,6 +156,46 @@ export function Story({
 
   const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
 
+  // Replay Audio
+  const replayAudio = useCallback(
+    async (message: Message) => {
+      if (message.audioUrl && message.audioWordTimings) {
+        console.log(`Replaying audio for message ${message.id}`);
+        const data = await fetch(message.audioUrl);
+        const blob = await data.blob();
+
+        const audioContext = usePlaybackStore.getState().audioContext;
+        const bufferedPlayerNode = usePlaybackStore.getState().bufferedPlayerNode;
+
+        // Setup
+        usePlaybackStore.getState().setWordTimings(JSON.parse(message.audioWordTimings));
+        useMessagesStore.getState().setStreamedMessageId(message.id);
+        useMessagesStore.getState().setStreamedWords(message.content.split(' '));
+
+        clearBufferedPlayerNodeBuffer(bufferedPlayerNode);
+
+        // Convert blob to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const base64AudioString = reader.result;
+          if (typeof base64AudioString !== 'string') return;
+
+          const base64Data = base64AudioString.split(',')[1];
+
+          // Play
+          usePlaybackStore.getState().setAudioStartTime(Date.now());
+          if (typeof base64AudioString === 'string') {
+            bufferBase64Audio(audioContext, bufferedPlayerNode, base64Data);
+          }
+        };
+      } else {
+        console.error(`No audio or word timings for message ${message.id}`);
+      }
+    },
+    [streamedMessageId, streamedWords],
+  );
+
   return (
     <div className="flex flex-col items-center w-full mx-auto h-[100dvh] relative">
       <div
@@ -200,14 +242,34 @@ export function Story({
               case 'assistant':
                 const contentLines = message.content.split('\n');
                 return (
-                  <div key={message.id} className="w-full">
-                    {contentLines.map((line, index) => (
-                      <React.Fragment key={index}>
-                        {line}
-                        <br />
-                      </React.Fragment>
-                    ))}
-                  </div>
+                  <ContextMenu key={message.id}>
+                    <ContextMenuTrigger>
+                      <div className="w-full select-none">
+                        {contentLines.map((line, index) => (
+                          <React.Fragment key={index}>
+                            {line}
+                            <br />
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem>
+                        <div className="flex gap-x-2 items-center" onClick={() => navigator.clipboard.writeText(message.content)}>
+                          <Icons.clipboard />
+                          Copy
+                        </div>
+                      </ContextMenuItem>
+                      {message.audioUrl && message.audioWordTimings && (
+                        <ContextMenuItem>
+                          <div className="flex gap-x-2 items-center" onClick={() => replayAudio(message)}>
+                            <Icons.undo />
+                            Replay Audio
+                          </div>
+                        </ContextMenuItem>
+                      )}
+                    </ContextMenuContent>
+                  </ContextMenu>
                 );
               case 'function':
                 if (message.name === 'generate_image') {

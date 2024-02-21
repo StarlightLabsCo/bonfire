@@ -172,6 +172,9 @@ model Message {
   content      String
   name         String?
   function_call String? // this one is specifically this case because openai api uses snake_case and we can just use prisma select
+
+  audioUrl String? // if this message has generated audio, we'll store it here
+  audioWordTimings String? // if this message has generated audio, we'll store the word timings here
 }
 
 enum MessageRole {

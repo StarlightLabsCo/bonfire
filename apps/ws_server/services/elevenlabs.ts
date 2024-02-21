@@ -1,14 +1,17 @@
 // Documentation: https://docs.elevenlabs.io/api-reference/text-to-speech-websockets
 import { AudioCreatedResponse, AudioWordTimings, StarlightWebSocketResponseType } from 'websocket/types';
 import { sendToInstanceSubscribers } from '../src/connection';
+import { uploadPcmToR2 } from './cloudflare'; // Import the upload function
+import { db } from './db';
 
 if (!process.env.ELEVEN_LABS_API_KEY) {
   throw new Error('ELEVEN_LABS_API_KEY is not defined');
 }
 
 const instanceIdToElevenLabsWs: { [key: string]: WebSocket } = {};
+const instanceIdToAudioBuffer: { [key: string]: Buffer[] } = {};
 
-export function initSpeechStreamConnection(instanceId: string, narratorId: string = '1Tbay5PQasIwgSzUscmj') {
+export function initSpeechStreamConnection(instanceId: string, messageId: string, narratorId: string = '1Tbay5PQasIwgSzUscmj') {
   return new Promise<WebSocket>((resolve) => {
     let ws = new WebSocket(
       `wss://api.elevenlabs.io/v1/text-to-speech/${narratorId}/stream-input?model_id=eleven_monolingual_v1&output_format=pcm_44100`,
@@ -34,10 +37,19 @@ export function initSpeechStreamConnection(instanceId: string, narratorId: strin
     let start = true;
     let end = false;
 
-    ws.addEventListener('message', (event: MessageEvent) => {
+    ws.addEventListener('message', async (event: MessageEvent) => {
       const data = JSON.parse(event.data.toString());
 
       if (data.isFinal) end = true;
+
+      if (data.audio) {
+        const audioBuffer = Buffer.from(data.audio, 'base64');
+        if (!instanceIdToAudioBuffer[instanceId]) {
+          instanceIdToAudioBuffer[instanceId] = [audioBuffer];
+        } else {
+          instanceIdToAudioBuffer[instanceId].push(audioBuffer);
+        }
+      }
 
       sendToInstanceSubscribers(instanceId, {
         type: StarlightWebSocketResponseType.audioCreated,
@@ -52,6 +64,22 @@ export function initSpeechStreamConnection(instanceId: string, narratorId: strin
 
       if (data.normalizedAlignment) {
         wordTimings = processNormalizedAlignment(instanceId, data.normalizedAlignment, wordTimings);
+      }
+
+      if (end) {
+        const completeAudioBuffer = Buffer.concat(instanceIdToAudioBuffer[instanceId]);
+        delete instanceIdToAudioBuffer[instanceId];
+
+        await uploadPcmToR2(completeAudioBuffer, messageId);
+
+        await db.message.update({
+          where: {
+            id: messageId,
+          },
+          data: {
+            audioWordTimings: JSON.stringify(wordTimings),
+          },
+        });
       }
     });
 

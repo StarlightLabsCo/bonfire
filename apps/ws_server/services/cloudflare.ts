@@ -13,8 +13,8 @@ if (!process.env.S3_ENDPOINT) {
   throw new Error('Missing S3_ENDPOINT');
 }
 
-if (!process.env.S3_IMAGES_BUCKET) {
-  throw new Error('Missing S3_IMAGES_BUCKET');
+if (!process.env.S3_ASSETS_BUCKET) {
+  throw new Error('Missing S3_ASSETS_BUCKET');
 }
 
 if (!process.env.S3_PUBLIC_URL) {
@@ -37,7 +37,7 @@ export async function uploadImageToR2(imageURL: string, messageId: string) {
   const imageBuffer = Buffer.from(arrayBuffer);
 
   const uploadCommand = new PutObjectCommand({
-    Bucket: process.env.S3_IMAGES_BUCKET,
+    Bucket: process.env.S3_ASSETS_BUCKET,
     Key: messageId + '.png',
     Body: imageBuffer,
     ContentType: 'image/png',
@@ -55,6 +55,30 @@ export async function uploadImageToR2(imageURL: string, messageId: string) {
     },
     data: {
       content: `${process.env.S3_PUBLIC_URL}/${messageId}.png`,
+    },
+  });
+}
+
+export async function uploadPcmToR2(pcmBuffer: Buffer, messageId: string) {
+  const uploadCommand = new PutObjectCommand({
+    Bucket: process.env.S3_ASSETS_BUCKET,
+    Key: messageId + '.pcm',
+    Body: pcmBuffer,
+    ContentType: 'audio/pcm',
+  });
+
+  const uploadResponse = await S3.send(uploadCommand);
+
+  if (uploadResponse.$metadata.httpStatusCode != 200) {
+    throw new Error('Failed to upload PCM audio to R2');
+  }
+
+  await db.message.update({
+    where: {
+      id: messageId,
+    },
+    data: {
+      audioUrl: `${process.env.S3_PUBLIC_URL}/${messageId}.pcm`,
     },
   });
 }

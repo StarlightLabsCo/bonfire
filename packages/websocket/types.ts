@@ -10,6 +10,7 @@ export type StarlightWebSocketRequest =
   | ResumeInstanceRequest
   | AddPlayerMessageRequest
   | UndoMessageRequest
+  | ReplayMessageAudioRequest
   | HeartbeatClientRequest
   | HeartbeatClientResponse;
 
@@ -26,6 +27,7 @@ export enum StarlightWebSocketRequestType {
   resumeInstance,
   addPlayerMessage,
   undoMessage,
+  replayMessageAudio,
   heartbeatClientRequest,
   heartbeatClientResponse,
 }
@@ -93,6 +95,17 @@ export type UndoMessageRequest = GenericStarlightWebSocketRequest<StarlightWebSo
 
 export type UndoMessageData = {
   instanceId: string;
+};
+
+// Replay Message Audio
+export type ReplayMessageAudioRequest = GenericStarlightWebSocketRequest<
+  StarlightWebSocketRequestType.replayMessageAudio,
+  ReplayMessageAudioData
+>;
+
+export type ReplayMessageAudioData = {
+  instanceId: string;
+  messageId: string;
 };
 
 // Heartbeat Client Request

@@ -53,9 +53,13 @@ export async function continueStory(instance: Instance & { messages: Message[] }
   });
 
   if (updatedInstance.narratorVoiceId) {
-    await initSpeechStreamConnection(updatedInstance.id, updatedInstance.narratorVoiceId);
+    await initSpeechStreamConnection(
+      updatedInstance.id,
+      updatedInstance.messages[updatedInstance.messages.length - 1].id,
+      updatedInstance.narratorVoiceId,
+    );
   } else {
-    await initSpeechStreamConnection(updatedInstance.id);
+    await initSpeechStreamConnection(updatedInstance.id, updatedInstance.messages[updatedInstance.messages.length - 1].id);
   }
 
   console.log(`Narrator Response Length: ${instance.narratorResponseLength}`);

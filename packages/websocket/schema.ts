@@ -17,6 +17,9 @@ export const MessageZodSchema: z.ZodType<Message> = z
     content: z.string(),
     name: z.string().nullable(),
     function_call: z.string().nullable(),
+
+    audioUrl: z.string().nullable(),
+    audioWordTimings: z.string().nullable(),
   })
   .strict();
 
@@ -95,6 +98,18 @@ export const UndoMessageRequestZodSchema: z.ZodType<Types.UndoMessageRequest> = 
     data: z
       .object({
         instanceId: z.string(),
+      })
+      .strict(),
+  })
+  .strict();
+
+export const ReplayMessageAudioRequestZodSchema: z.ZodType<Types.ReplayMessageAudioRequest> = z
+  .object({
+    type: z.literal(Types.StarlightWebSocketRequestType.replayMessageAudio),
+    data: z
+      .object({
+        instanceId: z.string(),
+        messageId: z.string(),
       })
       .strict(),
   })
@@ -336,6 +351,7 @@ export const requestTypeToSchema: {
   [Types.StarlightWebSocketRequestType.resumeInstance]: ResumeInstanceRequestZodSchema,
   [Types.StarlightWebSocketRequestType.addPlayerMessage]: AddPlayerMessageRequestZodSchema,
   [Types.StarlightWebSocketRequestType.undoMessage]: UndoMessageRequestZodSchema,
+  [Types.StarlightWebSocketRequestType.replayMessageAudio]: ReplayMessageAudioRequestZodSchema,
   [Types.StarlightWebSocketRequestType.heartbeatClientRequest]: HeartbeatClientRequestZodSchema,
   [Types.StarlightWebSocketRequestType.heartbeatClientResponse]: HeartbeatClientResponseZodSchema,
 };
