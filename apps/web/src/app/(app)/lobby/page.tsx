@@ -30,7 +30,7 @@ export default function Lobby() {
       {isCustom ? <CustomStoryEditor className="grow" /> : <SuggestedStories className="my-5" />}
       <div
         onClick={() => createInstance()}
-        className="rounded-full grow-0 shrink-0 w-24 h-12 bg-[#ff8f00] text-white z-10 flex items-center justify-center font-black text-xl my-8"
+        className="rounded-full grow-0 shrink-0 w-24 h-12 bg-[#ff8f00] text-white z-10 flex items-center justify-center font-black text-xl my-8 cursor-pointer hover:scale-105"
       >
         Play
       </div>
