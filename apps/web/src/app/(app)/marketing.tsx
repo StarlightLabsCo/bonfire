@@ -12,9 +12,9 @@ import { ChoicesAnimation } from '@/components/pages/lobby/marketing/choices-ani
 export default function Marketing() {
   return (
     <div className="w-full flex flex-col overflow-x-hidden overflow-y-auto overscroll-none">
-      <div className="w-full max-w-5xl h-screen">
+      <div className="w-full h-screen">
         {/* Hero Section */}
-        <div className="relative h-3/4">
+        <div className="h-3/4 w-full relative">
           <Image
             className="object-cover h-full -z-10"
             src="https://r2.trybonfire.ai/hero.png"
@@ -22,21 +22,21 @@ export default function Marketing() {
             height={1024}
             alt="Hero image"
           />
-          <div className="absolute bottom-0 h-full max-h-[50%] w-full max-w-5xl bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 h-full max-h-[50%] w-full max-w-5xl bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 h-full flex flex-col justify-end items-center gap-y-4 text-white">
-            <div className="font-black font-sans text-5xl drop-shadow-lg w-full text-center">
+          <div className="absolute bottom-0 h-full max-h-[50%] w-full bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 h-full max-h-[50%] w-full bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 h-full md:h-3/4 w-full flex flex-col justify-end md:justify-center items-center gap-y-4 text-white">
+            <div className="w-full font-black font-sans text-5xl md:text-7xl drop-shadow-lg md:drop-shadow-2xl text-center">
               <FadeIn>The Ultimate Storyteller</FadeIn>
             </div>
-            <div className="text-sm w-4/5 text-center text-neutral-400 pb-4">
+            <div className="w-4/5 text-sm md:text-base text-center text-neutral-400 md:text-neutral-200 pb-4">
               <FadeIn delay={0.1}>An AI narrator that brings your stories to life as a text adventure with images & audio.</FadeIn>
             </div>
           </div>
         </div>
 
         {/* Call To Action */}
-        <div className="relative h-1/4 pt-8">
-          <div className="absolute top-0 h-full w-full max-w-5xl bg-gradient-to-b from-black to-transparent" />
+        <div className="h-1/4 w-full relative pt-8">
+          <div className="absolute top-0 h-full w-full bg-gradient-to-b from-black to-transparent" />
           <div className="absolute top-0 h-full w-full -z-10 text-white/5">
             <Icons.topography />
           </div>
@@ -57,7 +57,7 @@ export default function Marketing() {
       </div>
 
       {/* Sectionals */}
-      <div className="w-full text-white flex flex-col gap-y-4 mb-20">
+      <div className="w-full max-w-5xl mx-auto text-white flex flex-col gap-y-4 mb-20">
         <div className="px-4 pt-4 w-3/4" id="ideas">
           <div className="font-bold text-2xl">Bring Ideas to Life</div>
           <div className="text-xs text-neutral-400">

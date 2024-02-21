@@ -13,7 +13,7 @@ type DashboardProps = {
 
 export default function Dashboard({ instance }: DashboardProps) {
   return (
-    <div className="h-[calc(100dvh-2.5rem)] w-full mt-10 px-4 py-2 flex flex-col gap-y-2">
+    <div className="h-[calc(100dvh-2.5rem)] w-full max-w-5xl mx-auto mt-10 px-4 py-2 flex flex-col gap-y-2">
       <div className="relative h-3/4 w-full border border-white rounded-xl">
         <Image
           src={instance.messages[0].content}

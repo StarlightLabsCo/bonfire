@@ -37,7 +37,7 @@ export default function CustomStoryEditor({ className }: CustomStoryEditorProps)
   const setNarratorResponseLength = useLobbyStore((state) => state.setNarratorResponseLength);
 
   return (
-    <div className={cn('flex flex-col gap-y-8 w-full', className)}>
+    <div className={cn('flex flex-col gap-y-8 w-full max-w-5xl mx-auto', className)}>
       <StoryTitleInput storyTitle={storyTitle} setStoryTitle={setStoryTitle} />
       <StoryOutlineInput storyOutline={storyOutline} setStoryOutline={setStoryOutline} />
       <ArtStyleCarousel setSelectedArtStyle={setImageStyle} />
