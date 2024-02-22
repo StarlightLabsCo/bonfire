@@ -17,13 +17,13 @@ export function StoryExampleCard({ isActive, title, description, image, classNam
 
   return (
     <div className={cn('h-full rounded-xl relative border border-white', className)}>
-      <Image className="rounded-xl object-cover h-full aspect-9/16" src={image} alt={title} width={1792} height={1024} />
+      <Image className="object-cover h-full rounded-xl aspect-9/16" src={image} alt={title} width={1792} height={1024} />
       <div className="absolute bottom-0 w-full h-1/4 bg-black/90 rounded-b-xl" />
-      <div className="absolute bottom-1/4 w-full h-1/4 bg-gradient-to-t from-black/90 to-transparent" />
+      <div className="absolute w-full bottom-1/4 h-1/4 bg-gradient-to-t from-black/90 to-transparent" />
 
-      <div className="h-2/5 w-full absolute bottom-0 z-10 flex flex-col p-3 gap-y-1 justify-between mb-3">
+      <div className="absolute bottom-0 z-10 flex flex-col justify-between w-full p-3 mb-3 h-2/5 gap-y-1">
         <TriggeredFadeIn animated={isActive}>
-          <div className="font-black text-3xl drop-shadow-lg text-center">{title}</div>
+          <div className="text-3xl font-black text-center drop-shadow-lg">{title}</div>
         </TriggeredFadeIn>
         <TriggeredFadeIn animated={isActive} delay={0.1}>
           <div className="text-xs font-light text-center text-neutral-400">{truncatedDescription}</div>

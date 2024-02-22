@@ -40,7 +40,7 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
         className,
       )}
     >
-      <div className="text-xs p-2">Past Stories</div>
+      <div className="p-2 text-xs">Past Stories</div>
       <div className="flex flex-col gap-y-2">
         {instances.map((instance, index) => {
           const isActive = pathname === `/instances/${instance.id}`;
@@ -53,8 +53,8 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
               } rounded-md text-xs font-light hover:cursor-pointer`}
               onClick={() => handleClick(`/instances/${instance.id}`)}
             >
-              <Icons.logo className="w-4 h-4 mr-2 flex-shrink-0 z-10" />
-              <div className="overflow-hidden w-full whitespace-nowrap relative">
+              <Icons.logo className="z-10 flex-shrink-0 w-4 h-4 mr-2" />
+              <div className="relative w-full overflow-hidden whitespace-nowrap">
                 <div>{instance.name}</div>
                 {isActive ? (
                   <>
@@ -66,24 +66,24 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-40">
                           <DropdownMenuItem
-                            className="text-xs font-light cursor-pointer focus:bg-neutral-800 p-2"
+                            className="p-2 text-xs font-light cursor-pointer focus:bg-neutral-800"
                             onSelect={() => setIsShareDialogOpen(true)}
                           >
-                            <Icons.share className="mr-2 h-4 w-4" />
+                            <Icons.share className="w-4 h-4 mr-2" />
                             Share
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="text-xs font-light cursor-pointer focus:bg-neutral-800 p-2 my-2"
+                            className="p-2 my-2 text-xs font-light cursor-pointer focus:bg-neutral-800"
                             onSelect={() => setIsInstanceInfoDialog(true)}
                           >
-                            <Icons.infoCircle className="mr-2 h-4 w-4" />
+                            <Icons.infoCircle className="w-4 h-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="text-xs font-light cursor-pointer focus:bg-neutral-800 text-red-500 p-2"
+                            className="p-2 text-xs font-light text-red-500 cursor-pointer focus:bg-neutral-800"
                             onSelect={() => setIsDeleteInstanceDialogOpen(true)}
                           >
-                            <Icons.trash className="mr-2 h-4 w-4" />
+                            <Icons.trash className="w-4 h-4 mr-2" />
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -97,7 +97,7 @@ export function PastStories({ instances, className }: { instances: Instance[]; c
             </Link>
           );
         })}
-        <div className="h-6 w-full" />
+        <div className="w-full h-6" />
       </div>
     </div>
   );

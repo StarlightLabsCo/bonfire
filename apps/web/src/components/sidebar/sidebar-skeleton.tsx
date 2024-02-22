@@ -4,12 +4,12 @@ import { Icons } from '../icons';
 
 export function SidebarSkeleton() {
   return (
-    <div className="absolute h-10 z-10 w-full flex items-center text-gray-200 md:hidden">
+    <div className="absolute z-10 flex items-center w-full h-10 text-gray-200 md:hidden">
       <div className="flex items-center flex-shrink-0">
-        <button className="h-10 w-10 flex items-center justify-center">
+        <button className="flex items-center justify-center w-10 h-10">
           <Icons.hamburger />
         </button>
-        <div className="font-semibold text-sm">Bonfire</div>
+        <div className="text-sm font-semibold">Bonfire</div>
       </div>
     </div>
   );

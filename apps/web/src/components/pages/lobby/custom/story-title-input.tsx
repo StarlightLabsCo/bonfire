@@ -12,21 +12,21 @@ export default function StoryTitleInput({ storyTitle, setStoryTitle, className }
 
   return (
     <div className={cn('w-full flex flex-col gap-y-2 px-4 border-b border-white/10 pb-10', className)}>
-      <div className="flex justify-between items-center mt-5">
+      <div className="flex items-center justify-between mt-5">
         <div className="font-bold">Story Title</div>
         <div
-          className="px-3 py-1 flex gap-x-1 items-center justify-center border border-white/10 rounded-lg text-xs font-light cursor-pointer hover:bg-white/5"
+          className="flex items-center justify-center px-3 py-1 text-xs font-light border rounded-lg cursor-pointer gap-x-1 border-white/10 hover:bg-white/5"
           onClick={gptCompleteStoryTitle}
         >
           Complete
-          <Icons.sparkles className="h-3 w-3" />
+          <Icons.sparkles className="w-3 h-3" />
         </div>
       </div>
       <input
         placeholder="Type your story title here..."
         value={storyTitle}
         onChange={(e) => setStoryTitle(e.target.value)}
-        className="w-full border border-white/10 rounded-lg p-2 bg-black text-xs"
+        className="w-full p-2 text-xs bg-black border rounded-lg border-white/10"
       />
     </div>
   );

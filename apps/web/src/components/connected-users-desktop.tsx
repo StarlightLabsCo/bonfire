@@ -21,7 +21,7 @@ export function ConnectedUsersDesktop({ className }: ConnectedUsersProps) {
       {displayUsers.map((user, index) => (
         <HoverCard key={index}>
           <HoverCardTrigger>
-            <Avatar key={index} className="h-8 w-8 rounded-full">
+            <Avatar key={index} className="w-8 h-8 rounded-full">
               <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
               <AvatarFallback>{user.name}</AvatarFallback>
             </Avatar>
@@ -32,14 +32,14 @@ export function ConnectedUsersDesktop({ className }: ConnectedUsersProps) {
       {connectedUsers.length > 4 && (
         <HoverCard>
           <HoverCardTrigger>
-            <div className="h-8 w-8 rounded-full border p-4 border-white/10 flex items-center justify-center">
+            <div className="flex items-center justify-center w-8 h-8 p-4 border rounded-full border-white/10">
               +{connectedUsers.length - 4}
             </div>
           </HoverCardTrigger>
           <HoverCardContent className="flex flex-col gap-y-2">
             {connectedUsers.slice(4).map((user, index) => (
               <div key={index} className="flex items-center gap-x-2">
-                <Avatar className="h-6 w-6 rounded-full">
+                <Avatar className="w-6 h-6 rounded-full">
                   <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
                   <AvatarFallback>{user.name}</AvatarFallback>
                 </Avatar>

@@ -11,10 +11,10 @@ import { ChoicesAnimation } from '@/components/pages/lobby/marketing/choices-ani
 
 export default function Marketing() {
   return (
-    <div className="w-full flex flex-col overflow-x-hidden overflow-y-auto overscroll-none">
+    <div className="flex flex-col w-full overflow-x-hidden overflow-y-auto overscroll-none">
       <div className="w-full h-screen">
         {/* Hero Section */}
-        <div className="h-3/4 w-full relative">
+        <div className="relative w-full h-3/4">
           <Image
             className="object-cover h-full -z-10"
             src="https://r2.trybonfire.ai/hero.png"
@@ -23,21 +23,29 @@ export default function Marketing() {
             alt="Hero image"
           />
           <div className="absolute bottom-0 h-full max-h-[50%] w-full bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 h-full max-h-[50%] w-full bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 h-full md:h-3/4 w-full flex flex-col justify-end md:justify-center items-center gap-y-4 text-white">
-            <div className="w-full font-black font-sans text-5xl md:text-7xl drop-shadow-lg md:drop-shadow-2xl text-center">
-              <FadeIn>The Ultimate Storyteller</FadeIn>
+          <div className="absolute bottom-0 w-full h-full bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 flex items-end w-full h-full text-white gap-y-6 md:items-start md:pt-32 justify-center-center">
+            <div className="flex flex-col items-center grow gap-y-4">
+              <div className="w-full font-sans text-5xl font-black text-center md:text-7xl drop-shadow-lg md:drop-shadow-2xl">
+                <FadeIn>The Ultimate Storyteller</FadeIn>
+              </div>
+              <div className="w-4/5 pb-4 text-sm text-center md:text-base text-neutral-400 md:text-neutral-200">
+                <FadeIn delay={0.1}>An AI narrator that brings your stories to life as a text adventure with images & audio.</FadeIn>
+              </div>
             </div>
-            <div className="w-4/5 text-sm md:text-base text-center text-neutral-400 md:text-neutral-200 pb-4">
-              <FadeIn delay={0.1}>An AI narrator that brings your stories to life as a text adventure with images & audio.</FadeIn>
+            <div className="flex-col items-center hidden w-full md:flex">
+              <video autoPlay loop muted playsInline className="w-full rounded-lg">
+                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
         </div>
 
         {/* Call To Action */}
-        <div className="h-1/4 w-full relative pt-8">
-          <div className="absolute top-0 h-full w-full bg-gradient-to-b from-black to-transparent" />
-          <div className="absolute top-0 h-full w-full -z-10 text-white/5">
+        <div className="relative w-full pt-8 h-1/4">
+          <div className="absolute top-0 w-full h-full bg-gradient-to-b from-black to-transparent" />
+          <div className="absolute top-0 w-full h-full -z-10 text-white/5">
             <Icons.topography />
           </div>
           <FadeIn delay={0.2}>
@@ -57,15 +65,15 @@ export default function Marketing() {
       </div>
 
       {/* Sectionals */}
-      <div className="w-full max-w-5xl mx-auto text-white flex flex-col gap-y-4 mb-20">
-        <div className="px-4 pt-4 w-3/4" id="ideas">
-          <div className="font-bold text-2xl">Bring Ideas to Life</div>
+      <div className="flex flex-col w-full max-w-5xl mx-auto mb-20 text-white gap-y-4">
+        <div className="w-3/4 px-4 pt-4" id="ideas">
+          <div className="text-2xl font-bold">Bring Ideas to Life</div>
           <div className="text-xs text-neutral-400">
             Whether a few stray ideas, or a full outline, Bonfire creates an immersive story just for you.
           </div>
         </div>
-        <div className="px-4 pt-4 w-full">
-          <div className="w-3/4 font-bold text-2xl">Infinite Possibilities</div>
+        <div className="w-full px-4 pt-4">
+          <div className="w-3/4 text-2xl font-bold">Infinite Possibilities</div>
           <div className="w-3/4 text-xs text-neutral-400">Every choice you make directs the story in a new direction.</div>
           <ChoicesAnimation className="my-6" />
           <div className="w-3/4 text-xs text-neutral-400">
@@ -73,24 +81,24 @@ export default function Marketing() {
           </div>
         </div>
         <div className="pt-4">
-          <div className="w-3/4 px-4 font-bold text-2xl">Visualize the Story</div>
+          <div className="w-3/4 px-4 text-2xl font-bold">Visualize the Story</div>
           <div className="w-3/4 px-4 text-xs text-neutral-400">Depict characters, items, and events at every step of the story.</div>
           <MarqueeImages className="mt-5" />
         </div>
-        <div className="px-4 pt-4 w-full">
-          <div className="w-3/4 font-bold text-2xl">Personalize Your Narrator</div>
+        <div className="w-full px-4 pt-4">
+          <div className="w-3/4 text-2xl font-bold">Personalize Your Narrator</div>
           <div className="w-3/4 text-xs text-neutral-400">Tailor the narrator&apos;s voice, personality, and style to what you want.</div>
           <VoiceExample className="mt-5" />
         </div>
         <div className="px-4 pt-4">
-          <div className="font-bold text-2xl">Invite Friends</div>
+          <div className="text-2xl font-bold">Invite Friends</div>
           <div className="text-xs text-neutral-400">Shape the story with friends, and let them experience the world you have created.</div>
           <MultiplayerAnimation className="mt-12 mb-6" />
         </div>
         <div className="pt-4">
-          <div className="px-4 font-bold text-2xl">Try it for yourself</div>
+          <div className="px-4 text-2xl font-bold">Try it for yourself</div>
           <div className="px-4 text-xs text-neutral-400">No signup required!</div>
-          <StoryExamples className="mt-5 w-full" />
+          <StoryExamples className="w-full mt-5" />
         </div>
       </div>
     </div>

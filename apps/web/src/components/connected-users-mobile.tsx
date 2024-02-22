@@ -18,7 +18,7 @@ export function ConnectedUsersMobile({ className }: ConnectedUsersProps) {
   return (
     <div className={cn('md:hidden flex items-center gap-x-1', className)}>
       {displayUsers.map((user, index) => (
-        <Avatar key={index} className="h-5 w-5 rounded-full fade-in-fast">
+        <Avatar key={index} className="w-5 h-5 rounded-full fade-in-fast">
           <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
           <AvatarFallback>{user.name}</AvatarFallback>
         </Avatar>

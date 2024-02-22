@@ -22,12 +22,12 @@ export default function NarratorResponseLengthSlider({
   return (
     <div className={cn('w-full flex flex-col gap-y-6 px-4 mb-10', className)}>
       <div className="flex items-center font-bold">Narrator Response Length</div>
-      <div className="w-full flex flex-col gap-y-2">
+      <div className="flex flex-col w-full gap-y-2">
         <Slider value={[value]} onValueChange={onValueChange} max={2} step={1} />
         <div className="flex justify-between">
-          <div className="font-light text-sm text-neutral-400">Short</div>
-          <div className="font-light text-sm text-neutral-400">Medium</div>
-          <div className="font-light text-sm text-neutral-400">Long</div>
+          <div className="text-sm font-light text-neutral-400">Short</div>
+          <div className="text-sm font-light text-neutral-400">Medium</div>
+          <div className="text-sm font-light text-neutral-400">Long</div>
         </div>
       </div>
     </div>

@@ -15,14 +15,14 @@ export default function StoryOutlineInput({ storyOutline, setStoryOutline, class
 
   return (
     <div className={cn('w-full flex flex-col gap-y-2 px-4 border-b border-white/10 pb-10', className)}>
-      <div className="flex justify-between items-center mt-5">
+      <div className="flex items-center justify-between mt-5">
         <div className="font-bold">Story Outline</div>
         <div
-          className="px-3 py-1 flex gap-x-1 items-center justify-center border border-white/10 rounded-lg text-xs font-light cursor-pointer hover:bg-white/5"
+          className="flex items-center justify-center px-3 py-1 text-xs font-light border rounded-lg cursor-pointer gap-x-1 border-white/10 hover:bg-white/5"
           onClick={gptCompleteStoryOutline}
         >
           Complete
-          <Icons.sparkles className="h-3 w-3" />
+          <Icons.sparkles className="w-3 h-3" />
         </div>
       </div>
       <Textarea
@@ -32,7 +32,7 @@ export default function StoryOutlineInput({ storyOutline, setStoryOutline, class
         placeholder="Type your story outline here..."
         value={storyOutline}
         onChange={(e) => setStoryOutline(e.target.value)}
-        className="w-full h-40 border-white/10 bg-black text-xs"
+        className="w-full h-40 text-xs bg-black border-white/10"
       />
     </div>
   );

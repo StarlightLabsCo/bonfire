@@ -11,14 +11,14 @@ export default function NarratorPersonaInput({ narratorPrompt, setNarratorPrompt
   return (
     <div className={cn('w-full flex flex-col gap-y-2 px-4 border-b border-white/10 pb-10', className)}>
       <div className="flex items-center font-bold">Narrator Persona</div>
-      <div className="w-full flex flex-col gap-y-2">
+      <div className="flex flex-col w-full gap-y-2">
         <div className={cn('flex flex-col border border-white/10 rounded-lg px-4 py-2', { 'border-white': narratorPrompt.length == 0 })}>
           <div className="font-bold">Classic</div>
           <div className="text-xs font-light text-neutral-400">
             A narrator that aims to create a choose your own adventure game with exciting twists and turns
           </div>
         </div>
-        <div className="w-full flex gap-x-2 items-center justify-center">
+        <div className="flex items-center justify-center w-full gap-x-2">
           <div className="h-[1px] w-10 rounded-full bg-white" />
           <div>OR</div>
           <div className="h-[1px] w-10 rounded-full bg-white" />
@@ -32,7 +32,7 @@ export default function NarratorPersonaInput({ narratorPrompt, setNarratorPrompt
             value={narratorPrompt}
             onChange={(e) => setNarratorPrompt(e.target.value)}
             placeholder="Type your custom narrator style here..."
-            className="w-full border-0 p-0 text-xs focus-visible:ring-0"
+            className="w-full p-0 text-xs border-0 focus-visible:ring-0"
           />
         </div>
       </div>

@@ -27,7 +27,7 @@ export function OutOfCreditsDialog() {
               Subscribe
             </Button>
           </DialogDescription>
-          <DialogDescription className="text-xs pt-5 text-gray-600">
+          <DialogDescription className="pt-5 text-xs text-gray-600">
             (We&apos;ve unfortunately run out of free credits to give you.)
           </DialogDescription>
         </DialogHeader>

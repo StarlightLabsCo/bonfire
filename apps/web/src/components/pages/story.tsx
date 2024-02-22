@@ -202,11 +202,11 @@ export function Story({
         ref={messageContainerRef}
         className={`${cormorantGaramond.className} w-full flex flex-col items-center h-full px-8 overflow-auto overscroll-none font-[400] text-sm md:text-lg pt-16 md:pt-8`}
       >
-        <div className="max-w-3xl w-full flex flex-col items-center gap-y-8 pb-24">
+        <div className="flex flex-col items-center w-full max-w-3xl pb-24 gap-y-8">
           {messages.map((message: Message) => {
             if (streamedMessageId === message.id && streamedWords) {
               return (
-                <div key={message.id} className="w-full flex flex-wrap">
+                <div key={message.id} className="flex flex-wrap w-full">
                   {streamedWords.map((word, index) => {
                     const words = word.split('\n');
                     return (
@@ -255,14 +255,14 @@ export function Story({
                     </ContextMenuTrigger>
                     <ContextMenuContent>
                       <ContextMenuItem>
-                        <div className="flex gap-x-2 items-center" onClick={() => navigator.clipboard.writeText(message.content)}>
+                        <div className="flex items-center gap-x-2" onClick={() => navigator.clipboard.writeText(message.content)}>
                           <Icons.clipboard />
                           Copy Text
                         </div>
                       </ContextMenuItem>
                       {message.audioUrl && message.audioWordTimings && (
                         <ContextMenuItem>
-                          <div className="flex gap-x-2 items-center" onClick={() => replayAudio(message)}>
+                          <div className="flex items-center gap-x-2" onClick={() => replayAudio(message)}>
                             <Icons.speakerLoud />
                             Replay Audio
                           </div>
@@ -274,7 +274,7 @@ export function Story({
               case 'function':
                 if (message.name === 'generate_image') {
                   return (
-                    <div key={message.id} className="w-full fade-in-fast z-0">
+                    <div key={message.id} className="z-0 w-full fade-in-fast">
                       <Zoom>
                         <Image src={message.content} width={1792} height={1024} className="rounded-2xl fade-in-2s" alt="Generated image" />
                       </Zoom>
@@ -287,15 +287,15 @@ export function Story({
             }
           })}
           {error && (
-            <div className="w-full py-2 pl-6 border-l-2 border-red-500 font-sans flex flex-row items-center gap-x-4">
-              <Icons.exclamationTriangle className="w-6 h-6 text-red-500 font-light text-xs" />
+            <div className="flex flex-row items-center w-full py-2 pl-6 font-sans border-l-2 border-red-500 gap-x-4">
+              <Icons.exclamationTriangle className="w-6 h-6 text-xs font-light text-red-500" />
               There&apos;s been an error.
             </div>
           )}
 
           {!error && messages[messages.length - 1]?.role === 'user' && (
             <div className="w-full">
-              <div className="h-2 w-2 ml-2 bg-neutral-700 fade-in-5 animate-ping rounded-full" />
+              <div className="w-2 h-2 ml-2 rounded-full bg-neutral-700 fade-in-5 animate-ping" />
             </div>
           )}
           {!error && submittedMessage && messages[messages.length - 1]?.role != 'user' && (
@@ -304,7 +304,7 @@ export function Story({
                 <p className="text-neutral-500">{submittedMessage}</p>
               </div>
               <div className="w-full">
-                <div className="h-2 w-2 ml-2 bg-neutral-700 fade-in-5 animate-ping rounded-full" />
+                <div className="w-2 h-2 ml-2 rounded-full bg-neutral-700 fade-in-5 animate-ping" />
               </div>
             </>
           )}

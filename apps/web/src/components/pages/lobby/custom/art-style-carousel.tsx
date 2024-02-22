@@ -104,8 +104,8 @@ type ArtStyleCarouselProps = {
 
 export default function ArtStyleCarousel({ setSelectedArtStyle, className }: ArtStyleCarouselProps) {
   return (
-    <div className="w-full flex flex-col gap-y-2 border-b border-white/10 pb-10">
-      <div className="flex items-center font-bold px-4">Art Style</div>
+    <div className="flex flex-col w-full pb-10 border-b gap-y-2 border-white/10">
+      <div className="flex items-center px-4 font-bold">Art Style</div>
       <Carousel
         className={cn(className)}
         onSelectChange={(index) => {

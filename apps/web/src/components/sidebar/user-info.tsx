@@ -60,7 +60,7 @@ export function UserInfo({
   }, []);
 
   return (
-    <div className="w-full h-14 px-2 flex flex-col items-center justify-center cursor-pointer">
+    <div className="flex flex-col items-center justify-center w-full px-2 cursor-pointer h-14">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger />
         <DropdownMenuContent className="w-56">
@@ -72,7 +72,7 @@ export function UserInfo({
               }}
               className="font-light cursor-pointer focus:bg-neutral-800"
             >
-              <Icons.discord className="mr-2 h-3 w-3" />
+              <Icons.discord className="w-3 h-3 mr-2" />
               Discord
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -81,7 +81,7 @@ export function UserInfo({
               }}
               className="font-light cursor-pointer focus:bg-neutral-800"
             >
-              <Icons.twitter className="mr-2 h-3 w-3" />
+              <Icons.twitter className="w-3 h-3 mr-2" />
               Twitter
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -90,35 +90,35 @@ export function UserInfo({
           <DropdownMenuGroup>
             {stripeSubscriptionId ? (
               <DropdownMenuItem onClick={() => createPortalSession()} className="font-light cursor-pointer focus:bg-neutral-800">
-                <Icons.creditCard className="mr-2 h-3 w-3" />
+                <Icons.creditCard className="w-3 h-3 mr-2" />
                 Billing
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem onClick={() => createCheckoutSession()} className="font-light cursor-pointer focus:bg-neutral-800">
-                <Icons.rocket className="mr-2 h-3 w-3" />
+                <Icons.rocket className="w-3 h-3 mr-2" />
                 Upgrade
               </DropdownMenuItem>
             )}
             <DropdownMenuItem onClick={() => setIsSettingsDialogOpen(true)} className="font-light cursor-pointer focus:bg-neutral-800">
-              <Icons.gear className="mr-2 h-3 w-3" />
+              <Icons.gear className="w-3 h-3 mr-2" />
               Settings
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer focus:bg-neutral-800">
-            <Icons.exit className="mr-2 h-3 w-3" />
+            <Icons.exit className="w-3 h-3 mr-2" />
             Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <div
-        className="w-full h-12 flex items-center justify-between p-2 rounded-md hover:bg-neutral-800"
+        className="flex items-center justify-between w-full h-12 p-2 rounded-md hover:bg-neutral-800"
         onClick={() => {
           setOpen(true);
         }}
       >
         <div className="flex items-center gap-x-2">
-          <Avatar className="h-8 w-8 rounded-md">
+          <Avatar className="w-8 h-8 rounded-md">
             <AvatarImage src={user.image ? user.image : undefined} alt={user.name ? user.name : undefined} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>

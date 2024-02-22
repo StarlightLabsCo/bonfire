@@ -32,8 +32,8 @@ const stories = [
 export function StoryExamples({ className }: StoryExamplesProps) {
   return (
     <div className={cn('w-full relative', className)}>
-      <div className="hidden md:block absolute top-0 left-0 w-1/4 h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-      <div className="hidden md:block absolute top-0 right-0 w-1/4 h-full bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+      <div className="absolute top-0 left-0 z-10 hidden w-1/4 h-full pointer-events-none md:block bg-gradient-to-r from-black to-transparent" />
+      <div className="absolute top-0 right-0 z-10 hidden w-1/4 h-full pointer-events-none md:block bg-gradient-to-l from-black to-transparent" />
       <Carousel>
         <CarouselContent className="w-full md:max-h-96 ">
           {stories.map((story, index) => (

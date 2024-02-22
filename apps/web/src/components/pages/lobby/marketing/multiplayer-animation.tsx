@@ -114,12 +114,12 @@ export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
 
   return (
     <div className={cn('w-full flex items-center justify-center', className)}>
-      <div ref={ref} className="h-64 w-64">
+      <div ref={ref} className="w-64 h-64">
         <div className={'relative w-full h-full rounded-full flex justify-center items-center'}>
           <Image
             src={hostImage}
             alt="Host"
-            className="absolute w-24 h-24 rounded-full border border-white/30 drop-shadow-lg"
+            className="absolute w-24 h-24 border rounded-full border-white/30 drop-shadow-lg"
             height={1024}
             width={1024}
           />
@@ -130,7 +130,7 @@ export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
               variants={variants}
               initial="hidden"
               transition={transition}
-              className="absolute h-16 w-16 -translate-x-1/2 -translate-y-1/2"
+              className="absolute w-16 h-16 -translate-x-1/2 -translate-y-1/2"
               style={calculatePosition(index, friends.length, timeRef.current)}
             >
               <Image
@@ -138,7 +138,7 @@ export function MultiplayerAnimation({ className }: MultiplayerAnimationProps) {
                 alt={`Friend ${index + 1}`}
                 height={1024}
                 width={1024}
-                className="absolute rounded-full border border-white/30 drop-shadow-lg"
+                className="absolute border rounded-full border-white/30 drop-shadow-lg"
               />
             </motion.div>
           ))}

@@ -193,7 +193,7 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
           alt="Source Node"
           height={1024}
           width={1024}
-          className="h-16 w-16 rounded-full border border-white/30 drop-shadow-lg"
+          className="w-16 h-16 border rounded-full border-white/30 drop-shadow-lg"
         />
       </motion.div>
 
@@ -230,7 +230,7 @@ export function ChoicesAnimation({ className }: ChoicesAnimationProps) {
             alt={`Leaf Node`}
             height={1024}
             width={1024}
-            className="h-16 w-16 rounded-full border border-white/30 drop-shadow-lg"
+            className="w-16 h-16 border rounded-full border-white/30 drop-shadow-lg"
           />
         </motion.div>
       ))}

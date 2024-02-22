@@ -22,20 +22,20 @@ export function CreateScenarioDialog() {
 
   return (
     <Dialog open={false} onOpenChange={() => {}}>
-      <DialogContent className="h-3/4 max-w-3xl flex flex-col">
+      <DialogContent className="flex flex-col max-w-3xl h-3/4">
         <DialogHeader>
           <DialogTitle>Create Scenario</DialogTitle>
         </DialogHeader>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="pt-5 flex h-full" orientation="vertical">
-          <TabsList className="mr-6 flex flex-col gap-y-1 h-full justify-start items-start bg-neutral-950">
-            <TabsTrigger value="narrator" className="p-0 text-md flex gap-x-2">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex h-full pt-5" orientation="vertical">
+          <TabsList className="flex flex-col items-start justify-start h-full mr-6 gap-y-1 bg-neutral-950">
+            <TabsTrigger value="narrator" className="flex p-0 text-md gap-x-2">
               <Icons.person />
               Narrator
             </TabsTrigger>
-            <TabsTrigger value="outline" className="p-0 text-md flex gap-x-2">
+            <TabsTrigger value="outline" className="flex p-0 text-md gap-x-2">
               <Icons.book /> Story Outline
             </TabsTrigger>
-            <TabsTrigger value="style" className="p-0 text-md flex gap-x-2">
+            <TabsTrigger value="style" className="flex p-0 text-md gap-x-2">
               <Icons.image />
               Image Style
             </TabsTrigger>
@@ -57,7 +57,7 @@ export function CreateScenarioDialog() {
                 <Textarea value={voice} onChange={(e) => setVoice(e.target.value)} className="w-full h-20 border-white/10 bg-neutral-900" />
               </div>
               <Button
-                className="mt-auto ml-auto w-20"
+                className="w-20 mt-auto ml-auto"
                 onClick={() => {
                   setActiveTab('outline');
                 }}
@@ -78,7 +78,7 @@ export function CreateScenarioDialog() {
                 />
               </div>
               <Button
-                className="mt-auto ml-auto w-20"
+                className="w-20 mt-auto ml-auto"
                 onClick={() => {
                   setActiveTab('style');
                 }}

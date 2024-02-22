@@ -42,7 +42,7 @@ export function InstanceInfoDialog() {
                 <span>{instance?.updatedAt && new Date(instance?.updatedAt).toLocaleString()}</span>
               </div>
               <div className="flex flex-col gap-y-2">
-                <span className="font-bold self-start">Prompt:</span>
+                <span className="self-start font-bold">Prompt:</span>
                 <span className="text-left">{instance?.description}</span>
               </div>
             </div>

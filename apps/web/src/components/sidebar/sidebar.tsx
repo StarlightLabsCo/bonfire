@@ -81,45 +81,45 @@ export function Sidebar({ user, instances }: { user: User | undefined; instances
 
       {/* Mobile Header */}
       {pathname === '/lobby' ? (
-        <div className="absolute h-10 z-10 w-full flex items-center justify-between text-gray-200 md:hidden">
+        <div className="absolute z-10 flex items-center justify-between w-full h-10 text-gray-200 md:hidden">
           <div className="flex items-center flex-shrink-0">
-            <button className="h-10 w-10 flex items-center justify-center" onClick={() => openSidebar()}>
+            <button className="flex items-center justify-center w-10 h-10" onClick={() => openSidebar()}>
               <Icons.hamburger />
             </button>
-            <div className="font-semibold text-sm">Bonfire</div>
+            <div className="text-sm font-semibold">Bonfire</div>
           </div>
           <div className="flex items-center">
             <div className="text-[0.65rem] font-light">Invite friends</div>
-            <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => alert('hi')}>
+            <button className="flex items-center justify-center w-10 h-10 shrink-0" onClick={() => alert('hi')}>
               <Icons.userPlus className="h-[1.125rem] w-[1.125rem]" />
             </button>
           </div>
         </div>
       ) : instanceId ? (
         <div
-          className="absolute h-10 z-10 w-full flex items-center justify-between border-b bg-neutral-950 border-white/10 text-gray-200 md:hidden"
+          className="absolute z-10 flex items-center justify-between w-full h-10 text-gray-200 border-b bg-neutral-950 border-white/10 md:hidden"
           style={{ top: `${mobileHeaderHeight}px` }}
         >
-          <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => openSidebar()}>
+          <button className="flex items-center justify-center w-10 h-10 shrink-0" onClick={() => openSidebar()}>
             <Icons.hamburger />
           </button>
-          <div className="h-10 grow flex items-center justify-center font-sans">
+          <div className="flex items-center justify-center h-10 font-sans grow">
             {/* TODO: title could go here -  make it so it reflects current instance */}
           </div>
           <div className="flex items-center">
             <ConnectedUsersMobile />
-            <button className="shrink-0 h-10 w-10 flex items-center justify-center" onClick={() => setIsShareDialogOpen(true)}>
+            <button className="flex items-center justify-center w-10 h-10 shrink-0" onClick={() => setIsShareDialogOpen(true)}>
               <Icons.share />
             </button>
           </div>
         </div>
       ) : (
-        <div className="absolute h-10 z-10 w-full flex items-center text-gray-200 md:hidden">
+        <div className="absolute z-10 flex items-center w-full h-10 text-gray-200 md:hidden">
           <div className="flex items-center flex-shrink-0">
-            <button className="h-10 w-10 flex items-center justify-center" onClick={() => openSidebar()}>
+            <button className="flex items-center justify-center w-10 h-10" onClick={() => openSidebar()}>
               <Icons.hamburger />
             </button>
-            <div className="font-semibold text-sm">Bonfire</div>
+            <div className="text-sm font-semibold">Bonfire</div>
           </div>
         </div>
       )}

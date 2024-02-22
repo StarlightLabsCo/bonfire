@@ -25,17 +25,17 @@ export function TopActions() {
   };
 
   return (
-    <div className="w-full h-12 p-2 flex items-center gap-x-2">
+    <div className="flex items-center w-full h-12 p-2 gap-x-2">
       <Link
         href="/"
         onClick={handleClick}
-        className="h-8 flex grow p-2 gap-x-2 items-center rounded-md border border-white/10 hover:cursor-pointer"
+        className="flex items-center h-8 p-2 border grow gap-x-2 rounded-md border-white/10 hover:cursor-pointer"
       >
         <Icons.plus className="w-4 h-4" />
         <div className="text-xs font-light">New Story</div>
       </Link>
       <div
-        className="h-8 flex p-2 items-center justify-center rounded-md border border-white/10 hover:cursor-pointer"
+        className="flex items-center justify-center h-8 p-2 border rounded-md border-white/10 hover:cursor-pointer"
         onClick={() => closeSidebar()}
       >
         <Icons.sidepanel className="w-4 h-4" />

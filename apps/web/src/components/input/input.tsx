@@ -35,7 +35,7 @@ const Input: FC<InputProps> = ({ value, setValue, submit, placeholder, className
           value={undefined}
           disabled={true}
         />
-        <Icons.microphoneSlash className="w-4 h-4 text-neutral-400 mr-2" />
+        <Icons.microphoneSlash className="w-4 h-4 mr-2 text-neutral-400" />
         <Icons.lockClosed className="w-4 h-4 text-neutral-400" />
       </div>
     );

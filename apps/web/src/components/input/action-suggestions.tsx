@@ -11,7 +11,7 @@ type ActionSuggestionsProps = {
 export function ActionSuggestions({ suggestions, submitAction, disabled, className }: ActionSuggestionsProps) {
   return (
     <>
-      <div className="absolute left-4 md:hidden bg-gradient-to-r from-neutral-950 to-transparent w-6 h-8 z-10" />
+      <div className="absolute z-10 w-6 h-8 left-4 md:hidden bg-gradient-to-r from-neutral-950 to-transparent" />
       {suggestions.map((suggestion: ActionSuggestion, index: number) => (
         <button
           key={index}
@@ -23,10 +23,10 @@ export function ActionSuggestions({ suggestions, submitAction, disabled, classNa
           onClick={() => !disabled && submitAction(suggestion.action)}
           disabled={disabled}
         >
-          <span className="text-xs md:text-sm font-light">{suggestion.action}</span>
+          <span className="text-xs font-light md:text-sm">{suggestion.action}</span>
         </button>
       ))}
-      <div className="absolute right-4 md:hidden bg-gradient-to-l from-neutral-950 to-transparent w-6 h-8 z-10" />
+      <div className="absolute z-10 w-6 h-8 right-4 md:hidden bg-gradient-to-l from-neutral-950 to-transparent" />
     </>
   );
 }

@@ -64,7 +64,7 @@ export default function NarratorVoiceSelector({
   };
 
   return (
-    <div className="w-full flex flex-col gap-y-2 px-4 border-b border-white/10 pb-10">
+    <div className="flex flex-col w-full px-4 pb-10 border-b gap-y-2 border-white/10">
       <div className="flex items-center font-bold">Narrator Voice</div>
       <Combobox
         items={voices}
@@ -75,7 +75,7 @@ export default function NarratorVoiceSelector({
         open={isComboboxOpen}
         onOpenChange={(isOpen) => setIsComboboxOpen(isOpen)}
       />
-      <div className="w-full flex gap-x-2 h-16 items-center shrink-0">
+      <div className="flex items-center w-full h-16 gap-x-2 shrink-0">
         {isPlaying ? (
           <Icons.pause className="w-10 h-10" onClick={handlePlayPauseClick} />
         ) : (

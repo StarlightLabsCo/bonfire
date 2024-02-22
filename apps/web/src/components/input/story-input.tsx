@@ -145,7 +145,7 @@ export function StoryInput({ user, instance, scrollRef, className }: StoryInputP
         className="absolute w-full h-32 bg-gradient-to-t from-neutral-950 to-transparent bottom-10 blur-gradient"
         style={{ pointerEvents: 'none' }}
       />
-      <div className="absolute w-full h-10 bg-neutral-950 bottom-0" style={{ pointerEvents: 'none' }} />
+      <div className="absolute bottom-0 w-full h-10 bg-neutral-950" style={{ pointerEvents: 'none' }} />
       <div className={cn(`story-input-wrapper absolute bottom-0 px-4 md:px-2 lg:px-0 pb-2 w-full max-w-3xl flex flex-col z-10`, className)}>
         <div className="flex items-center justify-between mb-2">
           <div className={cn('flex flex-nowrap flex-row gap-x-2 gap-y-2 overflow-x-auto scrollbar-hide', className)}>
@@ -153,7 +153,7 @@ export function StoryInput({ user, instance, scrollRef, className }: StoryInputP
               <ActionSuggestions suggestions={suggestions} submitAction={submitAction} />
             )}
           </div>
-          <div className="hidden md:flex gap-x-2 items-center h-full">
+          <div className="items-center hidden h-full md:flex gap-x-2">
             {error && typeof user !== 'undefined' && <RetryButton />}
             {messages.some((message) => message.role === MessageRole.user) && !locked && typeof user !== 'undefined' && !error && (
               <UndoButton className="fade-in-2s" />
@@ -161,7 +161,7 @@ export function StoryInput({ user, instance, scrollRef, className }: StoryInputP
             {isOwner && <ShareButton />}
           </div>
         </div>
-        <div className="flex gap-x-2 items-center md:block">
+        <div className="flex items-center gap-x-2 md:block">
           {socketState != 'open' ? (
             <Button disabled icon={<Icons.link />} className="md:hidden" />
           ) : (

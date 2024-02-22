@@ -149,8 +149,8 @@ export function ShareLinkDialog() {
           <div className="flex flex-col w-full gap-y-8">
             <div className="flex flex-col w-full gap-y-4">
               <div>
-                <div className="font-bold text-lg">Invite companions to your adventure</div>
-                <div className="font-light text-sm text-white/50">
+                <div className="text-lg font-bold">Invite companions to your adventure</div>
+                <div className="text-sm font-light text-white/50">
                   Bring friends into your story to decide the fate of your journey together
                 </div>
               </div>
@@ -177,7 +177,7 @@ export function ShareLinkDialog() {
               {players && players.length > 0 && (
                 <div className="flex flex-col gap-y-3">
                   {players.map((player, index) => (
-                    <div key={index} className="w-full flex justify-between items-center">
+                    <div key={index} className="flex items-center justify-between w-full">
                       <div className="flex items-center gap-x-4">
                         {player.image ? (
                           <Avatar className="w-6 h-6 rounded-full">
@@ -193,7 +193,7 @@ export function ShareLinkDialog() {
                         </div>
                       </div>
                       <Icons.cross
-                        className="w-4 h-4 text-neutral-500 hover:text-neutral-200 cursor-pointer"
+                        className="w-4 h-4 cursor-pointer text-neutral-500 hover:text-neutral-200"
                         onClick={() => removePlayerFromInstance(player.id)}
                       />
                     </div>
@@ -203,12 +203,12 @@ export function ShareLinkDialog() {
             </div>
             <div className="flex flex-col w-full gap-y-4">
               <div>
-                <div className="font-bold text-lg">Spread the tales of your journey</div>
-                <div className="font-light text-sm text-white/50">
+                <div className="text-lg font-bold">Spread the tales of your journey</div>
+                <div className="text-sm font-light text-white/50">
                   Use this link to share your adventure with the world. Observers can watch, but not participate.
                 </div>
               </div>
-              <div className="flex items-center gap-x-2 text-white">
+              <div className="flex items-center text-white gap-x-2">
                 <Switch checked={checked} onCheckedChange={setInstancePublic} />
                 {checked ? 'Public' : 'Private'}
               </div>

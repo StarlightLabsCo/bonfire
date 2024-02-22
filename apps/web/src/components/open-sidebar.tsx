@@ -34,7 +34,7 @@ export function OpenSidebar() {
   if (showSidebarOpen) {
     return (
       <div
-        className="z-20 absolute top-2 left-2 h-8 p-2 items-center justify-center rounded-md border bg-neutral-950 border-white/10 hover:cursor-pointer hidden md:flex"
+        className="absolute z-20 items-center justify-center hidden h-8 p-2 border top-2 left-2 rounded-md bg-neutral-950 border-white/10 hover:cursor-pointer md:flex"
         onClick={() => openSidebar()}
       >
         <Icons.sidepanel className="w-4 h-4" />

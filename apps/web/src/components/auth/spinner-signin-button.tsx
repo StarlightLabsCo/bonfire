@@ -20,9 +20,9 @@ export function SpinnerSignInButton({ provider, className }: SpinnerSignInButton
   };
 
   const icons = {
-    apple: <Icons.apple className="mr-2 h-4 w-4" />,
-    google: <Icons.google className="mr-2 h-4 w-4" />,
-    discord: <Icons.discord className="mr-2 h-4 w-4" />,
+    apple: <Icons.apple className="w-4 h-4 mr-2" />,
+    google: <Icons.google className="w-4 h-4 mr-2" />,
+    discord: <Icons.discord className="w-4 h-4 mr-2" />,
   };
 
   const texts = {
@@ -39,7 +39,7 @@ export function SpinnerSignInButton({ provider, className }: SpinnerSignInButton
       onClick={handleClick}
       className={cn('border-white/10 hover:bg-neutral-800', className)}
     >
-      {isLoading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : icons[provider]} {texts[provider]}
+      {isLoading ? <Icons.spinner className="w-4 h-4 mr-2 animate-spin" /> : icons[provider]} {texts[provider]}
     </Button>
   );
 }

@@ -58,7 +58,7 @@ export function Combobox({ items, placeholder, noItemFoundMessage, value, open, 
     return (
       <Popover open={open} onOpenChange={onOpenChange} modal={true}>
         <PopoverTrigger asChild>
-          <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between border-white/10">
+          <Button variant="outline" role="combobox" aria-expanded={open} className="justify-between w-full border-white/10">
             {value ? (
               <div className="flex items-baseline">
                 <span>{items.find((item) => item.value === value)?.label}</span>
@@ -67,7 +67,7 @@ export function Combobox({ items, placeholder, noItemFoundMessage, value, open, 
             ) : (
               placeholder
             )}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">{ComboboxContent}</PopoverContent>
@@ -78,7 +78,7 @@ export function Combobox({ items, placeholder, noItemFoundMessage, value, open, 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between border-white/10">
+        <Button variant="outline" role="combobox" aria-expanded={open} className="justify-between w-full border-white/10">
           {value ? (
             <div className="flex items-baseline">
               <span>{items.find((item) => item.value === value)?.label}</span>
@@ -87,7 +87,7 @@ export function Combobox({ items, placeholder, noItemFoundMessage, value, open, 
           ) : (
             placeholder
           )}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
         </Button>
       </DrawerTrigger>
       <DrawerContent>{ComboboxContent}</DrawerContent>

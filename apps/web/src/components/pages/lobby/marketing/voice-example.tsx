@@ -66,7 +66,7 @@ export function VoiceExample({ className }: VoiceExampleProps) {
         open={isComboboxOpen}
         onOpenChange={(isOpen) => setIsComboboxOpen(isOpen)}
       />
-      <div className="flex w-full gap-x-2 h-16 items-center">
+      <div className="flex items-center w-full h-16 gap-x-2">
         {isPlaying ? (
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 2, repeatDelay: 0.3 }}>
             <Icons.pause className="w-10 h-10" onClick={handlePlayPauseClick} />
@@ -76,7 +76,7 @@ export function VoiceExample({ className }: VoiceExampleProps) {
             <Icons.play className="w-10 h-10" onClick={handlePlayPauseClick} />
           </motion.div>
         )}
-        <div className="flex items-center w-full h-full rounded-lg p-2">
+        <div className="flex items-center w-full h-full p-2 rounded-lg">
           <div id="waveform" className="w-full h-full" />
         </div>
       </div>
