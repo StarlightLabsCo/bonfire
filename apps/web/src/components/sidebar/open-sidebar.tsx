@@ -1,10 +1,14 @@
 'use client';
 
 import { useCallback, useEffect } from 'react';
-import { Icons } from './icons';
+import { usePathname } from 'next/navigation';
+import { Icons } from '../icons';
 import { useSidebarStore } from '@/stores/sidebar-store';
+import { User } from 'next-auth';
 
-export function OpenSidebar() {
+export function OpenSidebar({ user }: { user: User | undefined }) {
+  const path = usePathname();
+
   const showSidebarOpen = useSidebarStore((state) => state.showSidebarOpenButton);
   const openSidebar = useSidebarStore((state) => state.openSidebar);
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
@@ -31,14 +35,20 @@ export function OpenSidebar() {
     };
   }, [handleKeyDown]);
 
+  if (path == '/' && typeof user === 'undefined') {
+    return null;
+  }
+
   if (showSidebarOpen) {
     return (
       <div
-        className="absolute z-20 items-center justify-center hidden h-8 p-2 border top-2 left-2 rounded-md bg-neutral-950 border-white/10 hover:cursor-pointer md:flex"
+        className="absolute z-20 items-center justify-center hidden h-8 p-2 border rounded-md top-2 left-2 bg-neutral-950 border-white/10 hover:cursor-pointer md:flex"
         onClick={() => openSidebar()}
       >
         <Icons.sidepanel className="w-4 h-4" />
       </div>
     );
+  } else {
+    return null;
   }
 }

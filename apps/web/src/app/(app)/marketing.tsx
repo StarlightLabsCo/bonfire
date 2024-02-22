@@ -14,7 +14,7 @@ export default function Marketing() {
     <div className="flex flex-col w-full overflow-x-hidden overflow-y-auto overscroll-none">
       <div className="w-full h-screen">
         {/* Hero Section */}
-        <div className="relative w-full h-3/4 md:h-5/6">
+        <div className="relative w-full h-3/4 md:h-full">
           <Image
             className="object-cover h-full md:hidden -z-10"
             src="https://r2.trybonfire.ai/hero.png"
@@ -31,7 +31,10 @@ export default function Marketing() {
           />
           <div className="absolute bottom-0 w-full h-full max-h-[50%] md:max-h-[25%] bg-gradient-to-t from-black to-transparent" />
           <div className="absolute bottom-0 w-full h-full max-h-[50%] md:max-h-[25%] bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 flex items-end justify-center w-full h-full text-white md:max-w-7xl md:left-0 md:right-0 md:top-0 md:m-auto md:h-fit gap-x-6 md:items-start md:my-auto">
+          <div className="absolute top-0 hidden w-full md:block">
+            <div className="flex items-center h-10 mx-auto text-lg font-bold text-white max-w-7xl">Bonfire</div>
+          </div>
+          <div className="absolute bottom-0 flex items-end justify-center w-full h-full text-white md:max-w-7xl md:left-0 md:right-0 md:top-0 md:m-auto md:h-fit gap-x-6 md:items-start md:mt-[15%]">
             <div className="flex flex-col items-center justify-end w-full md:items-start gap-y-4">
               <div className="w-full max-w-[550px] font-sans text-5xl font-black text-center md:text-left md:text-[5.5rem] drop-shadow-lg md:drop-shadow-2xl">
                 <FadeIn>The Ultimate Storyteller</FadeIn>
@@ -55,10 +58,14 @@ export default function Marketing() {
               </video>
             </div>
           </div>
+
+          <FadeIn delay={0.3} className="absolute bottom-0 hidden w-full h-6 mb-4 text-white cursor-pointer md:block">
+            <ScrollArrow scrollTo="ideas" />
+          </FadeIn>
         </div>
 
         {/* Call To Action */}
-        <div className="relative w-full pt-8 h-1/4 md:h-1/6">
+        <div className="relative w-full pt-8 h-1/4 md:hidden">
           <div className="absolute top-0 w-full h-full bg-gradient-to-b from-black to-transparent" />
           <div className="absolute top-0 w-full h-full -z-10 text-white/5">
             <Icons.topography />
@@ -66,7 +73,7 @@ export default function Marketing() {
           <FadeIn delay={0.2}>
             <Link
               href="/login"
-              className="md:hidden relative h-9 w-24 mx-auto flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white"
+              className="relative h-9 w-24 mx-auto flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white"
             >
               <div className="flex items-center gap-x-1">
                 <div className="font-bold">Play</div>

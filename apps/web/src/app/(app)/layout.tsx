@@ -1,7 +1,6 @@
 import { Toaster } from '@/components/ui/sonner';
 import { Navigator } from '@/components/navigator';
-import { OpenSidebar } from '@/components/open-sidebar';
-
+import { OpenSidebarParent } from '@/components/sidebar/open-sidebar-parent';
 import { OutOfCreditsDialog } from '@/components/dialog/outofcredits-dialog';
 import { ShareLinkDialog } from '@/components/dialog/sharelink-dialog';
 import { StripeCheckoutDialog } from '@/components/dialog/stripe-checkout-dialog';
@@ -15,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex flex-col w-full md:flex-row">
       <SidebarParent />
-      <OpenSidebar />
+      <OpenSidebarParent />
       {children}
       <Toaster />
       <ShareLinkDialog />
