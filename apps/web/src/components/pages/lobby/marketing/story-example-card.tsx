@@ -21,7 +21,7 @@ export function StoryExampleCard({ isActive, title, description, image, classNam
       <div className="absolute bottom-0 w-full h-1/4 bg-black/90 rounded-b-xl" />
       <div className="absolute bottom-1/4 w-full h-1/4 bg-gradient-to-t from-black/90 to-transparent" />
 
-      <div className="absolute bottom-0 h-2/5 z-10 flex flex-col p-3 gap-y-1 justify-between mb-3">
+      <div className="h-2/5 w-full absolute bottom-0 z-10 flex flex-col p-3 gap-y-1 justify-between mb-3">
         <TriggeredFadeIn animated={isActive}>
           <div className="font-black text-3xl drop-shadow-lg text-center">{title}</div>
         </TriggeredFadeIn>

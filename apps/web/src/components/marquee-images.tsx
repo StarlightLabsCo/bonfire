@@ -73,12 +73,9 @@ const imagesSecondHalf = [
 
 export function MarqueeImages({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        'relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background shadow-2xl',
-        className,
-      )}
-    >
+    <div className={cn('relative flex w-full flex-col items-center justify-center overflow-hidden rounded-lg shadow-2xl h-86', className)}>
+      <div className="hidden md:block absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-black to-transparent z-10" />
+      <div className="hidden md:block absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-black to-transparent z-10" />
       <Marquee className="[--gap:1rem]">
         {imagesFirstHalf.map((image, idx) => (
           <Image
