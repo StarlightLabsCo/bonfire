@@ -14,28 +14,43 @@ export default function Marketing() {
     <div className="flex flex-col w-full overflow-x-hidden overflow-y-auto overscroll-none">
       <div className="w-full h-screen">
         {/* Hero Section */}
-        <div className="relative w-full h-3/4">
+        <div className="relative w-full h-3/4 md:h-5/6">
           <Image
-            className="object-cover h-full -z-10"
+            className="object-cover h-full md:hidden -z-10"
             src="https://r2.trybonfire.ai/hero.png"
             width={1792}
             height={1024}
             alt="Hero image"
           />
-          <div className="absolute bottom-0 h-full max-h-[50%] w-full bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 w-full h-full bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-0 flex items-end w-full h-full text-white gap-y-6 md:items-start md:pt-32 justify-center-center">
-            <div className="flex flex-col items-center grow gap-y-4">
-              <div className="w-full font-sans text-5xl font-black text-center md:text-7xl drop-shadow-lg md:drop-shadow-2xl">
+          <Image
+            className="hidden object-cover h-full md:block -z-10 -scale-x-100"
+            src="https://r2.trybonfire.ai/herodesktop2.png" //desktophero.png
+            width={1792}
+            height={1024}
+            alt="Hero image"
+          />
+          <div className="absolute bottom-0 w-full h-full max-h-[50%] md:max-h-[25%] bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 w-full h-full max-h-[50%] md:max-h-[25%] bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute bottom-0 flex items-end justify-center w-full h-full text-white md:max-w-7xl md:left-0 md:right-0 md:top-0 md:m-auto md:h-fit gap-x-6 md:items-start md:my-auto">
+            <div className="flex flex-col items-center justify-end w-full md:items-start gap-y-4">
+              <div className="w-full max-w-[550px] font-sans text-5xl font-black text-center md:text-left md:text-[5.5rem] drop-shadow-lg md:drop-shadow-2xl">
                 <FadeIn>The Ultimate Storyteller</FadeIn>
               </div>
-              <div className="w-4/5 pb-4 text-sm text-center md:text-base text-neutral-400 md:text-neutral-200">
+              <div className="w-4/5 max-w-[400px] pb-4 text-sm text-center md:text-left md:text-base text-neutral-400 md:text-neutral-300 md:drop-shadow-2xl">
                 <FadeIn delay={0.1}>An AI narrator that brings your stories to life as a text adventure with images & audio.</FadeIn>
               </div>
+              <Link
+                href="/login"
+                className="hidden md:flex relative h-9 w-24 items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white"
+              >
+                <div className="flex items-center gap-x-1">
+                  <div className="font-bold">Play</div>
+                </div>
+              </Link>
             </div>
             <div className="flex-col items-center hidden w-full md:flex">
-              <video autoPlay loop muted playsInline className="w-full rounded-lg">
-                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4" />
+              <video autoPlay loop muted playsInline className="w-full rounded-3xl">
+                <source src="https://r2.trybonfire.ai/BonfireTimelapse.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -43,7 +58,7 @@ export default function Marketing() {
         </div>
 
         {/* Call To Action */}
-        <div className="relative w-full pt-8 h-1/4">
+        <div className="relative w-full pt-8 h-1/4 md:h-1/6">
           <div className="absolute top-0 w-full h-full bg-gradient-to-b from-black to-transparent" />
           <div className="absolute top-0 w-full h-full -z-10 text-white/5">
             <Icons.topography />
@@ -51,7 +66,7 @@ export default function Marketing() {
           <FadeIn delay={0.2}>
             <Link
               href="/login"
-              className="relative h-9 w-24 mx-auto flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white"
+              className="md:hidden relative h-9 w-24 mx-auto flex items-center justify-center bg-[#ff8f00] rounded-full z-10 text-white"
             >
               <div className="flex items-center gap-x-1">
                 <div className="font-bold">Play</div>
