@@ -17,7 +17,7 @@ export function StoryExampleCardDesktop({ isActive, title, description, image, c
   return (
     <div className={cn('w-96 h-[42rem] rounded-xl relative border border-white drop-shadow-2xl', className)}>
       <div
-        className={cn('absolute z-10 w-full h-full rounded-lg bg-black/90 transition-opacity duration-500 ease-in-out')}
+        className={cn('absolute z-10 w-full h-full bg-black/90 transition-opacity duration-500 ease-in-out rounded-xl')}
         style={{ opacity: isActive ? 0 : 0.8 }}
       />
       <Image className="object-cover h-full rounded-xl aspect-9/16" src={image} alt={title} width={1792} height={1024} />
