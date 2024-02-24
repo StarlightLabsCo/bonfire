@@ -49,7 +49,6 @@ export function StoryExamplesDesktop({ className }: StoryExamplesProps) {
 
   return (
     <div className={cn('w-full relative h-[42rem] flex justify-center items-center', className)}>
-      {/* This has no height */}
       {items.map((item, index) => {
         const isCenter = index === selectedIndex;
         const offset = (index - selectedIndex + itemCount) % itemCount;
@@ -57,36 +56,28 @@ export function StoryExamplesDesktop({ className }: StoryExamplesProps) {
         const isRight = offset === 1;
         let transform = '';
         let zIndex = 0;
-        let opacity = 1;
 
         if (isCenter) {
           transform = 'translateX(0%) translateZ(0) scale(1)';
           zIndex = 2;
-          opacity = 0;
         } else if (isLeft || isRight) {
           transform = isLeft ? 'translateX(-50%) translateZ(-100px) scale(0.8)' : 'translateX(50%) translateZ(-100px) scale(0.8)';
           zIndex = 1;
-          opacity = 0.8;
         } else {
           transform = 'translateX(0%) translateZ(-200px) scale(0.8)';
           zIndex = 0;
-          opacity = 1;
         }
 
         return (
           <div
             key={item.id}
-            className={'rounded-lg shadow-lg absolute transition-all duration-500 ease-in-out'}
+            className={'rounded-lg shadow-lg absolute transition-all duration-500 ease-in-out transform-gpu'}
             style={{
               transform: transform,
               zIndex: zIndex,
             }}
             onClick={() => selectItem(index)}
           >
-            <div
-              className={cn('absolute z-20 w-full h-full rounded-lg bg-black/90 transition-opacity duration-500 ease-in-out')}
-              style={{ opacity: opacity }}
-            />
             <StoryExampleCardDesktop title={item.title} description={item.description} image={item.image} isActive={isCenter} />
           </div>
         );
