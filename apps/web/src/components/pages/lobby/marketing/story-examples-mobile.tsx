@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { StoryExampleCard } from './story-example-card';
+import { StoryExampleCardMobile } from './story-example-card-mobile';
 
 type StoryExamplesProps = {
   className?: string;
@@ -29,25 +29,20 @@ const stories = [
   },
 ];
 
-export function StoryExamples({ className }: StoryExamplesProps) {
+export function StoryExamplesMobile({ className }: StoryExamplesProps) {
   return (
     <div className={cn('w-full relative', className)}>
       <div className="absolute top-0 left-0 z-10 hidden w-1/4 h-full pointer-events-none md:block bg-gradient-to-r from-black to-transparent" />
       <div className="absolute top-0 right-0 z-10 hidden w-1/4 h-full pointer-events-none md:block bg-gradient-to-l from-black to-transparent" />
       <Carousel>
-        <CarouselContent className="w-full md:max-h-96 ">
+        <CarouselContent className="w-full md:max-h-96">
           {stories.map((story, index) => (
             <CarouselItem
               key={index}
               index={index}
               className={'flex justify-center'}
               renderItem={(isActive: boolean) => (
-                <StoryExampleCard
-                  title={story.title}
-                  description={story.description}
-                  image={story.image}
-                  isActive={isActive} // Pass isActive to StoryExampleCard
-                />
+                <StoryExampleCardMobile title={story.title} description={story.description} image={story.image} isActive={isActive} />
               )}
             />
           ))}
