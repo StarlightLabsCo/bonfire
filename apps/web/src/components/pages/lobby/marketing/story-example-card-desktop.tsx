@@ -5,13 +5,14 @@ import Link from 'next/link';
 
 type StoryExampleCardProps = {
   isActive: boolean;
+  id: string;
   title: string;
   description: string;
   image: string;
   className?: string;
 };
 
-export function StoryExampleCardDesktop({ isActive, title, description, image, className }: StoryExampleCardProps) {
+export function StoryExampleCardDesktop({ id, isActive, title, description, image, className }: StoryExampleCardProps) {
   const truncatedDescription = description.split(' ').slice(0, 20).join(' ') + (description.split(' ').length > 20 ? '...' : '');
 
   return (
@@ -33,7 +34,7 @@ export function StoryExampleCardDesktop({ isActive, title, description, image, c
 
         <TriggeredFadeIn animated={isActive}>
           <Link
-            href="/login"
+            href={`/examples/${id}`}
             className="relative h-9 w-24 mx-auto flex items-center justify-center bg-[#ff8f00] rounded-full z-20 text-white hover:scale-105 cursor-pointer"
           >
             <div className="flex items-center gap-x-1">

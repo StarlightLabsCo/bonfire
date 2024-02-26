@@ -35,7 +35,7 @@ export function OpenSidebar({ user }: { user: User | undefined }) {
     };
   }, [handleKeyDown]);
 
-  if (path == '/' && typeof user === 'undefined') {
+  if ((path == '/' || path.startsWith('/examples')) && typeof user === 'undefined') {
     return null;
   }
 

@@ -1,0 +1,48 @@
+{
+  "id": "neon-wings",
+  "title": "Neon Wings",
+  "description": "Aria Knight, a decorated pilot, uncovers conspiracies in a neon-drenched future where experimental aircraft technology leads to high-stakes espionage in the sprawling metropolis",
+  "image": "https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.png",
+  "nodes": [
+    {
+      "id": "0",
+      "text": "Lorem Ipsum",
+      "audio": "https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.mp3",
+      "wordTimings": "",
+      "image": "",
+      "choices": ["01", "02", "03"]
+    },
+    {
+      "id": "01",
+      "text": "Lorem Ipsum",
+      "audio": "https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.mp3",
+      "wordTimings": "",
+      "image": "",
+      "choices": ["011", "012", "013"]
+    },
+    {
+      "id": "02",
+      "text": "Lorem Ipsum",
+      "audio": "https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.mp3",
+      "wordTimings": "",
+      "image": "",
+      "choices": ["021", "022", "023"]
+    },
+    {
+      "id": "03",
+      "text": "Lorem Ipsum",
+      "audio": "https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.mp3",
+      "wordTimings": "",
+      "image": "",
+      "choices": ["031", "032", "033"]
+    },
+    {
+      "id": "011",
+      "text": "Lorem Ipsum",
+      "audio": "https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.mp3",
+      "wordTimings": "",
+      "image": "",
+      "choices": ["0111", "0112", "0113"]
+    }
+  ]
+}

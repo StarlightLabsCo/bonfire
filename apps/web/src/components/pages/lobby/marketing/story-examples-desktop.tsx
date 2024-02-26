@@ -10,28 +10,28 @@ type StoryExamplesProps = {
 
 const items = [
   {
-    id: 1,
+    id: 'neon-wings',
     title: 'Neon Wings',
     description:
       'Aria Knight, a decorated pilot, uncovers conspiracies in a neon-drenched future where experimental aircraft technology leads to high-stakes espionage in the sprawling metropolis',
     image: 'https://r2.trybonfire.ai/clq23d5ja000ohd84z6elvb2z.png',
   },
   {
-    id: 2,
+    id: 'the-harbors-secret',
     title: "The Harbor's Secret",
     description:
       'Eliza Harwood, a cunning navigator and scholar, searches for ancient artifacts in a world where the Age of Exploration thrives, all while navigating through political intrigue and the untamed oceans.',
     image: 'https://r2.trybonfire.ai/clq2fgzc0004yws205qlc4yhm.png',
   },
   {
-    id: 3,
+    id: 'galactic-frontiers',
     title: 'Galactic Frontiers',
     description:
       'Ed Baldwin, astronaut extraordinaire, discovers a breathtaking exoplanet, with life forms and landscapes defying the laws of physics, on the brink of a discovery that could change humanity forever.',
     image: 'https://r2.trybonfire.ai/clq23fb0n0017hd84o4mxtuqs.png',
   },
   {
-    id: 4,
+    id: 'the-last-stand',
     title: 'The Last Stand',
     description:
       'Aria Knight, a decorated pilot, uncovers conspiracies in a neon-drenched future where experimental aircraft technology leads to high-stakes espionage in the sprawling metropolis',
@@ -78,7 +78,13 @@ export function StoryExamplesDesktop({ className }: StoryExamplesProps) {
             }}
             onClick={() => selectItem(index)}
           >
-            <StoryExampleCardDesktop title={item.title} description={item.description} image={item.image} isActive={isCenter} />
+            <StoryExampleCardDesktop
+              id={item.id}
+              title={item.title}
+              description={item.description}
+              image={item.image}
+              isActive={isCenter}
+            />
           </div>
         );
       })}
