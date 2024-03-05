@@ -160,7 +160,6 @@ export function Story({
   const replayAudio = useCallback(
     async (message: Message) => {
       if (message.audioUrl && message.audioWordTimings) {
-        console.log(`Replaying audio for message ${message.id}`);
         const data = await fetch(message.audioUrl);
         const blob = await data.blob();
 

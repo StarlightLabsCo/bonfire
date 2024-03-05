@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { IBM_Plex_Serif } from 'next/font/google';
@@ -8,16 +8,15 @@ import Zoom from 'react-medium-image-zoom';
 import './image-zoom-styles.css';
 
 import { Message } from '@prisma/client';
-import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
-import { useWebsocketStore } from '@/stores/websocket-store';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import { Icons } from '../icons';
 import { cn } from '@/lib/utils';
 import { bufferBase64Audio, clearBufferedPlayerNodeBuffer } from '@/lib/audio/playback';
 import { ExampleStoryInput } from '../input/example-story-input';
+import { MessageRole } from 'database';
 
 export const cormorantGaramond = IBM_Plex_Serif({
   subsets: ['latin'],
@@ -25,32 +24,39 @@ export const cormorantGaramond = IBM_Plex_Serif({
 });
 
 type ExampleStoryProps = {
-  story: Object;
+  story: StoryStep;
+};
+
+export type StoryStep = {
+  text: string;
+  audioUrl: string;
+  audioWordTimings: string;
+  imageUrl: string;
+  choices: Choice[];
+};
+
+export type Choice = {
+  choice: string;
+  next: StoryStep | null;
 };
 
 export function ExampleStory({ story }: ExampleStoryProps) {
+  const [currentStoryStep, setCurrentStoryStep] = useState<StoryStep>(story);
+  const [currentStageText, setCurrentStageText] = useState<string>('Generating...');
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const locked = useCurrentInstanceStore((state) => state.locked);
-  const lockedAt = useCurrentInstanceStore((state) => state.lockedAt);
-  const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
-  const setLocked = useCurrentInstanceStore((state) => state.setLocked);
-  const setLockedAt = useCurrentInstanceStore((state) => state.setLockedAt);
-  const setStage = useCurrentInstanceStore((state) => state.setStage);
-
-  const socketState = useWebsocketStore((state) => state.socketState);
-  const subscribeToInstance = useCurrentInstanceStore((state) => state.subscribeToInstance);
-  const clearAudio = usePlaybackStore((state) => state.clearAudio);
+  const streamedMessageId = useMessagesStore((state) => state.streamedMessageId);
+  const setStreamedMessageId = useMessagesStore((state) => state.setStreamedMessageId);
+  const streamedWords = useMessagesStore((state) => state.streamedWords);
+  const setStreamedWords = useMessagesStore((state) => state.setStreamedWords);
 
   const messages = useMessagesStore((state) => state.messages);
   const setMessages = useMessagesStore((state) => state.setMessages);
-
   const submittedMessage = useMessagesStore((state) => state.submittedMessage);
   const setSubmittedMessage = useMessagesStore((state) => state.setSubmittedMessage);
-  const streamedMessageId = useMessagesStore((state) => state.streamedMessageId);
-  const streamedWords = useMessagesStore((state) => state.streamedWords);
 
-  // Mobile Header useEffect
+  // Mobile Header useEffect // TODO: move to sidebar
   const messageContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleScroll = () => {
@@ -114,13 +120,10 @@ export function ExampleStory({ story }: ExampleStoryProps) {
     };
   }, [wordTimings, audioStartTime]);
 
-  const error = locked && lockedAt && new Date().getTime() - new Date(lockedAt).getTime() > 60 * 1000 * 5;
-
   // Replay Audio
   const replayAudio = useCallback(
     async (message: Message) => {
       if (message.audioUrl && message.audioWordTimings) {
-        console.log(`Replaying audio for message ${message.id}`);
         const data = await fetch(message.audioUrl);
         const blob = await data.blob();
 
@@ -155,6 +158,149 @@ export function ExampleStory({ story }: ExampleStoryProps) {
     },
     [streamedMessageId, streamedWords],
   );
+
+  // --- Steps ---
+  const presentText = () => {
+    return new Promise<void>(async (resolve) => {
+      let message = {
+        id: Math.random().toString(36).substr(2, 9),
+        instanceId: '-1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        role: MessageRole.assistant,
+        content: '',
+        name: null,
+        function_call: null,
+        audioUrl: currentStoryStep.audioUrl,
+        audioWordTimings: currentStoryStep.audioWordTimings,
+      };
+
+      setMessages([...useMessagesStore.getState().messages, message]);
+      setStreamedMessageId(message.id);
+
+      const words = currentStoryStep.text.split(' ');
+
+      const interval = setInterval(() => {
+        if (words.length === 0) {
+          clearInterval(interval);
+          resolve();
+          setCurrentStageText('Pick an action...');
+          return;
+        }
+
+        const currentWord = words.shift();
+        if (!currentWord) return;
+        message.content += currentWord + ' ';
+        useMessagesStore.getState().upsertMessage(message);
+        setStreamedWords(message.content.split(' '));
+      }, 100);
+
+      // Play Audio
+      const data = await fetch(currentStoryStep.audioUrl);
+      const blob = await data.blob();
+
+      const audioContext = usePlaybackStore.getState().audioContext;
+      const bufferedPlayerNode = usePlaybackStore.getState().bufferedPlayerNode;
+
+      // Setup
+      usePlaybackStore.getState().setWordTimings(JSON.parse(currentStoryStep.audioWordTimings));
+      useMessagesStore.getState().setStreamedMessageId(message.id);
+      useMessagesStore.getState().setStreamedWords(message.content.split(' '));
+
+      clearBufferedPlayerNodeBuffer(bufferedPlayerNode);
+
+      // Convert blob to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const base64AudioString = reader.result;
+        if (typeof base64AudioString !== 'string') return;
+
+        const base64Data = base64AudioString.split(',')[1];
+
+        // Play
+        usePlaybackStore.getState().setAudioStartTime(Date.now());
+        if (typeof base64AudioString === 'string') {
+          bufferBase64Audio(audioContext, bufferedPlayerNode, base64Data);
+        }
+      };
+    });
+  };
+
+  const presentImageAndChoices = () => {
+    const image = {
+      id: Math.random().toString(36).substr(2, 9),
+      instanceId: '-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      role: MessageRole.function,
+      content: currentStoryStep.imageUrl,
+      name: 'generate_image',
+      function_call: null,
+      audioUrl: null,
+      audioWordTimings: null,
+    };
+
+    const choices = {
+      id: Math.random().toString(36).substr(2, 9),
+      instanceId: '-1',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      role: MessageRole.function,
+      content: JSON.stringify(
+        currentStoryStep.choices.map((choice) => ({
+          action: choice.choice,
+          modifier_reason: null,
+          modifier: null,
+        })),
+      ),
+      name: 'action_suggestions',
+      function_call: null,
+      audioUrl: null,
+      audioWordTimings: null,
+    };
+
+    setMessages([...useMessagesStore.getState().messages, image, choices]);
+  };
+
+  const stepStory = async () => {
+    await presentText();
+    presentImageAndChoices();
+  };
+
+  useEffect(() => {
+    setSubmittedMessage(null);
+    stepStory();
+  }, [currentStoryStep]);
+
+  useEffect(() => {
+    if (!submittedMessage) return;
+    setCurrentStageText('Generating...');
+
+    useMessagesStore.getState().setMessages([
+      ...messages,
+      {
+        id: '4',
+        instanceId: '-1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        role: MessageRole.user,
+        content: submittedMessage ?? '',
+        name: null,
+        function_call: null,
+        audioUrl: null,
+        audioWordTimings: null,
+      },
+    ]);
+
+    currentStoryStep.choices.forEach((choice) => {
+      if (choice.choice === submittedMessage) {
+        if (choice.next) {
+          setCurrentStoryStep(choice.next);
+        }
+      }
+    });
+  }, [submittedMessage]);
 
   return (
     <div className="flex flex-col items-center w-full mx-auto h-[100dvh] relative">
@@ -246,33 +392,11 @@ export function ExampleStory({ story }: ExampleStoryProps) {
                 return null;
             }
           })}
-          {error && (
-            <div className="flex flex-row items-center w-full py-2 pl-6 font-sans border-l-2 border-red-500 gap-x-4">
-              <Icons.exclamationTriangle className="w-6 h-6 text-xs font-light text-red-500" />
-              There&apos;s been an error.
-            </div>
-          )}
-
-          {!error && messages[messages.length - 1]?.role === 'user' && (
-            <div className="w-full">
-              <div className="w-2 h-2 ml-2 rounded-full bg-neutral-700 fade-in-5 animate-ping" />
-            </div>
-          )}
-          {!error && submittedMessage && messages[messages.length - 1]?.role != 'user' && (
-            <>
-              <div className="w-full pl-6 border-l-2 border-neutral-700 fade-in-fast">
-                <p className="text-neutral-500">{submittedMessage}</p>
-              </div>
-              <div className="w-full">
-                <div className="w-2 h-2 ml-2 rounded-full bg-neutral-700 fade-in-5 animate-ping" />
-              </div>
-            </>
-          )}
           <div className="h-16" />
           <div ref={scrollRef} />
         </div>
       </div>
-      <ExampleStoryInput scrollRef={scrollRef} />
+      <ExampleStoryInput scrollRef={scrollRef} text={currentStageText} />
     </div>
   );
 }

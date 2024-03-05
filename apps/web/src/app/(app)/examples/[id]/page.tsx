@@ -1,8 +1,12 @@
-import { ExampleStory } from '@/components/pages/example-story';
+import { ExampleStory, StoryStep } from '@/components/pages/example-story';
+import examples from './examples.json';
+
+type Examples = {
+  [key: string]: StoryStep;
+};
 
 export default function Example({ params }: { params: { id: string } }) {
-  // fetch example story by id from r2 bucket
-  // represent it as a big JSON object?
+  const story = (examples as Examples)[params.id];
 
-  return <ExampleStory story={{}} />;
+  return <ExampleStory story={story} />;
 }

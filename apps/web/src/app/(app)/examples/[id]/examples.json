@@ -1,0 +1,37 @@
+{
+  "neon-wings": {
+    "text": "Under the scorching sun, you find yourself standing in the heart of a bustling marketplace. The air is thick with the scents of exotic spices and the cacophony of merchants haggling. In your hand, a leather pouch feels almost too light, a reminder of the dire need that drove you here. Across the square, an old well promises relief from the heat. You make your way through the crowd, eager for a drink.",
+    "audioUrl": "https://r2.trybonfire.ai/clsvzmpq000031f9z24n993gc.pcm",
+    "audioWordTimings": "{\"words\":[\"Under\",\"the\",\"scorching\",\"sun\",\"you\",\"find\",\"yourself\",\"standing\",\"in\",\"the\",\"heart\",\"of\",\"a\",\"bustling\",\"marketplace\",\"The\",\"air\",\"is\",\"thick\",\"with\",\"the\",\"scents\",\"of\",\"exotic\",\"spices\",\"and\",\"the\",\"cacophony\",\"of\",\"merchants\",\"haggling\",\"In\",\"your\",\"hand\",\"a\",\"leather\",\"pouch\",\"feels\",\"almost\",\"too\",\"light\",\"a\",\"reminder\",\"of\",\"the\",\"dire\",\"need\",\"that\",\"drove\",\"you\",\"here\",\"Across\",\"the\",\"square\",\"an\",\"old\",\"well\",\"promises\",\"relief\",\"from\",\"the\",\"heat\",\"You\",\"make\",\"your\",\"way\",\"through\",\"the\",\"crowd\",\"eager\",\"for\",\"a\",\"drink\"],\"wordStartTimesMs\":[116,406,522,1057,1823,1985,2194,2543,2949,3030,3146,3402,3495,3587,4029,5271,5526,5816,5967,6234,6408,6513,6838,6954,7442,8150,8614,8730,9322,9450,9926,11273,11459,11633,12318,12492,12782,13131,13467,13862,14082,14837,15000,15441,15545,15685,16068,16335,16497,16787,16938,17960,18343,18448,19098,19295,19516,19806,20340,20688,20874,20990,21989,22163,22325,22465,22592,22825,22929,23533,23835,23986,24067],\"wordDurationsMs\":[290,116,535,441,162,209,349,406,81,116,256,93,92,442,731,255,290,151,267,174,105,325,116,488,708,464,116,592,128,476,534,186,174,441,174,290,349,336,395,220,430,163,441,104,140,383,267,162,290,151,325,383,105,499,197,221,290,534,348,186,116,395,174,162,140,127,233,104,430,302,151,81,418]}",
+    "imageUrl": "https://r2.trybonfire.ai/clsvznhvc00061f9z0fu6evpg.png",
+    "choices": [
+      {
+        "choice": "Fly away",
+        "next": {
+          "text": "Under the scorching sun, you find yourself standing in the heart of a bustling marketplace. The air is thick with the scents of exotic spices and the cacophony of merchants haggling. In your hand, a leather pouch feels almost too light, a reminder of the dire need that drove you here. Across the square, an old well promises relief from the heat. You make your way through the crowd, eager for a drink.",
+          "audioUrl": "https://r2.trybonfire.ai/clsvzmpq000031f9z24n993gc.pcm",
+          "audioWordTimings": "{\"words\":[\"Under\",\"the\",\"scorching\",\"sun\",\"you\",\"find\",\"yourself\",\"standing\",\"in\",\"the\",\"heart\",\"of\",\"a\",\"bustling\",\"marketplace\",\"The\",\"air\",\"is\",\"thick\",\"with\",\"the\",\"scents\",\"of\",\"exotic\",\"spices\",\"and\",\"the\",\"cacophony\",\"of\",\"merchants\",\"haggling\",\"In\",\"your\",\"hand\",\"a\",\"leather\",\"pouch\",\"feels\",\"almost\",\"too\",\"light\",\"a\",\"reminder\",\"of\",\"the\",\"dire\",\"need\",\"that\",\"drove\",\"you\",\"here\",\"Across\",\"the\",\"square\",\"an\",\"old\",\"well\",\"promises\",\"relief\",\"from\",\"the\",\"heat\",\"You\",\"make\",\"your\",\"way\",\"through\",\"the\",\"crowd\",\"eager\",\"for\",\"a\",\"drink\"],\"wordStartTimesMs\":[116,406,522,1057,1823,1985,2194,2543,2949,3030,3146,3402,3495,3587,4029,5271,5526,5816,5967,6234,6408,6513,6838,6954,7442,8150,8614,8730,9322,9450,9926,11273,11459,11633,12318,12492,12782,13131,13467,13862,14082,14837,15000,15441,15545,15685,16068,16335,16497,16787,16938,17960,18343,18448,19098,19295,19516,19806,20340,20688,20874,20990,21989,22163,22325,22465,22592,22825,22929,23533,23835,23986,24067],\"wordDurationsMs\":[290,116,535,441,162,209,349,406,81,116,256,93,92,442,731,255,290,151,267,174,105,325,116,488,708,464,116,592,128,476,534,186,174,441,174,290,349,336,395,220,430,163,441,104,140,383,267,162,290,151,325,383,105,499,197,221,290,534,348,186,116,395,174,162,140,127,233,104,430,302,151,81,418]}",
+          "imageUrl": "https://r2.trybonfire.ai/clsvznhvc00061f9z0fu6evpg.png",
+          "choices": [
+            {
+              "choice": "Pog",
+              "next": null
+            },
+            {
+              "choice": "Champ",
+              "next": null
+            }
+          ]
+        }
+      },
+      {
+        "choice": "Stay",
+        "next": null
+      },
+      {
+        "choice": "Dance",
+        "next": null
+      }
+    ]
+  }
+}
