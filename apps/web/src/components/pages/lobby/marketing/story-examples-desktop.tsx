@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { StoryExampleCardDesktop } from './story-example-card-desktop';
+import FadeIn from '@/components/animation/fadeIn';
 
 type StoryExamplesProps = {
   className?: string;
@@ -56,6 +57,7 @@ export function StoryExamplesDesktop({ className }: StoryExamplesProps) {
         const isRight = offset === 1;
         let transform = '';
         let zIndex = 0;
+        let delay = isCenter ? 1.75 : 2.25;
 
         if (isCenter) {
           transform = 'translateX(0%) translateZ(0) scale(1)';
@@ -71,20 +73,22 @@ export function StoryExamplesDesktop({ className }: StoryExamplesProps) {
         return (
           <div
             key={item.id}
-            className={'rounded-lg shadow-lg absolute transition-all duration-500 ease-in-out transform-gpu'}
+            className={'absolute transition-all duration-500 ease-in-out transform-gpu'}
             style={{
               transform: transform,
               zIndex: zIndex,
             }}
             onClick={() => selectItem(index)}
           >
-            <StoryExampleCardDesktop
-              id={item.id}
-              title={item.title}
-              description={item.description}
-              image={item.image}
-              isActive={isCenter}
-            />
+            <FadeIn delay={delay} x={isLeft ? 100 : isRight ? -100 : 0}>
+              <StoryExampleCardDesktop
+                id={item.id}
+                title={item.title}
+                description={item.description}
+                image={item.image}
+                isActive={isCenter}
+              />
+            </FadeIn>
           </div>
         );
       })}

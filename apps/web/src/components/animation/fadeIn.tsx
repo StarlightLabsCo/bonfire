@@ -6,15 +6,18 @@ import { useRef } from 'react';
 export default function FadeIn({
   children,
   className,
-  noVertical,
   delay,
   viewTriggerOffset,
+  x,
+  y = 24,
 }: {
   children: React.ReactNode;
   className?: string;
   noVertical?: boolean;
   delay?: number;
   viewTriggerOffset?: boolean;
+  x?: number;
+  y?: number;
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, {
@@ -22,14 +25,16 @@ export default function FadeIn({
     margin: viewTriggerOffset ? '-128px' : '0px',
   });
 
-  const fadeUpVariants = {
+  const fadeVariants = {
     initial: {
       opacity: 0,
-      y: noVertical ? 0 : 24,
+      y: y || 0,
+      x: x || 0,
     },
     animate: {
       opacity: 1,
       y: 0,
+      x: 0,
     },
   };
 
@@ -37,7 +42,7 @@ export default function FadeIn({
     <motion.div
       ref={ref}
       animate={inView ? 'animate' : 'initial'}
-      variants={fadeUpVariants}
+      variants={fadeVariants}
       className={className}
       initial={false}
       transition={{
