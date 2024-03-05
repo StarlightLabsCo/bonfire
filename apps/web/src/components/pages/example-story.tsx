@@ -193,7 +193,7 @@ export function ExampleStory({ story }: ExampleStoryProps) {
         message.content += currentWord + ' ';
         useMessagesStore.getState().upsertMessage(message);
         setStreamedWords(message.content.split(' '));
-      }, 100);
+      }, 50);
 
       // Play Audio
       const data = await fetch(currentStoryStep.audioUrl);
@@ -323,7 +323,10 @@ export function ExampleStory({ story }: ExampleStoryProps) {
                             <>
                               <span
                                 key={`${message.id}-${index}-${wordIndex}`}
-                                className={cn(`fade-in-fast transition-colors duration-300`, isSpoken ? 'text-white' : 'text-white/20')}
+                                className={cn(
+                                  `fade-in-fast transition-colors duration-300 select-none`,
+                                  isSpoken ? 'text-white' : 'text-white/20',
+                                )}
                               >
                                 {word}
                               </span>
