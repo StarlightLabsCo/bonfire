@@ -16,12 +16,13 @@ export function DesktopMarketing({ className }: DesktopMarketingProps) {
         <div className="relative w-full h-full">
           <Image
             className="hidden object-cover h-full md:block -z-10 -scale-x-100"
-            src="https://r2.trybonfire.ai/bonfirehero3.png"
+            src="https://r2.trybonfire.ai/bonfirehero6.png"
             width={1792}
             height={1024}
             alt="Hero image"
+            quality={100}
           />
-          <div className="absolute h-[60%] inset-0 bg-gradient-to-t from-transparent to-transparent backdrop-blur-[1px]" />
+          {/* <div className="absolute h-[60%] inset-0 bg-gradient-to-t from-transparent to-transparent backdrop-blur-[1px]" /> */}
           <div className="absolute top-0 block w-full">
             <div className="flex items-center h-12 mx-auto text-lg font-bold text-white max-w-7xl drop-shadow-2xl">Bonfire</div>
           </div>
