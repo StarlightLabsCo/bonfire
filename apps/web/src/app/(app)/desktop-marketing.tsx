@@ -3,6 +3,7 @@ import Link from 'next/link';
 import FadeIn from '@/components/animation/fadeIn';
 import { cn } from '@/lib/utils';
 import { StoryExamplesDesktop } from '@/components/pages/lobby/marketing/story-examples-desktop';
+import { Icons } from '@/components/icons';
 
 type DesktopMarketingProps = {
   className?: string;
@@ -45,6 +46,20 @@ export function DesktopMarketing({ className }: DesktopMarketingProps) {
             </div>
 
             <div className="flex justify-center w-full">
+              <div className="absolute bottom-[-6rem] left-1/2 flex gap-x-2">
+                <div className="flex flex-col gap-y-1">
+                  <FadeIn delay={2.5}>
+                    <div className="font-bold text-lg">Try an example!</div>
+                  </FadeIn>
+                  <FadeIn delay={2.5}>
+                    <div className="font-extralight text-xs">No signup required.</div>
+                  </FadeIn>
+                </div>
+                <FadeIn delay={2.5}>
+                  <Icons.curvedArrow className="absolute right-[-3.5rem] top-[-1rem] w-12 h-12 text-white" />
+                </FadeIn>
+              </div>
+
               <StoryExamplesDesktop />
             </div>
           </div>
