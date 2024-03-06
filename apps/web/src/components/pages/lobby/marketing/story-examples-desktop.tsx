@@ -57,7 +57,7 @@ export function StoryExamplesDesktop({ className }: StoryExamplesProps) {
         const isRight = offset === 1;
         let transform = '';
         let zIndex = 0;
-        let delay = isCenter ? 1.75 : 2.25;
+        let delay = isCenter ? 1.5 : 2;
 
         if (isCenter) {
           transform = 'translateX(0%) translateZ(0) scale(1)';
