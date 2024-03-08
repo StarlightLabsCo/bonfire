@@ -2,12 +2,15 @@
 
 import { Icons } from '../icons';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCurrentInstanceStore } from '@/stores/current-instance-store';
 import { useSidebarStore } from '@/stores/sidebar-store';
 import { useMessagesStore } from '@/stores/messages-store';
 import { usePlaybackStore } from '@/stores/audio/playback-store';
 
 export function TopActions() {
+  const pathname = usePathname();
+
   const closeSidebar = useSidebarStore((state) => state.closeSidebar);
 
   const setInstanceId = useCurrentInstanceStore((state) => state.setInstanceId);
@@ -15,7 +18,7 @@ export function TopActions() {
   const clearAudio = usePlaybackStore((state) => state.clearAudio);
 
   const handleClick = () => {
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 768 || pathname.startsWith('/examples')) {
       closeSidebar();
     }
 
@@ -31,8 +34,17 @@ export function TopActions() {
         onClick={handleClick}
         className="flex items-center h-8 p-2 border grow gap-x-2 rounded-md border-white/10 hover:cursor-pointer"
       >
-        <Icons.plus className="w-4 h-4" />
-        <div className="text-xs font-light">New Story</div>
+        {pathname.startsWith('/examples') ? (
+          <>
+            <Icons.chevronLeft className="w-4 h-4" />
+            <div className="text-xs font-light">Landing Page</div>
+          </>
+        ) : (
+          <>
+            <Icons.plus className="w-4 h-4" />
+            <div className="text-xs font-light">New Story</div>
+          </>
+        )}
       </Link>
       <div
         className="flex items-center justify-center h-8 p-2 border rounded-md border-white/10 hover:cursor-pointer"
