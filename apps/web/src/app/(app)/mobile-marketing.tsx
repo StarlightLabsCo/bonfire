@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import FadeIn from '@/components/animation/fadeIn';
 import { MarqueeImages } from '@/components/marquee-images';
-import { VoiceExample } from '@/components/pages/lobby/marketing/voice-example';
-import { ScrollArrow } from '@/components/pages/lobby/marketing/scroll-arrow';
-import { StoryExamplesMobile } from '@/components/pages/lobby/marketing/story-examples-mobile';
-import { MultiplayerAnimation } from '@/components/pages/lobby/marketing/multiplayer-animation';
-import { ChoicesAnimation } from '@/components/pages/lobby/marketing/choices-animation';
+import { VoiceExample } from '@/components/pages/marketing/voice-example';
+import { ScrollArrow } from '@/components/pages/marketing/scroll-arrow';
+import { StoryExamplesMobile } from '@/components/pages/marketing/story-examples-mobile';
+import { MultiplayerAnimation } from '@/components/pages/marketing/multiplayer-animation';
+import { ChoicesAnimation } from '@/components/pages/marketing/choices-animation';
 import { cn } from '@/lib/utils';
 
 type MobileMarketingProps = {

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import FadeIn from '@/components/animation/fadeIn';
 import { cn } from '@/lib/utils';
-import { StoryExamplesDesktop } from '@/components/pages/lobby/marketing/story-examples-desktop';
+import { StoryExamplesDesktop } from '@/components/pages/marketing/story-examples-desktop';
 import { Icons } from '@/components/icons';
 
 type DesktopMarketingProps = {
